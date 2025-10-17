@@ -7,6 +7,7 @@ import { signOut } from "firebase/auth";
 import { auth } from "../../firebase/config";
 import { useNavigate } from "react-router-dom";
 import PencilLoader from "../../components/PencilLoader/PencilLoader";
+import UserAvatar from "../../components/UserAvatar";
 import {
   BookOpen,
   FileText,
@@ -595,11 +596,7 @@ const Profile = () => {
             <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6 flex-1">
               {/* Profile Image */}
               <div className="flex-shrink-0">
-                <img
-                  src={userProfile?.photoURL || "/api/placeholder/100/100"}
-                  alt="Profile"
-                  className="w-20 h-20 rounded-full object-cover"
-                />
+                <UserAvatar user={userProfile} size="w-20 h-20" className="text-2xl" />
               </div>
 
               {/* User Info */}

@@ -3,6 +3,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../src/context/AuthContext";
 import { adminAPI } from "../utils/api";
 import logo from '../../src/assets/logo.png'
+import UserAvatar from './UserAvatar';
 import {
   Menu,
   X,
@@ -209,11 +210,7 @@ const Navbar = () => {
               {user ? (
                 <div className="relative group">
                   <button className="flex items-center space-x-2 p-2 rounded-lg hover:bg-noto-light/50">
-                    <img
-                      src={user.photoURL}
-                      alt={user.displayName}
-                      className="w-8 h-8 rounded-full border-2 border-noto-secondary"
-                    />
+                    <UserAvatar user={user} size="w-8 h-8" />
                     <span className="text-noto-primary font-medium">
                       {user.displayName}
                     </span>
@@ -324,11 +321,7 @@ const Navbar = () => {
               {user ? (
                 <div className="mt-4 pt-4 border-t border-gray-200">
                   <div className="flex items-center space-x-2 mb-3">
-                    <img
-                      src={user.photoURL || "/default-avatar.png"}
-                      alt={user.displayName}
-                      className="w-8 h-8 rounded-full"
-                    />
+                    <UserAvatar user={user} size="w-10 h-10" />
                     <span className="font-medium">{user.displayName}</span>
                   </div>
 
