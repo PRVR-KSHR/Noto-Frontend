@@ -1,0 +1,384 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* noto Color Variables */
+    --noto-primary: #10367d;
+    --noto-secondary: #74b4d9;
+    --noto-light: #ebebeb;
+    --noto-dark: #0a1b3d;
+
+    /* Semantic Variables */
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 29.2%;
+    --muted: 210 40% 92%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --border: 210 40% 92%;
+    --input: 210 40% 92%;
+    --ring: 199 89% 65%;
+    --noto-font :  "Bricolage Grotesque", sans-serif;
+  }
+
+  @theme {
+    --font-sans: var(--noto-font); /* This makes font-sans use Bricolage Grotesque */
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--noto-font); /* Apply Bricolage Grotesque directly */
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-semibold text-noto-primary;
+    font-family: var(--noto-font); /* Ensure headings use the same font */
+  }
+}
+
+@layer components {
+  /* noto Button Components */
+  .btn-primary {
+    @apply bg-noto-primary hover:bg-noto-dark text-white font-medium py-2 px-4 rounded-lg transition-all duration-200;
+  }
+
+  .btn-secondary {
+    @apply bg-noto-secondary hover:bg-opacity-80 text-white font-medium py-2 px-4 rounded-lg transition-all duration-200;
+  }
+
+  .btn-outline {
+    @apply border-2 border-noto-primary text-noto-primary hover:bg-noto-primary hover:text-white font-medium py-2 px-4 rounded-lg transition-all duration-200;
+  }
+
+  /* noto Card Component */
+  .card {
+    @apply bg-white rounded-xl border border-noto-light/50 p-6 hover:shadow-lg transition-all duration-200;
+  }
+
+  /* noto Input Component */
+  .input {
+    @apply w-full px-4 py-2 border border-noto-light rounded-lg focus:ring-2 focus:ring-noto-secondary focus:border-transparent outline-none transition-all duration-200;
+  }
+
+  /* noto Navbar */
+  .navbar {
+    @apply bg-white/95 backdrop-blur-sm border-b border-noto-light shadow-sm;
+  }
+
+  /* noto Section */
+  .section {
+    @apply py-16 px-4;
+  }
+
+  /* noto Container */
+  .container {
+    @apply max-w-7xl mx-auto;
+  }
+}
+
+@layer utilities {
+    .hero-subtle-gradient {
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 1) 0%,
+      rgba(255, 255, 255, 0.98) 30%,
+      rgba(16, 54, 125, 0.06) 60%,
+      rgba(16, 54, 125, 0.12) 80%,
+      rgba(255, 255, 255, 0.95) 95%,
+      rgba(255, 255, 255, 1) 100%
+    );
+    position: relative;
+  }
+
+  .logo {
+  width: 150px;
+  height: auto;
+}
+
+  /* Smooth blur transition at the bottom */
+  .hero-subtle-gradient::after {
+    content: '';
+    position: absolute;
+    bottom: -50px;
+    left: 0;
+    right: 0;
+    height: 100px;
+    background: linear-gradient(
+      180deg,
+      rgba(16, 54, 125, 0.08) 0%,
+      rgba(255, 255, 255, 0.3) 50%,
+      rgba(255, 255, 255, 1) 100%
+    );
+    filter: blur(15px);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* Optional: Add very subtle vertical lines texture for depth */
+  .hero-subtle-gradient::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: repeating-linear-gradient(
+      90deg,
+      rgba(16, 54, 125, 0.015) 0px,
+      rgba(16, 54, 125, 0.015) 1px,
+      transparent 1px,
+      transparent 2px
+    );
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  .hero-subtle-gradient > * {
+    position: relative;
+    z-index: 3;
+  }
+  /* Font utilities */
+  .noto-font--noto-font {
+    font-family: var(--noto-font);
+  }
+
+  /* Custom animations */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slideUp {
+    from {
+      transform: translateY(100%);
+    }
+    to {
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.3s ease-out;
+  }
+
+  /* noto specific utilities */
+  .text-gradient {
+    @apply bg-gradient-to-r from-noto-primary to-noto-secondary bg-clip-text text-transparent;
+  }
+
+  .bg-gradient-noto {
+    @apply bg-gradient-to-br from-noto-primary to-noto-secondary;
+  }
+
+
+
+  .pencil {
+    display: block;
+  }
+
+  .pencil__body1,
+  .pencil__body2,
+  .pencil__body3,
+  .pencil__eraser,
+  .pencil__eraser-skew,
+  .pencil__point,
+  .pencil__rotate,
+  .pencil__stroke {
+    animation-duration: 3s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  }
+
+  .pencil__body1,
+  .pencil__body2,
+  .pencil__body3 {
+    transform: rotate(-90deg);
+  }
+
+  .pencil__body1 {
+    animation-name: pencilBody1;
+  }
+
+  .pencil__body2 {
+    animation-name: pencilBody2;
+  }
+
+  .pencil__body3 {
+    animation-name: pencilBody3;
+  }
+
+  .pencil__eraser {
+    animation-name: pencilEraser;
+    transform: rotate(-90deg) translate(49px, 0);
+  }
+
+  .pencil__eraser-skew {
+    animation-name: pencilEraserSkew;
+    animation-timing-function: ease-in-out;
+  }
+
+  .pencil__point {
+    animation-name: pencilPoint;
+    transform: rotate(-90deg) translate(49px, -30px);
+  }
+
+  .pencil__rotate {
+    animation-name: pencilRotate;
+  }
+
+  .pencil__stroke {
+    animation-name: pencilStroke;
+    transform: translate(100px, 100px) rotate(-113deg);
+  }
+
+  
+  /* Pencil Animation Keyframes */
+  @keyframes pencilBody1 {
+    from,
+    to {
+      stroke-dashoffset: 351.86;
+      transform: rotate(-90deg);
+    }
+    50% {
+      stroke-dashoffset: 150.8;
+      transform: rotate(-225deg);
+    }
+  }
+
+  @keyframes pencilBody2 {
+    from,
+    to {
+      stroke-dashoffset: 406.84;
+      transform: rotate(-90deg);
+    }
+    50% {
+      stroke-dashoffset: 174.36;
+      transform: rotate(-225deg);
+    }
+  }
+
+  @keyframes pencilBody3 {
+    from,
+    to {
+      stroke-dashoffset: 296.88;
+      transform: rotate(-90deg);
+    }
+    50% {
+      stroke-dashoffset: 127.23;
+      transform: rotate(-225deg);
+    }
+  }
+
+  @keyframes pencilEraser {
+    from,
+    to {
+      transform: rotate(-45deg) translate(49px, 0);
+    }
+    50% {
+      transform: rotate(0deg) translate(49px, 0);
+    }
+  }
+
+  @keyframes pencilEraserSkew {
+    from,
+    32.5%,
+    67.5%,
+    to {
+      transform: skewX(0);
+    }
+    35%,
+    65% {
+      transform: skewX(-4deg);
+    }
+    37.5%,
+    62.5% {
+      transform: skewX(8deg);
+    }
+    40%,
+    45%,
+    50%,
+    55%,
+    60% {
+      transform: skewX(-15deg);
+    }
+    42.5%,
+    47.5%,
+    52.5%,
+    57.5% {
+      transform: skewX(15deg);
+    }
+  }
+
+  @keyframes pencilPoint {
+    from,
+    to {
+      transform: rotate(-90deg) translate(49px, -30px);
+    }
+    50% {
+      transform: rotate(-225deg) translate(49px, -30px);
+    }
+  }
+
+  @keyframes pencilRotate {
+    from {
+      transform: translate(100px, 100px) rotate(0);
+    }
+    to {
+      transform: translate(100px, 100px) rotate(720deg);
+    }
+  }
+
+  @keyframes pencilStroke {
+    from {
+      stroke-dashoffset: 439.82;
+      transform: translate(100px, 100px) rotate(-113deg);
+    }
+    50% {
+      stroke-dashoffset: 164.93;
+      transform: translate(100px, 100px) rotate(-113deg);
+    }
+    75%,
+    to {
+      stroke-dashoffset: 439.82;
+      transform: translate(100px, 100px) rotate(112deg);
+    }
+  }
+
+  /* Modal fade-in animation */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.2s ease-out;
+  }
+}
