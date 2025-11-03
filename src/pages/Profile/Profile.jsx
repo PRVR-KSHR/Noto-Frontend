@@ -761,12 +761,14 @@ const Profile = () => {
               </h2>
               {activeTab === "messages" ? (
                 <div className="flex flex-col pl-4 sm:flex-row sm:items-center sm:justify-end gap-2">
-                  <button
-                    onClick={() => fetchMessages()}
-                    className="bg-green-600 text-white w-9 h-9 ml-8 sm:w-auto sm:h-auto rounded-full sm:rounded-lg hover:bg-green-700 transition-colors inline-flex items-center justify-center gap-0 sm:gap-2 text-sm"
-                    title="Refresh messages"
-                    aria-label="Refresh messages"
-                  >
+                 <button
+  onClick={() => fetchMessages()}
+  className="bg-green-600 text-white px-3 py-2 sm:px-4 sm:py-2 rounded-full sm:rounded-lg 
+             hover:bg-green-700 transition-all duration-200 flex items-center justify-center gap-2
+             text-sm font-medium shadow-sm hover:shadow-md ml-2 sm:ml-4"
+  title="Refresh messages"
+  aria-label="Refresh messages"
+>
                     <RefreshCw className="w-4 h-4" />
                     <span className="hidden sm:inline">Refresh</span>
                   </button>
