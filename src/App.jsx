@@ -18,6 +18,7 @@ const Materials = React.lazy(() => import("./pages/Materials/Materials"));
 const Profile = React.lazy(() => import("./pages/Profile/Profile"));
 const ViewMaterial = React.lazy(() => import('./pages/ViewMaterial/ViewMaterial'));
 const About = React.lazy(() => import('./pages/AboutUs/AboutUs'));
+const ErrorPage = React.lazy(() => import('./pages/ErrorPage/ErrorPage'));
 
 function App() {
   const { user, loading } = useAuth();
@@ -57,6 +58,9 @@ function App() {
                 <Route path="/about" element={<About />} />
                 {/* ✅ NEW: Admin Dashboard Route */}
                 <Route path="/admin/dashboard" element={<AdminDashboard />} />
+                
+                {/* Error Page - Catch all unknown routes */}
+                <Route path="*" element={<ErrorPage errorCode={404} />} />
               </Routes>
             </Suspense>
           </main>
