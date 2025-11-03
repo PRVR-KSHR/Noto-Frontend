@@ -50,23 +50,23 @@ const Profile = () => {
     messages: 0,
   });
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  
+
   // Helper function to count words
   const countWords = (text) => {
-    return text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
+    return text.trim() === "" ? 0 : text.trim().split(/\s+/).length;
   };
 
   // ✅ NEW: Message Form state
   const [messageForm, setMessageForm] = useState({
-    subject: '',
-    message: '',
-    category: 'general'
+    subject: "",
+    message: "",
+    category: "general",
   });
 
   const handleMessageChange = (value) => {
     const wordCount = countWords(value);
     if (wordCount <= 1200) {
-      setMessageForm({...messageForm, message: value});
+      setMessageForm({ ...messageForm, message: value });
     }
   };
   const [showMessageForm, setShowMessageForm] = useState(false);
@@ -118,13 +118,13 @@ const Profile = () => {
 
   // Message categories
   const messageCategories = [
-    { value: 'general', label: 'General Inquiry' },
-    { value: 'event_request', label: 'Event Request' },
-    { value: 'feedback', label: 'Feedback' },
-    { value: 'review', label: 'Review' },
-    { value: 'bug_report', label: 'Bug Report' },
-    { value: 'feature_request', label: 'Feature Request' },
-    { value: 'other', label: 'Other' }
+    { value: "general", label: "General Inquiry" },
+    { value: "event_request", label: "Event Request" },
+    { value: "feedback", label: "Feedback" },
+    { value: "review", label: "Review" },
+    { value: "bug_report", label: "Bug Report" },
+    { value: "feature_request", label: "Feature Request" },
+    { value: "other", label: "Other" },
   ];
 
   useEffect(() => {
@@ -149,21 +149,22 @@ const Profile = () => {
       }
     };
 
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
     return () => {
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
   }, [activeTab]);
 
   // ✅ NEW: Fetch actual counts from API
   const fetchActualCounts = async () => {
     try {
-      const [uploadsResponse, bookmarksResponse, messagesResponse] = await Promise.all([
-        fileAPI.getMyUploads(),
-        fileAPI.getUserBookmarks(),
-        messageAPI.getUserMessages(),
-      ]);
+      const [uploadsResponse, bookmarksResponse, messagesResponse] =
+        await Promise.all([
+          fileAPI.getMyUploads(),
+          fileAPI.getUserBookmarks(),
+          messageAPI.getUserMessages(),
+        ]);
 
       setActualCounts({
         uploads: uploadsResponse.data.files?.length || 0,
@@ -252,7 +253,9 @@ const Profile = () => {
   // ✅ NEW: Handle new message button click with limitation
   const handleNewMessageClick = () => {
     if (hasExistingMessage()) {
-      toast.error("You can only have one message at a time. Please delete your existing message before creating a new one.");
+      toast.error(
+        "You can only have one message at a time. Please delete your existing message before creating a new one."
+      );
       return;
     }
     setShowMessageForm(true);
@@ -261,7 +264,7 @@ const Profile = () => {
   // ✅ NEW: Send new message
   const handleSendMessage = async (e) => {
     e.preventDefault();
-    
+
     if (!messageForm.subject.trim() || !messageForm.message.trim()) {
       toast.error("Please fill in all required fields");
       return;
@@ -275,11 +278,11 @@ const Profile = () => {
       await messageAPI.createMessage(messageForm);
       toast.dismiss(sendToastId);
       toast.success("✅ Message sent successfully!");
-      
+
       // Reset form and close modal
-      setMessageForm({ subject: '', message: '', category: 'general' });
+      setMessageForm({ subject: "", message: "", category: "general" });
       setShowMessageForm(false);
-      
+
       // Refresh messages
       fetchMessages();
     } catch (error) {
@@ -290,13 +293,15 @@ const Profile = () => {
 
   // ✅ NEW: Delete message
   const handleDeleteMessage = async (messageId) => {
-    const confirmed = window.confirm("Are you sure you want to delete this message? This action cannot be undone.");
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this message? This action cannot be undone."
+    );
     if (!confirmed) return;
 
     try {
       await messageAPI.deleteMessage(messageId);
-      setMessages(prev => prev.filter(msg => msg._id !== messageId));
-      setActualCounts(prev => ({ ...prev, messages: prev.messages - 1 }));
+      setMessages((prev) => prev.filter((msg) => msg._id !== messageId));
+      setActualCounts((prev) => ({ ...prev, messages: prev.messages - 1 }));
       toast.success("Message deleted successfully");
     } catch (error) {
       toast.error("Failed to delete message");
@@ -444,62 +449,79 @@ const Profile = () => {
                 <div className="flex items-center justify-center sm:justify-start gap-2 mt-2">
                   <strong>Status:</strong>
                   <div className="relative group">
-                    {material.verification.status === 'verified' && (
+                    {material.verification.status === "verified" && (
                       <div className="flex items-center gap-1 text-green-600">
                         <CheckCircle className="w-4 h-4" />
                         <span className="font-medium">Verified</span>
                       </div>
                     )}
-                    {material.verification.status === 'pending' && (
+                    {material.verification.status === "pending" && (
                       <div className="flex items-center gap-1 text-yellow-600">
                         <Clock3 className="w-4 h-4" />
                         <span className="font-medium">Pending Review</span>
                       </div>
                     )}
-                    {material.verification.status === 'rejected' && (
+                    {material.verification.status === "rejected" && (
                       <div className="flex items-center gap-1 text-red-600">
                         <XCircle className="w-4 h-4" />
                         <span className="font-medium">Rejected</span>
                       </div>
                     )}
-                    
+
                     {/* Hover tooltip with additional info */}
                     <div className="invisible group-hover:visible absolute z-10 w-72 p-4 mt-1 text-sm text-white bg-gray-800 rounded-lg shadow-lg -left-20 sm:left-0">
-                      {material.verification.status === 'verified' && (
+                      {material.verification.status === "verified" && (
                         <div>
-                          <p className="font-semibold text-green-300 mb-2">✓ Verified by Admin</p>
+                          <p className="font-semibold text-green-300 mb-2">
+                            ✓ Verified by Admin
+                          </p>
                           <p className="text-gray-300 mb-2">
-                            This material has been reviewed and approved by administrators.
+                            This material has been reviewed and approved by
+                            administrators.
                           </p>
                           {material.verification.verifiedAt && (
                             <p className="text-gray-400 text-xs">
-                              Verified: {new Date(material.verification.verifiedAt).toLocaleDateString()}
+                              Verified:{" "}
+                              {new Date(
+                                material.verification.verifiedAt
+                              ).toLocaleDateString()}
                             </p>
                           )}
                         </div>
                       )}
-                      {material.verification.status === 'pending' && (
+                      {material.verification.status === "pending" && (
                         <div>
-                          <p className="font-semibold text-yellow-300 mb-2">⏳ Awaiting Review</p>
+                          <p className="font-semibold text-yellow-300 mb-2">
+                            ⏳ Awaiting Review
+                          </p>
                           <p className="text-gray-300 mb-1">
-                            Your material is in the admin review queue and is usually verified within 24 hours.
+                            Your material is in the admin review queue and is
+                            usually verified within 24 hours.
                           </p>
                           {material.createdAt && (
                             <p className="text-gray-400 text-xs">
-                              Estimated by: {new Date(new Date(material.createdAt).getTime() + (24 * 60 * 60 * 1000)).toLocaleString()}
+                              Estimated by:{" "}
+                              {new Date(
+                                new Date(material.createdAt).getTime() +
+                                  24 * 60 * 60 * 1000
+                              ).toLocaleString()}
                             </p>
                           )}
                         </div>
                       )}
-                      {material.verification.status === 'rejected' && (
+                      {material.verification.status === "rejected" && (
                         <div>
-                          <p className="font-semibold text-red-300 mb-2">✗ Rejected by Admin</p>
+                          <p className="font-semibold text-red-300 mb-2">
+                            ✗ Rejected by Admin
+                          </p>
                           <p className="text-gray-300 mb-3">
                             This material was not approved for public display.
                           </p>
                           {material.verification.rejectionReason && (
                             <div className="bg-red-900 bg-opacity-30 p-3 rounded border-l-2 border-red-400">
-                              <p className="text-red-200 font-medium text-xs mb-1">Admin's Feedback:</p>
+                              <p className="text-red-200 font-medium text-xs mb-1">
+                                Admin's Feedback:
+                              </p>
                               <p className="text-red-100 text-xs leading-relaxed">
                                 {material.verification.rejectionReason}
                               </p>
@@ -507,7 +529,10 @@ const Profile = () => {
                           )}
                           {material.verification.verifiedAt && (
                             <p className="text-gray-400 text-xs mt-2">
-                              Rejected: {new Date(material.verification.verifiedAt).toLocaleDateString()}
+                              Rejected:{" "}
+                              {new Date(
+                                material.verification.verifiedAt
+                              ).toLocaleDateString()}
                             </p>
                           )}
                         </div>
@@ -518,19 +543,23 @@ const Profile = () => {
               )}
 
               {/* NEW: Show rejection reason prominently for rejected materials */}
-              {!showBookmarkAction && material.verification?.status === 'rejected' && material.verification?.rejectionReason && (
-                <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-lg">
-                  <div className="flex items-start gap-2">
-                    <XCircle className="w-4 h-4 text-red-600 mt-0.5 flex-shrink-0" />
-                    <div>
-                      <p className="text-red-800 font-medium text-xs mb-1">Admin Feedback:</p>
-                      <p className="text-red-700 text-xs leading-relaxed">
-                        {material.verification.rejectionReason}
-                      </p>
+              {!showBookmarkAction &&
+                material.verification?.status === "rejected" &&
+                material.verification?.rejectionReason && (
+                  <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-lg">
+                    <div className="flex items-start gap-2">
+                      <XCircle className="w-4 h-4 text-red-600 mt-0.5 flex-shrink-0" />
+                      <div>
+                        <p className="text-red-800 font-medium text-xs mb-1">
+                          Admin Feedback:
+                        </p>
+                        <p className="text-red-700 text-xs leading-relaxed">
+                          {material.verification.rejectionReason}
+                        </p>
+                      </div>
                     </div>
                   </div>
-                </div>
-              )}
+                )}
             </div>
 
             {/* Footer */}
@@ -585,10 +614,11 @@ const Profile = () => {
   }
 
   // Get current data based on active tab
-  const currentData = activeTab === "materials" 
-    ? myMaterials 
-    : activeTab === "bookmarks" 
-      ? bookmarks 
+  const currentData =
+    activeTab === "materials"
+      ? myMaterials
+      : activeTab === "bookmarks"
+      ? bookmarks
       : messages;
 
   return (
@@ -601,7 +631,11 @@ const Profile = () => {
             <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6 flex-1">
               {/* Profile Image */}
               <div className="flex-shrink-0">
-                <UserAvatar user={userProfile} size="w-20 h-20" className="text-2xl" />
+                <UserAvatar
+                  user={userProfile}
+                  size="w-20 h-20"
+                  className="text-2xl"
+                />
               </div>
 
               {/* User Info */}
@@ -657,9 +691,12 @@ const Profile = () => {
             <div className="flex items-start gap-3">
               <div className="text-2xl">💾</div>
               <div className="flex-1">
-                <h3 className="font-semibold text-amber-900 mb-1">Storage Limit</h3>
+                <h3 className="font-semibold text-amber-900 mb-1">
+                  Storage Limit
+                </h3>
                 <p className="text-sm text-amber-800">
-                  You can upload up to <strong>5 documents</strong> per user. This limit will increase as we scale our cloud infrastructure.
+                  You can upload up to <strong>5 documents</strong> per user.
+                  This limit will increase as we scale our cloud infrastructure.
                 </p>
               </div>
             </div>
@@ -670,9 +707,13 @@ const Profile = () => {
             <div className="flex items-start gap-3">
               <div className="text-2xl">⏱️</div>
               <div className="flex-1">
-                <h3 className="font-semibold text-blue-900 mb-1">Verification Timeline</h3>
+                <h3 className="font-semibold text-blue-900 mb-1">
+                  Verification Timeline
+                </h3>
                 <p className="text-sm text-blue-800">
-                  All uploads go through admin review and are typically verified within <strong>24 hours</strong>. Check your specific Material for status.
+                  All uploads go through admin review and are typically verified
+                  within <strong>24 hours</strong>. Check your specific Material
+                  for status.
                 </p>
               </div>
             </div>
@@ -692,8 +733,12 @@ const Profile = () => {
                 }`}
               >
                 <Upload className="w-4 h-4 inline mr-2" />
-                <span className="hidden sm:inline">My Uploads ({actualCounts.uploads})</span>
-                <span className="sm:hidden">Uploads ({actualCounts.uploads})</span>
+                <span className="hidden sm:inline">
+                  My Uploads ({actualCounts.uploads})
+                </span>
+                <span className="sm:hidden">
+                  Uploads ({actualCounts.uploads})
+                </span>
               </button>
 
               <button
@@ -705,8 +750,12 @@ const Profile = () => {
                 }`}
               >
                 <Bookmark className="w-4 h-4 inline mr-2" />
-                <span className="hidden sm:inline">Bookmarks ({actualCounts.bookmarks})</span>
-                <span className="sm:hidden">Saved ({actualCounts.bookmarks})</span>
+                <span className="hidden sm:inline">
+                  Bookmarks ({actualCounts.bookmarks})
+                </span>
+                <span className="sm:hidden">
+                  Saved ({actualCounts.bookmarks})
+                </span>
               </button>
 
               <button
@@ -718,8 +767,12 @@ const Profile = () => {
                 }`}
               >
                 <MessageSquare className="w-4 h-4 inline mr-2" />
-                <span className="hidden sm:inline">Messages ({actualCounts.messages})</span>
-                <span className="sm:hidden">Messages ({actualCounts.messages})</span>
+                <span className="hidden sm:inline">
+                  Messages ({actualCounts.messages})
+                </span>
+                <span className="sm:hidden">
+                  Messages ({actualCounts.messages})
+                </span>
               </button>
             </nav>
           </div>
@@ -753,22 +806,22 @@ const Profile = () => {
           <div className="p-6">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl font-semibold text-gray-900">
-                {activeTab === "materials" 
-                  ? "My Materials" 
-                  : activeTab === "bookmarks" 
-                    ? "My Bookmarks" 
-                    : "My Messages"}
+                {activeTab === "materials"
+                  ? "My Materials"
+                  : activeTab === "bookmarks"
+                  ? "My Bookmarks"
+                  : "My Messages"}
               </h2>
               {activeTab === "messages" ? (
                 <div className="flex flex-col pl-4 sm:flex-row sm:items-center sm:justify-end gap-2">
-                 <button
-  onClick={() => fetchMessages()}
-  className="bg-green-600 text-white px-3 py-2 sm:px-4 sm:py-2 rounded-full sm:rounded-lg 
+                  <button
+                    onClick={() => fetchMessages()}
+                    className="bg-green-600 text-white px-3 py-2 sm:px-4 sm:py-2 rounded-full sm:rounded-lg 
              hover:bg-green-700 transition-all duration-200 flex items-center justify-center gap-2
              text-sm font-medium shadow-sm hover:shadow-md ml-2 sm:ml-4"
-  title="Refresh messages"
-  aria-label="Refresh messages"
->
+                    title="Refresh messages"
+                    aria-label="Refresh messages"
+                  >
                     <RefreshCw className="w-4 h-4" />
                     <span className="hidden sm:inline">Refresh</span>
                   </button>
@@ -780,7 +833,11 @@ const Profile = () => {
                         ? "bg-gray-400 text-gray-200 cursor-not-allowed"
                         : "bg-blue-600 text-white hover:bg-blue-700"
                     }`}
-                    title={hasExistingMessage() ? "Delete your existing message before creating a new one" : "Send a new message to admin"}
+                    title={
+                      hasExistingMessage()
+                        ? "Delete your existing message before creating a new one"
+                        : "Send a new message to admin"
+                    }
                   >
                     <Send className="w-3 h-3 sm:w-4 sm:h-4" />
                     <span className="hidden sm:inline">New Message</span>
@@ -788,7 +845,8 @@ const Profile = () => {
                   </button>
                   {hasExistingMessage() && (
                     <p className="text-xs text-red-600 text-center sm:text-right max-w-full sm:max-w-48">
-                      ⚠️ You have an existing message. Delete it before creating a new one.
+                      ⚠️ You have an existing message. Delete it before creating
+                      a new one.
                     </p>
                   )}
                 </div>
@@ -866,58 +924,73 @@ const Profile = () => {
                   <div className="flex items-start gap-2 sm:gap-3">
                     <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 mt-0.5 flex-shrink-0" />
                     <div>
-                      <h4 className="font-medium text-blue-900 mb-1 text-sm sm:text-base">Message Limit Policy</h4>
+                      <h4 className="font-medium text-blue-900 mb-1 text-sm sm:text-base">
+                        Message Limit Policy
+                      </h4>
                       <p className="text-xs sm:text-sm text-blue-800 mb-2">
-                        You can only have <strong>one message</strong> at a time. This helps us manage support requests efficiently.
+                        You can only have <strong>one message</strong> at a
+                        time. This helps us manage support requests efficiently.
                       </p>
                       <ul className="text-xs sm:text-sm text-blue-700 space-y-1">
-                        <li>• If you have any existing message (pending/approved/rejected), delete it before creating a new one</li>
-                        <li>• You must delete your previous message to send a new message</li>
-                        <li>• Use the delete button (🗑️) to remove your existing messages</li>
+                        <li>
+                          • If you have any existing message
+                          (pending/approved/rejected), delete it before creating
+                          a new one
+                        </li>
+                        <li>
+                          • You must delete your previous message to send a new
+                          message
+                        </li>
+                        <li>
+                          • Use the delete button (🗑️) to remove your existing
+                          messages
+                        </li>
                       </ul>
                     </div>
                   </div>
                 </div>
 
                 {currentData.map((message) => (
-                  <div key={message._id} className="bg-white rounded-lg shadow p-4 sm:p-6 border-l-4 border-blue-500">
+                  <div
+                    key={message._id}
+                    className="bg-white rounded-lg shadow p-4 sm:p-6 border-l-4 border-blue-500"
+                  >
                     <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-0">
                       <div className="flex-1">
                         <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-2">
-                          <h3 className="font-medium text-gray-900 text-sm sm:text-base">{message.subject}</h3>
-                          <span className={`inline-flex items-center px-2 sm:px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                            message.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                            message.status === 'approved' ? 'bg-green-100 text-green-800' :
-                            message.status === 'rejected' ? 'bg-red-100 text-red-800' :
-                            'bg-blue-100 text-blue-800'
-                          }`}>
-                            {message.status === 'pending' && <Clock className="w-3 h-3 mr-1" />}
-                            {message.status === 'approved' && <CheckCircle className="w-3 h-3 mr-1" />}
-                            {message.status === 'rejected' && <AlertCircle className="w-3 h-3 mr-1" />}
-                            {message.status === 'resolved' && <CheckCircle className="w-3 h-3 mr-1" />}
-                            {message.status.charAt(0).toUpperCase() + message.status.slice(1)}
-                          </span>
+                          <h3 className="font-medium text-gray-900 text-sm sm:text-base">
+                            {message.subject}
+                          </h3>
                         </div>
-                        <p className="text-gray-600 mb-3 text-sm sm:text-base">{message.message}</p>
+                        <p className="text-gray-600 mb-3 text-sm sm:text-base">
+                          {message.message}
+                        </p>
                         <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-xs sm:text-sm text-gray-500">
                           <span className="flex items-center gap-1">
                             <Calendar className="w-3 h-3 sm:w-4 sm:h-4" />
                             {new Date(message.createdAt).toLocaleDateString()}
                           </span>
                           <span className="capitalize bg-gray-100 px-2 py-1 rounded text-xs">
-                            {message.category.replace('_', ' ')}
+                            {message.category.replace("_", " ")}
                           </span>
                         </div>
                         {message.adminResponse && (
                           <div className="mt-3 sm:mt-4 p-3 bg-blue-50 rounded-lg border-l-2 border-blue-200">
                             <div className="flex items-center gap-2 mb-2">
                               <User className="w-3 h-3 sm:w-4 sm:h-4 text-blue-600" />
-                              <span className="font-medium text-blue-900 text-sm">Admin Response:</span>
+                              <span className="font-medium text-blue-900 text-sm">
+                                Admin Response:
+                              </span>
                             </div>
-                            <p className="text-blue-800 text-sm">{message.adminResponse}</p>
+                            <p className="text-blue-800 text-sm">
+                              {message.adminResponse}
+                            </p>
                             {message.respondedAt && (
                               <p className="text-xs text-blue-600 mt-2">
-                                Responded on {new Date(message.respondedAt).toLocaleDateString()}
+                                Responded on{" "}
+                                {new Date(
+                                  message.respondedAt
+                                ).toLocaleDateString()}
                               </p>
                             )}
                           </div>
@@ -957,7 +1030,9 @@ const Profile = () => {
           <div className="bg-white rounded-lg p-4 sm:p-6 max-w-md w-full shadow-xl">
             <div className="flex items-center gap-3 mb-4 text-red-600">
               <AlertCircle className="w-5 h-5 sm:w-6 sm:h-6" />
-              <h3 className="text-base sm:text-lg font-semibold">Delete Account</h3>
+              <h3 className="text-base sm:text-lg font-semibold">
+                Delete Account
+              </h3>
             </div>
 
             <div className="mb-4">
@@ -1005,14 +1080,19 @@ const Profile = () => {
                 Send Message to Admin
               </h3>
             </div>
-            <form onSubmit={handleSendMessage} className="px-4 sm:px-6 py-4 space-y-4">
+            <form
+              onSubmit={handleSendMessage}
+              className="px-4 sm:px-6 py-4 space-y-4"
+            >
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Category *
                 </label>
                 <select
                   value={messageForm.category}
-                  onChange={(e) => setMessageForm({...messageForm, category: e.target.value})}
+                  onChange={(e) =>
+                    setMessageForm({ ...messageForm, category: e.target.value })
+                  }
                   className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   required
                 >
@@ -1032,7 +1112,9 @@ const Profile = () => {
                 <input
                   type="text"
                   value={messageForm.subject}
-                  onChange={(e) => setMessageForm({...messageForm, subject: e.target.value})}
+                  onChange={(e) =>
+                    setMessageForm({ ...messageForm, subject: e.target.value })
+                  }
                   className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Enter message subject..."
                   maxLength="200"
@@ -1067,7 +1149,11 @@ const Profile = () => {
                   type="button"
                   onClick={() => {
                     setShowMessageForm(false);
-                    setMessageForm({ subject: '', message: '', category: 'general' });
+                    setMessageForm({
+                      subject: "",
+                      message: "",
+                      category: "general",
+                    });
                   }}
                   className="px-4 py-2 text-sm text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
                 >

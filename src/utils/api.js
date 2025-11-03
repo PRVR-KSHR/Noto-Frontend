@@ -2,7 +2,15 @@ import axios from 'axios';
 import { signOut } from "firebase/auth";
 import { auth } from '../firebase/config';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+// Prefer local API when running the frontend on localhost to avoid accidental calls to production
+const FALLBACK_API = 'http://localhost:5000/api';
+const ENV_API = import.meta.env.VITE_API_URL;
+const API_BASE_URL = (typeof window !== 'undefined' && window.location.hostname === 'localhost')
+  ? FALLBACK_API
+  : (ENV_API || FALLBACK_API);
+// Debug: surface which API base is being used
+// eslint-disable-next-line no-console
+console.log('[API] Base URL:', API_BASE_URL);
 
 // Create axios instance with longer timeout for Render cold starts
 const api = axios.create({
@@ -382,6 +390,14 @@ export const adminMessageAPI = {
   // Delete message (admin)
   deleteMessage: async (messageId) => {
     const response = await api.delete(`/messages/admin/${messageId}`);
+    return response.data;
+  },
+
+  // NEW: Reply to message (admin)
+  replyToMessage: async (messageId, replyText) => {
+    const response = await api.post(`/messages/admin/${messageId}/reply`, {
+      reply: replyText
+    });
     return response.data;
   }
 };

@@ -82,6 +82,10 @@ const AdminDashboard = () => {
   const [rejectionReason, setRejectionReason] = useState('');
   const [rejectionCategory, setRejectionCategory] = useState('quality');
 
+  // NEW: Message reply modal state
+  const [replyingTo, setReplyingTo] = useState(null);
+  const [replyText, setReplyText] = useState('');
+
   // Check admin access on component mount
   useEffect(() => {
     checkAdminAccess();
@@ -379,6 +383,75 @@ const AdminDashboard = () => {
     } catch (error) {
       console.error('Error deleting message:', error);
       toast.error('Failed to delete message');
+    }
+  };
+
+  // NEW: Message reply presets based on category
+  const replyPresets = {
+    bug_report: [
+      'Fixed - Issue has been resolved',
+      'Fixing - We are currently working on this',
+      'Not Reproducible - We could not reproduce this issue',
+      'Working As Intended - This is expected behavior'
+    ],
+    feedback: [
+      'Noted - Thank you for your feedback',
+      'Implementing - We are considering this suggestion',
+      'Planned - This is on our roadmap',
+      'Under Review - We are evaluating this'
+    ],
+    feature_request: [
+      'Noted - Thank you for the suggestion',
+      'Planned - This will be added in future updates',
+      'Considering - We will evaluate this request',
+      'Not Planned - This does not align with our vision'
+    ],
+    event_request: [
+      'Approved - Your event request has been approved. Please reach out to us at praveerkishore45@gmail.com for next steps',
+      'Under Review - We are currently reviewing your event proposal and will respond within 48 hours',
+      'Declined - Thank you for your interest, but we cannot host this event at this time',
+      'More Info Needed - We need additional details about your event. Please contact us at praveerkishore45@gmail.com'
+    ],
+    review: [
+      'Thank you for your review',
+      'We appreciate your feedback',
+      'Thank you for using our platform',
+      'We value your input'
+    ],
+    general: [
+      'Thank you for your message',
+      'We will get back to you soon',
+      'Your message has been received',
+      'Thank you for reaching out'
+    ],
+    other: [
+      'Thank you for your message',
+      'We will review and respond soon',
+      'Your message has been received',
+      'Thank you for contacting us'
+    ]
+  };
+
+  // NEW: Handle message reply
+  const handleSendReply = async () => {
+    if (!replyingTo || !replyText.trim()) {
+      toast.error('Please enter a reply message');
+      return;
+    }
+
+    const replyToastId = toast.loading('Sending reply...');
+
+    try {
+      await adminMessageAPI.replyToMessage(replyingTo._id, replyText);
+      toast.dismiss(replyToastId);
+      toast.success('Reply sent successfully!');
+      setReplyingTo(null);
+      setReplyText('');
+      await fetchDashboardData();
+    } catch (error) {
+      toast.dismiss(replyToastId);
+      console.error('Error sending reply:', error);
+      toast.error('Failed to send reply');
     }
   };
 
@@ -1140,7 +1213,6 @@ const AdminDashboard = () => {
                         <div className="flex items-start justify-between">
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 mb-2">
-                              {getStatusIcon(message.status)}
                               <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${getPriorityColor(message.priority)}`}>
                                 {message.priority}
                               </span>
@@ -1148,6 +1220,11 @@ const AdminDashboard = () => {
                             <h4 className="text-sm font-medium text-gray-900 mb-1">{message.subject}</h4>
                             <p className="text-xs text-gray-600 mb-2">{message.userName} • {message.userEmail}</p>
                             <p className="text-xs text-gray-600 mb-2 whitespace-pre-wrap break-words">{message.message}</p>
+                            {message.adminResponse && (
+                              <div className="mt-2 text-xs text-blue-700 bg-blue-50 border border-blue-100 rounded p-2 whitespace-pre-wrap break-words">
+                                <span className="font-medium">Your reply:</span> {message.adminResponse}
+                              </div>
+                            )}
                             <div className="flex items-center gap-2 text-xs text-gray-500">
                               <span className="capitalize">{message.category.replace('_', ' ')}</span>
                               <span>•</span>
@@ -1157,18 +1234,16 @@ const AdminDashboard = () => {
                         </div>
                         <div className="flex gap-2 mt-3">
                           <button
-                            onClick={() => handleUpdateMessageStatus(message._id, 'approved')}
-                            disabled={message.status === 'approved'}
-                            className="px-3 py-1 text-xs bg-green-100 text-green-700 rounded hover:bg-green-200 disabled:opacity-50"
+                            onClick={() => setReplyingTo(message)}
+                            className="px-3 py-1 text-xs bg-blue-100 text-blue-700 rounded hover:bg-blue-200 flex-1"
                           >
-                            Approve
+                            Reply
                           </button>
                           <button
-                            onClick={() => handleUpdateMessageStatus(message._id, 'rejected')}
-                            disabled={message.status === 'rejected'}
-                            className="px-3 py-1 text-xs bg-red-100 text-red-700 rounded hover:bg-red-200 disabled:opacity-50"
+                            onClick={() => handleDeleteMessage(message._id)}
+                            className="px-3 py-1 text-xs bg-red-100 text-red-700 rounded hover:bg-red-200"
                           >
-                            Reject
+                            Delete
                           </button>
                         </div>
                       </div>
@@ -1189,10 +1264,10 @@ const AdminDashboard = () => {
                         Category & Priority
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Status
+                        Date
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Date
+                        Reply
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Actions
@@ -1237,37 +1312,32 @@ const AdminDashboard = () => {
                               </div>
                             </div>
                           </td>
-                          <td className="px-6 py-4">
-                            <div className="flex items-center">
-                              {getStatusIcon(message.status)}
-                              <span className="ml-2 text-sm text-gray-900">
-                                {message.status.charAt(0).toUpperCase() + message.status.slice(1)}
-                              </span>
-                            </div>
-                          </td>
                           <td className="px-6 py-4 text-sm text-gray-500">
                             {new Date(message.createdAt).toLocaleDateString()}
                           </td>
+                          <td className="px-6 py-4 text-sm text-gray-700">
+                            {message.adminResponse ? (
+                              <div className="max-w-xs whitespace-pre-wrap break-words">
+                                {message.adminResponse}
+                                {message.respondedAt && (
+                                  <div className="text-xs text-gray-500 mt-1">
+                                    {new Date(message.respondedAt).toLocaleDateString()}
+                                  </div>
+                                )}
+                              </div>
+                            ) : (
+                              <span className="text-gray-400 italic">No reply yet</span>
+                            )}
+                          </td>
                           <td className="px-6 py-4">
                             <div className="flex items-center space-x-2">
-                              {message.status === 'pending' && (
-                                <>
-                                  <button
-                                    onClick={() => handleUpdateMessageStatus(message._id, 'approved')}
-                                    className="p-1 text-green-600 hover:bg-green-100 rounded transition-colors"
-                                    title="Approve message"
-                                  >
-                                    <CheckCircle className="h-4 w-4" />
-                                  </button>
-                                  <button
-                                    onClick={() => handleUpdateMessageStatus(message._id, 'rejected')}
-                                    className="p-1 text-red-600 hover:bg-red-100 rounded transition-colors"
-                                    title="Reject message"
-                                  >
-                                    <XCircle className="h-4 w-4" />
-                                  </button>
-                                </>
-                              )}
+                              <button
+                                onClick={() => setReplyingTo(message)}
+                                className="p-1 text-blue-600 hover:bg-blue-100 rounded transition-colors"
+                                title="Reply to message"
+                              >
+                                <Send className="h-4 w-4" />
+                              </button>
                               <button
                                 onClick={() => handleDeleteMessage(message._id)}
                                 className="p-1 text-red-600 hover:bg-red-100 rounded transition-colors"
@@ -1500,6 +1570,108 @@ const AdminDashboard = () => {
                   Reject Material
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* NEW: Message Reply Modal */}
+      {replyingTo && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="px-4 sm:px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Reply to Message
+                </h3>
+                <p className="text-sm text-gray-500 mt-1">
+                  From: <span className="font-medium">{replyingTo.userName}</span> ({replyingTo.userEmail})
+                </p>
+              </div>
+              <button
+                onClick={() => {
+                  setReplyingTo(null);
+                  setReplyText('');
+                }}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="px-4 sm:px-6 py-4 space-y-4">
+              {/* Original Message Context */}
+              <div className="bg-gray-50 rounded-lg p-4 border-l-4 border-blue-400">
+                <p className="text-xs font-semibold text-gray-500 uppercase mb-2">Original Message</p>
+                <h4 className="font-medium text-gray-900 mb-1">{replyingTo.subject}</h4>
+                <p className="text-sm text-gray-700 whitespace-pre-wrap break-words">{replyingTo.message}</p>
+                <div className="flex items-center gap-3 mt-2 text-xs text-gray-500">
+                  <span className="capitalize bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                    {replyingTo.category.replace('_', ' ')}
+                  </span>
+                  <span>{new Date(replyingTo.createdAt).toLocaleDateString()}</span>
+                </div>
+              </div>
+
+              {/* Reply Presets */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Quick Replies ({replyingTo.category})
+                </label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {(replyPresets[replyingTo.category] || replyPresets.general).map((preset, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => setReplyText(preset)}
+                      className={`text-left px-3 py-2 text-sm rounded-lg border transition-colors ${
+                        replyText === preset
+                          ? 'border-blue-500 bg-blue-50 text-blue-700'
+                          : 'border-gray-300 hover:border-blue-400 hover:bg-blue-50'
+                      }`}
+                    >
+                      {preset}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Custom Reply */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Your Reply (or customize above)
+                </label>
+                <textarea
+                  value={replyText}
+                  onChange={(e) => setReplyText(e.target.value)}
+                  placeholder="Type your response here..."
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                  rows="5"
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  {replyText.length}/1000 characters
+                </p>
+              </div>
+            </div>
+
+            {/* Modal Actions */}
+            <div className="px-4 sm:px-6 py-4 border-t border-gray-200 flex justify-end space-x-3">
+              <button
+                onClick={() => {
+                  setReplyingTo(null);
+                  setReplyText('');
+                }}
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSendReply}
+                disabled={!replyText.trim()}
+                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              >
+                <Send className="h-4 w-4" />
+                Send Reply
+              </button>
             </div>
           </div>
         </div>
