@@ -438,7 +438,7 @@ const handleSubmit = async (e) => {
               <div className="flex items-center justify-center space-x-2">
                 <AlertCircle className="w-4 h-4 text-amber-600" />
                 <span className="text-amber-800 text-xs sm:text-sm font-medium">
-                  📋 Admin verification required before going live (usually within 24 hours)
+                  📋 Admin verification required before going live <br /> (usually within 24 hours)
                 </span>
               </div>
               <p className="text-amber-700 text-xs mt-1 text-center">
