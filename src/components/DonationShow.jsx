@@ -5,14 +5,26 @@ import { donationAPI } from '../utils/api';
 const DonationShow = () => {
   const [donations, setDonations] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isColdStart, setIsColdStart] = useState(false);
 
   useEffect(() => {
     const fetchDonations = async () => {
       try {
         console.log('🚀 Fetching donations from backend API...');
         
+        // Show cold start message if loading takes more than 5 seconds
+        const coldStartTimer = setTimeout(() => {
+          setIsColdStart(true);
+          console.log('⏰ Cold start detected - backend is waking up...');
+        }, 5000);
+        
         // Fetch actual donations from public API
         const response = await donationAPI.getDonations();
+        
+        // Clear cold start timer
+        clearTimeout(coldStartTimer);
+        setIsColdStart(false);
+        
         console.log('✅ API Response received:', response);
         
         // Handle different response structures
@@ -57,14 +69,10 @@ const DonationShow = () => {
           data: error.response?.data
         });
         
-        // Only use fallback if there's an actual API error
-        console.log('🔄 Using fallback data due to API error');
-        const fallbackDonations = [
-          { _id: 'error-1', donorName: 'API Error - Sample Donor 1', amount: 500, notes: 'Please check backend' },
-          { _id: 'error-2', donorName: 'API Error - Sample Donor 2', amount: 250, notes: 'Backend connection failed' },
-          { _id: 'error-3', donorName: 'API Error - Sample Donor 3', amount: 750, notes: 'Using fallback data' },
-        ];
-        setDonations(fallbackDonations);
+        // Don't show error fallback - just show loading or empty state
+        console.log('⚠️ API error - keeping donations empty until backend responds');
+        setDonations([]);
+        setIsColdStart(false);
         
       } finally {
         setIsLoading(false);
@@ -101,9 +109,23 @@ const DonationShow = () => {
         
         <div className="text-center mb-3">
           <h3 className="text-sm font-medium text-gray-600 flex items-center justify-center gap-2">
-            🙏 Loading Supporters...
-            <Heart className="w-4 h-4 text-pink-500 animate-pulse" fill="currentColor" />
+            {isColdStart ? (
+              <>
+                ⏰ Waking up server (first visit may take 30s)...
+                <Heart className="w-4 h-4 text-pink-500 animate-pulse" fill="currentColor" />
+              </>
+            ) : (
+              <>
+                🙏 Loading Supporters...
+                <Heart className="w-4 h-4 text-pink-500 animate-pulse" fill="currentColor" />
+              </>
+            )}
           </h3>
+          {isColdStart && (
+            <p className="text-xs text-gray-500 mt-1">
+              Server is starting up (free tier limitation)
+            </p>
+          )}
         </div>
         
         <div className="overflow-hidden">
@@ -137,9 +159,9 @@ const DonationShow = () => {
   if (donations.length === 0) {
     return (
       <div className="w-full py-3 text-center">
-        <p className="text-gray-500 text-sm flex items-center justify-center animate-pulse">
+        <p className="text-gray-500 text-sm flex items-center justify-center">
           <Heart className="w-4 h-4 mr-2 text-pink-400" />
-          {isLoading ? 'Loading supporters...' : 'No donations found in backend. Be the first to support! 💝'}
+          {isLoading ? 'Loading supporters...' : 'Be the first to support! 💝'}
         </p>
       </div>
     );

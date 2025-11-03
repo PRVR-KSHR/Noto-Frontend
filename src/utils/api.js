@@ -4,13 +4,13 @@ import { auth } from '../firebase/config';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
-// Create axios instance
+// Create axios instance with longer timeout for Render cold starts
 const api = axios.create({
   baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
-  timeout: 10000, // 10 second timeout
+  timeout: 60000, // 60 second timeout to handle Render cold starts
 });
 
 // ✅ FIXED: Add the missing request interceptor to add auth tokens
