@@ -143,7 +143,15 @@ export const AuthProvider = ({ children }) => {
       await signOut(auth);
       setUserProfile(null);
       console.log("✅ Logout successful");
-      toast.success("Logged out successfully!");
+      // Redirect user to home page from any route (Profile, Admin, etc.)
+      // Use replace to avoid navigating back to the protected page.
+      try {
+        // Show a quick toast if the page isn't about to change immediately
+        toast.success("Logged out successfully!");
+      } catch {}
+      if (typeof window !== 'undefined') {
+        window.location.replace('/');
+      }
     } catch (error) {
       console.error("❌ Logout error:", error);
       toast.error("Logout failed: " + error.message);

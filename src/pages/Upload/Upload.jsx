@@ -250,19 +250,35 @@ const handleSubmit = async (e) => {
     toast.dismiss(uploadToastId);
     
     // NEW: Enhanced success message with verification notice
-    toast.success(
-      "🎉 Material uploaded successfully!\n📋 Your document is now awaiting admin verification before appearing in materials page.",
-      { 
-        duration: 6000,
-        style: {
-          background: '#10B981',
-          color: 'white',
-          padding: '16px',
-          borderRadius: '8px',
-          fontWeight: '500'
+      toast.success(
+        (t) => (
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center gap-2">
+              <span className="text-xl">🎉</span>
+              <span className="font-bold">Material Uploaded Successfully!</span>
+            </div>
+            <div className="flex items-start gap-2 text-sm opacity-95">
+              <span>📋</span>
+              <span>Your material is now under admin review and will typically be verified within <strong>24 hours</strong>.</span>
+            </div>
+            <div className="text-xs opacity-80 flex items-center gap-1">
+              <span>✓ You can track the status in your <strong>Profile</strong></span>
+            </div>
+          </div>
+        ),
+        { 
+          duration: 6000,
+          style: {
+            background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
+            color: 'white',
+            padding: '16px',
+            borderRadius: '12px',
+            fontWeight: '500',
+            boxShadow: '0 10px 25px rgba(16, 185, 129, 0.3)',
+            border: '1px solid rgba(255, 255, 255, 0.2)'
+          }
         }
-      }
-    );
+      );
 
      if (refreshUserProfile) {
       await refreshUserProfile();
@@ -417,16 +433,16 @@ const handleSubmit = async (e) => {
           <div className="mt-4 mx-auto max-w-lg">
             <div 
               className="bg-amber-50 border border-amber-200 rounded-lg p-3 cursor-help"
-              title="All uploaded materials are reviewed by our admin team to ensure quality and appropriateness before being made public. You can track the verification status in your profile."
+              title="All uploads are reviewed by our admin team to ensure quality before going public. Reviews are typically completed within 24 hours. You can track the verification status anytime in your Profile."
             >
               <div className="flex items-center justify-center space-x-2">
                 <AlertCircle className="w-4 h-4 text-amber-600" />
                 <span className="text-amber-800 text-xs sm:text-sm font-medium">
-                  📋 Materials require admin verification before going live
+                  📋 Admin verification required before going live (usually within 24 hours)
                 </span>
               </div>
               <p className="text-amber-700 text-xs mt-1 text-center">
-                Hover for more details • Check status in Profile
+                Hover for more details • Track status in Profile
               </p>
             </div>
           </div>
