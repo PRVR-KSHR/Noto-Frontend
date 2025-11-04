@@ -410,7 +410,7 @@ const AdminDashboard = () => {
       'Approved - Your event request has been approved. Please reach out to us at praveerkishore45@gmail.com for next steps',
       'Under Review - We are currently reviewing your event proposal and will respond within 48 hours',
       'Declined - Thank you for your interest, but we cannot host this event at this time',
-      'More Info Needed - We need additional details about your event. Please contact us at praveerkishore45@gmail.com'
+      'More Info Needed - We need additional details about your event. Please contact us at kaushalmandal13590@gmail.com'
     ],
     review: [
       'Thank you for your review',
