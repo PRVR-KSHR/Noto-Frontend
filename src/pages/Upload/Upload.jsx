@@ -548,10 +548,10 @@ const handleSubmit = async (e) => {
 
             {/* Handwritten Instructions Modal */}
             {showHandwrittenModal && (
-              <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 sm:p-6">
-                <div className="bg-white rounded-xl shadow-2xl w-full max-w-md sm:max-w-lg md:max-w-xl mx-auto animate-fade-in max-h-[90vh] overflow-y-auto">
+              <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 sm:p-6 transition-colors">
+                <div className="bg-white dark:bg-gray-900 rounded-xl shadow-2xl dark:shadow-gray-950/70 w-full max-w-md sm:max-w-lg md:max-w-xl mx-auto animate-fade-in max-h-[90vh] overflow-y-auto border border-transparent dark:border-gray-700">
                   {/* Modal Header */}
-                  <div className="bg-gradient-noto text-white p-4 sm:p-6 rounded-t-xl sticky top-0 z-10">
+                  <div className="bg-gradient-noto text-white p-4 sm:p-6 rounded-t-xl sticky top-0 z-10 shadow-sm">
                     <div className="flex items-center space-x-2 sm:space-x-3">
                       <PenTool className="w-6 h-6 sm:w-8 sm:h-8 flex-shrink-0" />
                       <div>
@@ -563,11 +563,11 @@ const handleSubmit = async (e) => {
 
                   {/* Modal Body */}
                   <div className="p-4 sm:p-6 space-y-3 sm:space-y-4">
-                    <div className="bg-blue-50 border-l-4 border-blue-500 p-3 sm:p-4 rounded">
-                      <p className="text-xs sm:text-sm text-blue-900 font-semibold mb-2">
+                    <div className="bg-blue-50 dark:bg-blue-500/10 border-l-4 border-blue-500 dark:border-blue-400 p-3 sm:p-4 rounded">
+                      <p className="text-xs sm:text-sm text-blue-900 dark:text-blue-100 font-semibold mb-2">
                         📚 For Best AI Chatbot Performance:
                       </p>
-                      <ul className="text-xs sm:text-sm text-blue-800 space-y-1.5 sm:space-y-2">
+                      <ul className="text-xs sm:text-sm text-blue-800 dark:text-blue-100 space-y-1.5 sm:space-y-2">
                         <li className="flex items-start">
                           <span className="mr-2 flex-shrink-0">✓</span>
                           <span><strong>Fewer pages work better</strong> - AI can understand content more accurately with concise documents</span>
@@ -579,11 +579,11 @@ const handleSubmit = async (e) => {
                       </ul>
                     </div>
 
-                    <div className="bg-green-50 border-l-4 border-green-500 p-3 sm:p-4 rounded">
-                      <p className="text-xs sm:text-sm text-green-900 font-semibold mb-2">
+                    <div className="bg-green-50 dark:bg-green-500/10 border-l-4 border-green-500 dark:border-green-400 p-3 sm:p-4 rounded">
+                      <p className="text-xs sm:text-sm text-green-900 dark:text-green-100 font-semibold mb-2">
                         📝 Quality Requirements:
                       </p>
-                      <ul className="text-xs sm:text-sm text-green-800 space-y-1.5 sm:space-y-2">
+                      <ul className="text-xs sm:text-sm text-green-800 dark:text-green-100 space-y-1.5 sm:space-y-2">
                         <li className="flex items-start">
                           <span className="mr-2 flex-shrink-0">✓</span>
                           <span><strong>Clear & Visible</strong> - Ensure all pages are properly scanned with good lighting</span>
@@ -599,11 +599,11 @@ const handleSubmit = async (e) => {
                       </ul>
                     </div>
 
-                    <div className="bg-amber-50 border-l-4 border-amber-500 p-3 sm:p-4 rounded">
-                      <p className="text-xs sm:text-sm text-amber-900 font-semibold mb-2">
+                    <div className="bg-amber-50 dark:bg-amber-500/10 border-l-4 border-amber-500 dark:border-amber-400 p-3 sm:p-4 rounded">
+                      <p className="text-xs sm:text-sm text-amber-900 dark:text-amber-100 font-semibold mb-2">
                         ⚠️ Important Notes:
                       </p>
-                      <ul className="text-xs sm:text-sm text-amber-800 space-y-1.5 sm:space-y-2">
+                      <ul className="text-xs sm:text-sm text-amber-800 dark:text-amber-100 space-y-1.5 sm:space-y-2">
                         <li className="flex items-start">
                           <span className="mr-2 flex-shrink-0">•</span>
                           <span>Processing may take 30-60 seconds for handwritten documents</span>
@@ -621,11 +621,11 @@ const handleSubmit = async (e) => {
                   </div>
 
                   {/* Modal Footer */}
-                  <div className="bg-gray-50 p-4 sm:p-6 rounded-b-xl flex flex-col sm:flex-row items-center justify-center sm:justify-between gap-3 sticky bottom-0 z-10">
+                  <div className="bg-gray-50 dark:bg-gray-800/80 p-4 sm:p-6 rounded-b-xl flex flex-col sm:flex-row items-center justify-center sm:justify-between gap-3 sticky bottom-0 z-10 border-t border-gray-200 dark:border-gray-700">
                     <button
                       type="button"
                       onClick={() => setShowHandwrittenModal(false)}
-                      className="w-full sm:w-auto text-gray-600 hover:text-gray-800 font-medium transition-colors px-4 py-2 rounded-lg hover:bg-gray-100"
+                      className="w-full sm:w-auto text-gray-600 dark:text-gray-200 hover:text-gray-800 dark:hover:text-white font-medium transition-colors px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700/70"
                     >
                       Cancel
                     </button>

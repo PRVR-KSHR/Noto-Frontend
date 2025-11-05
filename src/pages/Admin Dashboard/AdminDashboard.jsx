@@ -1493,42 +1493,42 @@ const AdminDashboard = () => {
 
       {/* NEW: Enhanced Rejection Modal */}
       {showRejectModal && rejectingMaterial && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4">
-          <div className="relative bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4">
+          <div className="relative bg-white dark:bg-gray-900 rounded-lg shadow-xl dark:shadow-gray-950/70 max-w-md w-full mx-4 border border-transparent dark:border-gray-700">
             <div className="p-6">
               {/* Header */}
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-medium text-gray-900 flex items-center">
-                  <XCircle className="h-5 w-5 text-red-600 mr-2" />
+                <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 flex items-center">
+                  <XCircle className="h-5 w-5 text-red-600 dark:text-red-400 mr-2" />
                   Reject Material
                 </h3>
                 <button
                   onClick={cancelRejection}
-                  className="text-gray-400 hover:text-gray-600"
+                  className="text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
                 >
                   <XCircle className="h-5 w-5" />
                 </button>
               </div>
 
               {/* Material Info */}
-              <div className="mb-4 p-3 bg-gray-50 rounded-lg">
-                <p className="text-sm font-medium text-gray-900 mb-1">
+              <div className="mb-4 p-3 bg-gray-50 dark:bg-gray-800/70 rounded-lg border border-transparent dark:border-gray-700">
+                <p className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-1">
                   Material: {rejectingMaterial.title}
                 </p>
-                <p className="text-xs text-gray-600">
+                <p className="text-xs text-gray-600 dark:text-gray-300">
                   This action will permanently reject this material and remove it from storage.
                 </p>
               </div>
 
               {/* Rejection Category */}
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                   Rejection Category *
                 </label>
                 <select
                   value={rejectionCategory}
                   onChange={(e) => setRejectionCategory(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-red-500"
                 >
                   <option value="quality">Quality Issues</option>
                   <option value="content">Inappropriate Content</option>
@@ -1543,19 +1543,19 @@ const AdminDashboard = () => {
 
               {/* Rejection Reason */}
               <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                   Detailed Reason *
                 </label>
                 <textarea
                   value={rejectionReason}
                   onChange={(e) => setRejectionReason(e.target.value)}
                   placeholder="Please provide a detailed explanation for rejecting this material..."
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-red-500"
                   rows="4"
                   maxLength="500"
                 />
                 <div className="flex justify-between items-center mt-1">
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
                     {rejectionReason.length}/500 characters
                   </p>
                   {rejectionReason.length > 450 && (
@@ -1568,7 +1568,7 @@ const AdminDashboard = () => {
 
               {/* Quick Reason Templates */}
               <div className="mb-6">
-                <p className="text-sm font-medium text-gray-700 mb-2">Quick Templates:</p>
+                <p className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Quick Templates:</p>
                 <div className="grid grid-cols-1 gap-2">
                   {[
                     "Poor image quality or unreadable content",
@@ -1580,7 +1580,7 @@ const AdminDashboard = () => {
                     <button
                       key={index}
                       onClick={() => setRejectionReason(template)}
-                      className="text-left text-xs text-blue-600 hover:text-blue-800 hover:bg-blue-50 p-2 rounded transition-colors"
+                      className="text-left text-xs text-blue-600 dark:text-blue-300 hover:text-blue-800 dark:hover:text-blue-200 hover:bg-blue-50 dark:hover:bg-blue-500/10 p-2 rounded transition-colors"
                     >
                       "{template}"
                     </button>
@@ -1592,7 +1592,7 @@ const AdminDashboard = () => {
               <div className="flex justify-end space-x-3">
                 <button
                   onClick={cancelRejection}
-                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500"
+                  className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500"
                 >
                   Cancel
                 </button>
@@ -1611,15 +1611,15 @@ const AdminDashboard = () => {
 
       {/* NEW: Message Reply Modal */}
       {replyingTo && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="px-4 sm:px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-gray-900 rounded-lg shadow-xl dark:shadow-gray-950/70 max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-transparent dark:border-gray-700">
+            <div className="px-4 sm:px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
               <div>
-                <h3 className="text-lg font-semibold text-gray-900">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                   Reply to Message
                 </h3>
-                <p className="text-sm text-gray-500 mt-1">
-                  From: <span className="font-medium">{replyingTo.userName}</span> ({replyingTo.userEmail})
+                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                  From: <span className="font-medium text-gray-700 dark:text-gray-200">{replyingTo.userName}</span> ({replyingTo.userEmail})
                 </p>
               </div>
               <button
@@ -1627,7 +1627,7 @@ const AdminDashboard = () => {
                   setReplyingTo(null);
                   setReplyText('');
                 }}
-                className="text-gray-500 hover:text-gray-700"
+                className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
               >
                 ✕
               </button>
@@ -1635,12 +1635,12 @@ const AdminDashboard = () => {
 
             <div className="px-4 sm:px-6 py-4 space-y-4">
               {/* Original Message Context */}
-              <div className="bg-gray-50 rounded-lg p-4 border-l-4 border-blue-400">
-                <p className="text-xs font-semibold text-gray-500 uppercase mb-2">Original Message</p>
-                <h4 className="font-medium text-gray-900 mb-1">{replyingTo.subject}</h4>
-                <p className="text-sm text-gray-700 whitespace-pre-wrap break-words">{replyingTo.message}</p>
-                <div className="flex items-center gap-3 mt-2 text-xs text-gray-500">
-                  <span className="capitalize bg-blue-100 text-blue-800 px-2 py-1 rounded">
+              <div className="bg-gray-50 dark:bg-gray-800/70 rounded-lg p-4 border-l-4 border-blue-400/80">
+                <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase mb-2">Original Message</p>
+                <h4 className="font-medium text-gray-900 dark:text-gray-200 mb-1">{replyingTo.subject}</h4>
+                <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap break-words">{replyingTo.message}</p>
+                <div className="flex items-center gap-3 mt-2 text-xs text-gray-500 dark:text-gray-400">
+                  <span className="capitalize bg-blue-100 dark:bg-blue-500/20 text-blue-800 dark:text-blue-200 px-2 py-1 rounded">
                     {replyingTo.category.replace('_', ' ')}
                   </span>
                   <span>{new Date(replyingTo.createdAt).toLocaleDateString()}</span>
@@ -1649,7 +1649,7 @@ const AdminDashboard = () => {
 
               {/* Reply Presets */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                   Quick Replies ({replyingTo.category})
                 </label>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -1659,8 +1659,8 @@ const AdminDashboard = () => {
                       onClick={() => setReplyText(preset)}
                       className={`text-left px-3 py-2 text-sm rounded-lg border transition-colors ${
                         replyText === preset
-                          ? 'border-blue-500 bg-blue-50 text-blue-700'
-                          : 'border-gray-300 hover:border-blue-400 hover:bg-blue-50'
+                          ? 'border-blue-500 bg-blue-50 text-blue-700 dark:border-blue-400 dark:bg-blue-500/20 dark:text-blue-200'
+                          : 'border-gray-300 dark:border-gray-600 hover:border-blue-400 dark:hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-500/10 text-gray-700 dark:text-gray-200'
                       }`}
                     >
                       {preset}
@@ -1671,30 +1671,30 @@ const AdminDashboard = () => {
 
               {/* Custom Reply */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                   Your Reply (or customize above)
                 </label>
                 <textarea
                   value={replyText}
                   onChange={(e) => setReplyText(e.target.value)}
                   placeholder="Type your response here..."
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                  className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100"
                   rows="5"
                 />
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                   {replyText.length}/1000 characters
                 </p>
               </div>
             </div>
 
             {/* Modal Actions */}
-            <div className="px-4 sm:px-6 py-4 border-t border-gray-200 flex justify-end space-x-3">
+            <div className="px-4 sm:px-6 py-4 border-t border-gray-200 dark:border-gray-700 flex justify-end space-x-3">
               <button
                 onClick={() => {
                   setReplyingTo(null);
                   setReplyText('');
                 }}
-                className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors"
+                className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-md transition-colors"
               >
                 Cancel
               </button>
