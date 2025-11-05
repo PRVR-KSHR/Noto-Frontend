@@ -1,11 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { fileAPI, adminAPI } from "../../utils/api"; // NEW: Added adminAPI
 import PencilLoader from "../../components/PencilLoader/PencilLoader";
 import toast from "react-hot-toast";
 import Chatbot from "../Chatbot/Chatbot";
-import { useMemo } from "react";
 import { textExtractionService } from "../../services/textExtraction";
 import { getOptimizedIframeUrl, getDownloadUrl, isCloudinaryUrl } from "../../utils/cloudinaryOptimizer"; // NEW: Bandwidth optimization
 import {
@@ -44,6 +43,7 @@ const ViewMaterial = () => {
   // NEW: Flags to inform chatbot docs-mode availability
   const [isHandwritten, setIsHandwritten] = useState(false);
   const [isImageFile, setIsImageFile] = useState(false);
+  const materialFetchRef = useRef({ id: null, promise: null });
   
   // NEW: Admin verification states
   const [isAdmin, setIsAdmin] = useState(false);
@@ -195,43 +195,73 @@ const ViewMaterial = () => {
   useEffect(() => {
     if (!user) return;
 
+    let isCancelled = false;
+
+    const loadMaterialOnce = () => {
+      if (
+        materialFetchRef.current.id === id &&
+        materialFetchRef.current.promise
+      ) {
+        return materialFetchRef.current.promise;
+      }
+
+      const promise = fileAPI.getFileById(id);
+      materialFetchRef.current = { id, promise };
+      return promise;
+    };
+
     const fetchMaterial = async () => {
       try {
         setLoading(true);
 
-        // ✅ Use the regular file API (no text extraction on server)
-        const response = await fileAPI.getFileById(id);
+        const response = await loadMaterialOnce();
 
-        if (!response.file) {
+        if (isCancelled) {
+          return;
+        }
+
+        const fileData = (() => {
+          if (!response) return null;
+          if (response.file) return response.file;
+          if (response.data?.file) return response.data.file;
+          if (response.data?.data?.file) return response.data.data.file;
+          if (response.data) return response.data;
+          return null;
+        })();
+
+        if (!fileData || !fileData._id) {
+          console.warn("Material payload missing expected file data", response);
           toast.error("Material not found");
           navigate("/materials");
           return;
         }
 
-        const fileData = response.file;
+        if (isCancelled) {
+          return;
+        }
+
         setMaterial(fileData);
 
-        // ✅ UPDATED: For documents, we use original URLs (no transformation in iframe possible)
-        // Bandwidth optimization works best with image thumbnails, not full document iframes
-        console.log("📄 File loaded:", fileData.fileName);
-        
-        // For now, use original URLs for both viewing and downloading
-        // Documents (PDF, DOC, PPT) need to be served as-is for proper rendering
+  console.log("📄 File loaded:", fileData.fileName);
+
         setOptimizedViewUrl(fileData.fileUrl);
         setOriginalDownloadUrl(fileData.fileUrl);
-        
+
         if (isCloudinaryUrl(fileData.fileUrl)) {
           console.log("🌩️ Cloudinary URL detected");
           console.log("💡 Note: Documents are served in original format for proper viewing");
         }
 
-        // ✅ NEW: Extract text on client-side when document is opened
+        if (isCancelled) {
+          return;
+        }
+
         console.log("📄 Starting text extraction for:", {
           fileName: fileData.fileName,
           fileType: fileData.fileType,
           hasExtractedText: !!fileData.extractedText,
           documentType: fileData.metadata?.documentType,
-          extractionStatus: fileData.extractionStatus
+          extractionStatus: fileData.extractionStatus,
         });
 
         try {
@@ -239,30 +269,41 @@ const ViewMaterial = () => {
             title: fileData.title,
             fileName: fileData.fileName,
             hasExtractedText: !!fileData.extractedText,
-            extractionStatus: fileData.extractionStatus
+            extractionStatus: fileData.extractionStatus,
           });
 
-          // ✅ CRITICAL FIX: Use server-extracted text ONLY for handwritten documents
-          // Typed documents will extract text client-side to save MongoDB space
-          if (fileData.extractedText && fileData.metadata?.documentType === 'handwritten') {
-            // Handwritten document: Use server OCR text from MongoDB
+          if (
+            fileData.extractedText &&
+            fileData.metadata?.documentType === "handwritten"
+          ) {
             console.log("✅ Using server-extracted OCR text (handwritten document)");
             console.log("📊 Text length:", fileData.extractedText.length);
-            console.log("📄 Preview:", fileData.extractedText.substring(0, 200));
+            console.log(
+              "📄 Preview:",
+              fileData.extractedText.substring(0, 200)
+            );
+            if (isCancelled) return;
             setDocumentText(fileData.extractedText);
-          } else if (fileData.extractionStatus === 'not-required' || !fileData.extractedText) {
-            // Typed document OR no server text: Extract client-side
-            console.log("⚡ Typed document - extracting text client-side (saves MongoDB space)");
+          } else if (
+            fileData.extractionStatus === "not-required" ||
+            !fileData.extractedText
+          ) {
+            console.log(
+              "⚡ Typed document - extracting text client-side (saves MongoDB space)"
+            );
             const extractedText = await textExtractionService.extractText(
               fileData.fileUrl,
               fileData.fileName,
               fileData.fileType
             );
 
+            if (isCancelled) return;
             setDocumentText(extractedText);
-            console.log("✅ Client-side text extraction successful, length:", extractedText.length);
+            console.log(
+              "✅ Client-side text extraction successful, length:",
+              extractedText.length
+            );
           } else {
-            // Fallback: Try client-side extraction
             console.log("⚠️ Fallback: Attempting client-side extraction...");
             const extractedText = await textExtractionService.extractText(
               fileData.fileUrl,
@@ -270,12 +311,16 @@ const ViewMaterial = () => {
               fileData.fileType
             );
 
+            if (isCancelled) return;
             setDocumentText(extractedText);
-            console.log("✅ Fallback extraction successful, length:", extractedText.length);
+            console.log(
+              "✅ Fallback extraction successful, length:",
+              extractedText.length
+            );
           }
         } catch (error) {
           console.error("❌ Text extraction failed:", error);
-          
+
           const fallbackText = `Document: ${fileData.title}
 File: ${fileData.fileName}
 
@@ -284,18 +329,42 @@ Please ensure the file is accessible and in a supported format.
 
 Error: ${error.message}`;
 
+          if (isCancelled) return;
           setDocumentText(fallbackText);
         }
       } catch (error) {
-        console.error("Failed to load material:", error);
-        toast.error("Failed to load material");
-        navigate("/materials");
+        if (materialFetchRef.current.id === id) {
+          materialFetchRef.current = { id: null, promise: null };
+        }
+
+        if (isCancelled) {
+          return;
+        }
+
+        if (error?.response?.status === 429) {
+          console.warn("Rate limited while loading material:", error);
+          toast.error("Too many requests. Please try again in a moment.");
+        } else {
+          console.error("Failed to load material:", error);
+          toast.error("Failed to load material");
+          navigate("/materials");
+        }
       } finally {
-        setLoading(false);
+        if (!isCancelled) {
+          setLoading(false);
+        }
+
+        if (materialFetchRef.current.id === id) {
+          materialFetchRef.current = { id: null, promise: null };
+        }
       }
     };
 
     fetchMaterial();
+
+    return () => {
+      isCancelled = true;
+    };
   }, [id, user, navigate]);
 
   // NEW: Check if user is admin
@@ -454,13 +523,13 @@ Error: ${error.message}`;
       return (
         <div className="flex items-center justify-center h-full">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-          <span className="ml-3 text-gray-600">Loading text file...</span>
+          <span className="ml-3 text-gray-600 dark:text-gray-300 transition-colors duration-300">Loading text file...</span>
         </div>
       );
     }
 
     return (
-      <div className="w-full h-full flex flex-col bg-white">
+      <div className="w-full h-full flex flex-col bg-white dark:bg-gray-900 transition-colors duration-300">
         <div
           className="flex-shrink-0 px-4 py-2 border-2 rounded-lg"
           style={{
@@ -474,7 +543,7 @@ Error: ${error.message}`;
         </div>
 
         <div className="flex-1 overflow-auto">
-          <pre className="p-4 text-sm text-gray-800 font-mono whitespace-pre-wrap h-full bg-white">
+          <pre className="p-4 text-sm text-gray-800 dark:text-gray-100 font-mono whitespace-pre-wrap h-full bg-white dark:bg-gray-950 transition-colors duration-300">
             {textContent}
           </pre>
         </div>
@@ -484,20 +553,20 @@ Error: ${error.message}`;
 
   // Add fallback banner component for when text extraction fails
   const TextExtractionFailedBanner = () => (
-    <div className="bg-gradient-to-r from-orange-50 to-red-50 border border-orange-200 rounded-lg p-3 sm:p-4 text-center max-w-full">
+    <div className="bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-500/10 dark:to-red-500/10 border border-orange-200 dark:border-orange-500/40 rounded-lg p-3 sm:p-4 text-center max-w-full transition-colors duration-300">
       <div className="flex items-center justify-center mb-2 sm:mb-3">
-        <Bot className="w-5 h-5 sm:w-6 sm:h-6 text-orange-500 mr-2" />
-        <h3 className="text-sm sm:text-base font-semibold text-gray-800">
+        <Bot className="w-5 h-5 sm:w-6 sm:h-6 text-orange-500 dark:text-orange-300 mr-2" />
+        <h3 className="text-sm sm:text-base font-semibold text-gray-800 dark:text-gray-100">
           Text Extraction Limited
         </h3>
       </div>
-      <p className="text-gray-600 mb-2 text-xs sm:text-sm">
+      <p className="text-gray-600 dark:text-gray-300 mb-2 text-xs sm:text-sm">
         This document contains mainly <strong>images or complex formatting</strong> that couldn't be processed for AI chat.
       </p>
-      <p className="text-xs text-gray-500 mb-3 sm:mb-4">
+      <p className="text-xs text-gray-500 dark:text-gray-400 mb-3 sm:mb-4">
         You can still download and view the document. For text-based content, try uploading in a different format!
       </p>
-      <div className="inline-flex items-center px-2 sm:px-3 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800 max-w-full">
+      <div className="inline-flex items-center px-2 sm:px-3 py-1 rounded-full text-xs font-medium bg-orange-100 dark:bg-orange-400/20 text-orange-800 dark:text-orange-200 max-w-full">
         🔁 Switch to Global Mode for general AI assistance
       </div>
     </div>
@@ -505,22 +574,22 @@ Error: ${error.message}`;
 
   // NEW: Explicit banner when Docs mode is unavailable for handwritten/images
   const DocsModeUnavailableBanner = () => (
-    <div className="bg-gradient-to-r from-yellow-50 to-amber-50 border border-amber-200 rounded-lg p-3 sm:p-4 text-center max-w-full">
+    <div className="bg-gradient-to-r from-yellow-50 to-amber-50 dark:from-amber-500/10 dark:to-yellow-500/10 border border-amber-200 dark:border-amber-500/40 rounded-lg p-3 sm:p-4 text-center max-w-full transition-colors duration-300">
       <div className="flex items-center justify-center mb-2 sm:mb-3">
-        <Bot className="w-5 h-5 sm:w-6 sm:h-6 text-amber-600 mr-2" />
-        <h3 className="text-sm sm:text-base font-semibold text-gray-800">
+        <Bot className="w-5 h-5 sm:w-6 sm:h-6 text-amber-600 dark:text-amber-300 mr-2" />
+        <h3 className="text-sm sm:text-base font-semibold text-gray-800 dark:text-gray-100">
           Docs Mode Not Available
         </h3>
       </div>
-      <p className="text-gray-700 mb-2 text-xs sm:text-sm">
+      <p className="text-gray-700 dark:text-gray-300 mb-2 text-xs sm:text-sm">
         {isHandwritten && !isImageFile
           ? "Handwritten documents aren't supported in Docs mode yet."
           : "Image-based documents aren't supported in Docs mode."}
       </p>
-      <p className="text-xs text-gray-600 mb-3 sm:mb-4">
+      <p className="text-xs text-gray-600 dark:text-gray-400 mb-3 sm:mb-4">
         Please use <span className="font-semibold">Global Mode</span> for general AI help about this material.
       </p>
-      <div className="inline-flex items-center px-2 sm:px-3 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800 max-w-full">
+      <div className="inline-flex items-center px-2 sm:px-3 py-1 rounded-full text-xs font-medium bg-amber-100 dark:bg-amber-400/20 text-amber-800 dark:text-amber-200 max-w-full">
         🔁 Tip: Tap the Global tab above to continue
       </div>
     </div>
@@ -535,19 +604,13 @@ Error: ${error.message}`;
     if (viewerError) {
       return (
         <div
-          className="flex flex-col items-center justify-center h-full p-8 rounded-lg"
-          style={{
-            border: "4px solid #214C8D",
-            borderRadius: "12px",
-            boxShadow: "0 10px 25px rgba(33, 76, 141, 0.3)",
-            background: "linear-gradient(135deg, #fef2f2, #fee2e2)",
-          }}
+          className="flex flex-col items-center justify-center h-full p-8 rounded-lg border-[4px] border-[#214C8D] dark:border-blue-500/70 shadow-2xl bg-gradient-to-br from-rose-50 to-rose-100 dark:from-rose-500/10 dark:to-rose-500/5 transition-colors duration-300"
         >
-          <AlertCircle className="w-16 h-16 text-[#214C8D] mb-4" />
-          <h3 className="text-xl font-semibold text-gray-700 mb-2">
+          <AlertCircle className="w-16 h-16 text-[#214C8D] dark:text-blue-400 mb-4 transition-colors duration-300" />
+          <h3 className="text-xl font-semibold text-gray-700 dark:text-gray-200 mb-2 transition-colors duration-300">
             Preview Not Available
           </h3>
-          <p className="text-gray-500 mb-6 text-center max-w-md">
+          <p className="text-gray-500 dark:text-gray-300 mb-6 text-center max-w-md transition-colors duration-300">
             This document cannot be previewed. Please download to view.
           </p>
           <button
@@ -600,14 +663,7 @@ Error: ${error.message}`;
     if (fileType === "application/pdf" || fileExtension === "pdf") {
       return (
         <div
-          className="w-full h-full rounded-xl overflow-hidden shadow-2xl"
-          style={{
-            border: "4px solid #214C8D",
-            borderRadius: "12px",
-            boxShadow:
-              "0 10px 25px rgba(33, 76, 141, 0.3), 0 0 0 1px rgba(33, 76, 141, 0.1)",
-            background: "linear-gradient(135deg, #f8fafc, #e2e8f0)",
-          }}
+          className="w-full h-full rounded-xl overflow-hidden shadow-2xl border-[4px] border-[#214C8D] dark:border-blue-500/70 bg-slate-50 dark:bg-slate-900 transition-colors duration-300"
         >
           {/* PDF Header */}
           <div className="bg-gradient-to-r from-[#214C8D] to-[#1e3a8a] px-4 py-2 flex items-center justify-between">
@@ -651,14 +707,7 @@ Error: ${error.message}`;
 
       return (
         <div
-          className="w-full h-full rounded-xl overflow-hidden shadow-2xl"
-          style={{
-            border: "4px solid #214C8D",
-            borderRadius: "12px",
-            boxShadow:
-              "0 10px 25px rgba(33, 76, 141, 0.3), 0 0 0 1px rgba(33, 76, 141, 0.1)",
-            background: "linear-gradient(135deg, #f8fafc, #e2e8f0)",
-          }}
+          className="w-full h-full rounded-xl overflow-hidden shadow-2xl border-[4px] border-[#214C8D] dark:border-blue-500/70 bg-slate-50 dark:bg-slate-900 transition-colors duration-300"
         >
           {/* Office Document Header */}
           <div className="bg-gradient-to-r from-[#214C8D] to-[#1e3a8a] px-4 py-2 flex items-center">
@@ -688,14 +737,7 @@ Error: ${error.message}`;
     if (fileType === "text/plain" || fileExtension === "txt") {
       return (
         <div
-          className="w-full h-full rounded-xl overflow-hidden shadow-2xl"
-          style={{
-            border: "4px solid #214C8D",
-            borderRadius: "12px",
-            boxShadow:
-              "0 10px 25px rgba(33, 76, 141, 0.3), 0 0 0 1px rgba(33, 76, 141, 0.1)",
-            background: "linear-gradient(135deg, #f8fafc, #e2e8f0)",
-          }}
+          className="w-full h-full rounded-xl overflow-hidden shadow-2xl border-[4px] border-[#214C8D] dark:border-blue-500/70 bg-slate-50 dark:bg-slate-900 transition-colors duration-300"
         >
           <TextFileViewer
             fileUrl={displayUrl}
@@ -708,20 +750,13 @@ Error: ${error.message}`;
     // Enhanced download option
     return (
       <div
-        className="flex flex-col items-center justify-center h-full p-8 rounded-xl"
-        style={{
-          border: "4px solid #214C8D",
-          borderRadius: "12px",
-          boxShadow:
-            "0 10px 25px rgba(33, 76, 141, 0.3), 0 0 0 1px rgba(33, 76, 141, 0.1)",
-          background: "linear-gradient(135deg, #f8fafc, #e2e8f0)",
-        }}
+        className="flex flex-col items-center justify-center h-full p-8 rounded-xl border-[4px] border-[#214C8D] dark:border-blue-500/70 bg-slate-50 dark:bg-slate-900 shadow-2xl transition-colors duration-300"
       >
-        <FileText className="w-20 h-20 text-[#214C8D] mb-6" />
-        <h3 className="text-2xl font-semibold text-gray-700 mb-3">
+        <FileText className="w-20 h-20 text-[#214C8D] dark:text-blue-400 mb-6 transition-colors duration-300" />
+        <h3 className="text-2xl font-semibold text-gray-700 dark:text-gray-200 mb-3 transition-colors duration-300">
           {material.title}
         </h3>
-        <p className="text-gray-600 mb-6 text-center max-w-md">
+        <p className="text-gray-600 dark:text-gray-300 mb-6 text-center max-w-md transition-colors duration-300">
           Click download to view this {fileExtension.toUpperCase()} document.
         </p>
         <button
@@ -738,10 +773,10 @@ Error: ${error.message}`;
   // REPLACE the unauthenticated spinner return
   if (!user) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center transition-colors duration-300">
         <div className="text-center">
           <PencilLoader />
-          <p className="mt-4 text-gray-600">Redirecting to login...</p>
+          <p className="mt-4 text-gray-600 dark:text-gray-300 transition-colors duration-300">Redirecting to login...</p>
         </div>
       </div>
     );
@@ -750,10 +785,10 @@ Error: ${error.message}`;
   // REPLACE the loading spinner return
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center transition-colors duration-300">
         <div className="text-center">
           <PencilLoader />
-          <p className="mt-4 text-gray-600">Opening Preview...</p>
+          <p className="mt-4 text-gray-600 dark:text-gray-300 transition-colors duration-300">Opening Preview...</p>
         </div>
       </div>
     );
@@ -761,13 +796,13 @@ Error: ${error.message}`;
 
   if (!material) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center transition-colors duration-300">
         <div className="text-center">
           <AlertCircle className="w-16 h-16 text-red-400 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold text-gray-700 mb-2">
+          <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-200 mb-2 transition-colors duration-300">
             Material Not Found
           </h2>
-          <p className="text-gray-500 mb-4">
+          <p className="text-gray-500 dark:text-gray-400 mb-4 transition-colors duration-300">
             The material you're looking for doesn't exist.
           </p>
           <button
@@ -782,13 +817,13 @@ Error: ${error.message}`;
   }
 
   return (
-    <div className="pt-10">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-10 transition-colors duration-300">
       {/* Download Warning Modal - Improved Design - Mobile Responsive */}
       {showDownloadWarning && (
         <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-[9999] p-2 sm:p-4 backdrop-blur-sm">
-          <div className="bg-white rounded-xl sm:rounded-2xl shadow-2xl max-w-2xl w-full mx-auto animate-in fade-in slide-in-from-bottom-4 duration-300 max-h-[95vh] overflow-y-auto">
+          <div className="bg-white dark:bg-gray-900 rounded-xl sm:rounded-2xl shadow-2xl max-w-2xl w-full mx-auto animate-in fade-in slide-in-from-bottom-4 duration-300 max-h-[95vh] overflow-y-auto border border-transparent dark:border-gray-700">
             {/* Modal Header with Icon */}
-            <div className="bg-gradient-to-r from-blue-500 to-blue-600 rounded-t-xl sm:rounded-t-2xl p-4 sm:p-6 text-white sticky top-0 z-10">
+            <div className="bg-gradient-to-r from-blue-500 to-blue-600 dark:from-blue-700 dark:to-blue-800 rounded-t-xl sm:rounded-t-2xl p-4 sm:p-6 text-white sticky top-0 z-10">
               <div className="flex items-center space-x-3 sm:space-x-4">
                 <div className="flex-shrink-0 w-10 h-10 sm:w-14 sm:h-14 bg-white bg-opacity-20 rounded-full flex items-center justify-center backdrop-blur-sm">
                   <Download className="w-5 h-5 sm:w-7 sm:h-7 text-white" />
@@ -807,7 +842,7 @@ Error: ${error.message}`;
             {/* Modal Body */}
             <div className="p-3 sm:p-6 space-y-3 sm:space-y-5">
               {/* Main Message */}
-              <div className="bg-gradient-to-br from-amber-50 to-orange-50 border-l-4 border-amber-500 rounded-lg p-3 sm:p-5 shadow-sm">
+              <div className="bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-500/10 dark:to-orange-500/10 border-l-4 border-amber-500 rounded-lg p-3 sm:p-5 shadow-sm">
                 <div className="flex items-start space-x-2 sm:space-x-3">
                   <div className="flex-shrink-0">
                     <span className="text-2xl sm:text-3xl">⚠️</span>
@@ -827,7 +862,7 @@ Error: ${error.message}`;
 
               {/* Best Practices Section */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                <div className="bg-green-50 border border-green-200 rounded-lg sm:rounded-xl p-3 sm:p-4">
+                <div className="bg-green-50 dark:bg-green-500/10 border border-green-200 dark:border-green-500/40 rounded-lg sm:rounded-xl p-3 sm:p-4">
                   <div className="flex items-center space-x-2 mb-2 sm:mb-3">
                     <span className="text-xl sm:text-2xl">✅</span>
                     <h5 className="font-bold text-green-900 text-sm sm:text-base">Recommended</h5>
@@ -848,7 +883,7 @@ Error: ${error.message}`;
                   </ul>
                 </div>
 
-                <div className="bg-blue-50 border border-blue-200 rounded-lg sm:rounded-xl p-3 sm:p-4">
+                <div className="bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/40 rounded-lg sm:rounded-xl p-3 sm:p-4">
                   <div className="flex items-center space-x-2 mb-2 sm:mb-3">
                     <span className="text-xl sm:text-2xl">💾</span>
                     <h5 className="font-bold text-blue-900 text-sm sm:text-base">Download When</h5>
@@ -871,7 +906,7 @@ Error: ${error.message}`;
               </div>
 
               {/* Quick Action Note */}
-              <div className="bg-gradient-to-r from-purple-50 to-pink-50 border-2 border-purple-300 rounded-lg sm:rounded-xl p-3 sm:p-4">
+              <div className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-500/10 dark:to-pink-500/10 border-2 border-purple-300 dark:border-purple-500/50 rounded-lg sm:rounded-xl p-3 sm:p-4">
                 <div className="flex items-start sm:items-center space-x-2 sm:space-x-3">
                   <span className="text-2xl sm:text-3xl flex-shrink-0">🎯</span>
                   <div className="flex-1 min-w-0">
@@ -885,7 +920,7 @@ Error: ${error.message}`;
             </div>
 
             {/* Modal Footer */}
-            <div className="px-3 sm:px-6 pb-3 sm:pb-6 pt-2 sticky bottom-0 bg-white">
+            <div className="px-3 sm:px-6 pb-3 sm:pb-6 pt-2 sticky bottom-0 bg-white dark:bg-gray-900">
               <button
                 onClick={handleWarningClose}
                 className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold py-3 sm:py-4 px-4 sm:px-6 rounded-lg sm:rounded-xl transition-all duration-200 flex items-center justify-center space-x-2 sm:space-x-3 shadow-lg hover:shadow-xl transform active:scale-95 sm:hover:scale-[1.02]"
@@ -903,14 +938,14 @@ Error: ${error.message}`;
 
       {/* Header */}
       {/* Header */}
-      <div className="bg-white shadow-sm border-b sticky top-16 z-20">
+  <div className="bg-white dark:bg-gray-900 shadow-sm border-b border-gray-200 dark:border-gray-700 sticky top-16 z-20 transition-colors duration-300">
         <div className="max-w-7xl mx-auto px-2 sm:px-4 md:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between h-auto sm:h-16 py-2 sm:py-0 gap-2 sm:gap-0">
             {/* Back Button */}
             <div className="flex items-center justify-start">
               <button
                 onClick={handleBack}
-                className="flex items-center text-gray-600 hover:text-gray-900 transition-colors text-sm sm:text-base"
+                className="flex items-center text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors text-sm sm:text-base"
               >
                 <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                 <span className="hidden sm:inline">Back to Materials</span>
@@ -922,15 +957,15 @@ Error: ${error.message}`;
             <div className="flex flex-col sm:flex-row items-center sm:items-end justify-center sm:justify-end gap-2 sm:space-x-4 w-full sm:w-auto text-center">
               {/* Info Text */}
               <div className="mt-1 sm:mt-2 text-center sm:text-left">
-                <p className="text-[10px] xs:text-[11px] sm:text-sm md:text-xs text-gray-600 flex items-center justify-center sm:justify-start gap-1.5 font-medium leading-snug">
+                <p className="text-[10px] xs:text-[11px] sm:text-sm md:text-xs text-gray-600 dark:text-gray-300 flex items-center justify-center sm:justify-start gap-1.5 font-medium leading-snug transition-colors duration-300">
                   <span className="text-green-600">💡</span>
                   <span>
                     For the best experience, please view these notes directly on
                     the website.
                   </span>
                 </p>
-                <p className="text-[10px] xs:text-[11px] sm:text-xs text-gray-500 mt-0.5 italic leading-snug">
-                  <span className="text-red-600 font-semibold">
+                <p className="text-[10px] xs:text-[11px] sm:text-xs text-gray-500 dark:text-gray-400 mt-0.5 italic leading-snug transition-colors duration-300">
+                  <span className="text-red-600 dark:text-red-400 font-semibold">
                     Downloads are limited due to cloud storage bandwidth
                   </span>{" "}
                   — use this option only if necessary.
@@ -984,14 +1019,14 @@ Error: ${error.message}`;
       </div>
 
       {/* Material Info */}
-      <div className="bg-white border-b">
+  <div className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 transition-colors duration-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4">
           <div className="flex items-start justify-between">
             <div className="flex-1 min-w-0">
-              <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 mb-2 truncate capitalize">
+              <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2 truncate capitalize transition-colors duration-300">
                 {material.title}
               </h1>
-              <div className="flex flex-wrap items-center text-xs sm:text-sm text-gray-500 space-x-2 sm:space-x-4">
+              <div className="flex flex-wrap items-center text-xs sm:text-sm text-gray-500 dark:text-gray-400 space-x-2 sm:space-x-4 transition-colors duration-300">
                 <div className="flex items-center">
                   <FileText className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
                   <span className="truncate">
@@ -1056,7 +1091,7 @@ Error: ${error.message}`;
       <div className="flex flex-col xl:flex-row gap-4 xl:gap-6 px-2 sm:px-4 lg:px-6 xl:px-8 py-4">
         {/* Document Viewer Section */}
         <div className="w-full xl:flex-1 xl:max-w-[65%]">
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+          <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden transition-colors duration-300">
             <div 
               className="w-full document-viewer"
               style={{
@@ -1072,40 +1107,47 @@ Error: ${error.message}`;
 
         {/* Chatbot Section */}
         <div className="w-full xl:flex-1 xl:max-w-[35%] mt-4 xl:mt-0">
-          <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
+          <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden transition-colors duration-300">
             {/* Info Message */}
-            <div className="bg-blue-50 border-b border-blue-100 px-3 py-2">
-              <p className="text-blue-700 font-medium text-xs sm:text-sm text-center">
-                💬 AI Chat supports PDF, Word, PowerPoint & Text files
-                {!hasValidDocumentContent ? (
-                  <>
-                    {" "}- <span className="bg-yellow-200 text-yellow-800 px-2 py-1 rounded-md font-semibold">Text extraction failed - Global Mode only</span>
-                  </>
-                ) : isHandwritten ? (
-                  <>
-                    {" "}- <span className="bg-purple-100 text-purple-800 px-2 py-1 rounded-md font-semibold">🖊️ Handwritten Doc - OCR Extracted</span>
-                  </>
-                ) : (
-                  <>
-                    {" "}- <span className="bg-green-100 text-green-800 px-2 py-1 rounded-md font-semibold">✅ Docs Mode Available</span>
-                  </>
-                )}
-              </p>
-              <p className="text-blue-600 text-[10px] sm:text-xs text-center mt-1 opacity-75">
-                💡 If AI is busy (503 error), wait 30 seconds and try again
-              </p>
+            <div className="bg-blue-50 dark:bg-blue-500/10 border-b border-blue-100 dark:border-blue-500/30 px-3 py-2 transition-colors duration-300">
+              <div className="space-y-2 text-center">
+                <p className="text-blue-700 dark:text-blue-200 font-semibold text-xs sm:text-sm transition-colors duration-300">
+                  💬 AI Chat
+                </p>
+                <div className="flex flex-wrap justify-center gap-2">
+                  <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-100 text-[11px] font-medium">
+                    PDF • Word • PPT • Text
+                  </span>
+                  {!hasValidDocumentContent ? (
+                    <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-yellow-100 dark:bg-yellow-500/20 text-yellow-700 dark:text-yellow-200 text-[11px] font-medium">
+                      Text extraction limited — Global mode only
+                    </span>
+                  ) : isHandwritten ? (
+                    <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-purple-100 dark:bg-purple-500/20 text-purple-700 dark:text-purple-200 text-[11px] font-medium">
+                      🖊️ Handwritten OCR ready
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-200 text-[11px] font-medium">
+                      ✅ Docs mode available
+                    </span>
+                  )}
+                </div>
+                <p className="text-blue-600 dark:text-blue-300 text-[10px] sm:text-xs opacity-75 transition-colors duration-300">
+                  Tip: if the AI is busy (503), wait a few seconds and try again.
+                </p>
+              </div>
             </div>
             
             {/* Chatbot Content */}
             <div 
-              className="relative chatbot-container"
+              className="relative chatbot-container bg-white dark:bg-gray-950 transition-colors duration-300"
               style={{
                 height: "75vh",
                 minHeight: "600px",
                 maxHeight: "900px",
               }}
             >
-              <div className="h-full">
+              <div className="h-full bg-white dark:bg-gray-950 transition-colors duration-300">
                 <Chatbot
                   documentText={documentText}
                   initialMode={hasValidDocumentContent ? "document" : "global"}
@@ -1122,12 +1164,12 @@ Error: ${error.message}`;
 
       {/* NEW: Rejection Modal */}
       {showRejectModal && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4">
-          <div className="relative bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
+        <div className="fixed inset-0 bg-gray-900 bg-opacity-60 overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4">
+          <div className="relative bg-white dark:bg-gray-900 rounded-lg shadow-xl max-w-md w-full mx-4 border border-transparent dark:border-gray-700">
             <div className="p-6">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-medium text-gray-900 flex items-center">
-                  <XCircle className="h-5 w-5 text-red-600 mr-2" />
+                <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 flex items-center">
+                  <XCircle className="h-5 w-5 text-red-600 dark:text-red-400 mr-2" />
                   Reject Material
                 </h3>
                 <button

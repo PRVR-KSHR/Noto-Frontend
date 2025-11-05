@@ -1,6 +1,7 @@
 import React, { Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useAuth } from "./context/AuthContext";
+import { useTheme } from "./context/ThemeContext";
 import { Toaster } from 'react-hot-toast';
 
 import Navbar from "./components/Navbar";
@@ -22,13 +23,14 @@ const ErrorPage = React.lazy(() => import('./pages/ErrorPage/ErrorPage'));
 
 function App() {
   const { user, loading } = useAuth();
+  const { theme } = useTheme();
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
         <div className="text-center">
           <PencilLoader />
-          <p className="mt-4 text-gray-600 text-lg">Loading noto...</p>
+          <p className="mt-4 text-gray-600 dark:text-gray-300 text-lg">Loading noto...</p>
         </div>
       </div>
     );
@@ -37,14 +39,14 @@ function App() {
   return (
       <Router>
         <ScrollToTop />
-        <div className="min-h-screen bg-gray-50 flex flex-col">
+        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col transition-colors duration-300">
           <Navbar />
           <main className="flex-grow">
             <Suspense fallback={
-              <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+              <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
                 <div className="text-center">
                   <PencilLoader />
-                  <p className="mt-4 text-gray-600 text-lg">Loading page...</p>
+                  <p className="mt-4 text-gray-600 dark:text-gray-300 text-lg">Loading page...</p>
                 </div>
               </div>
             }>

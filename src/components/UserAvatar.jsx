@@ -43,7 +43,7 @@ const UserAvatar = ({ user, size = 'w-8 h-8', className = '' }) => {
       <img
         src={user.photoURL}
         alt={user.displayName || 'User'}
-        className={`${size} rounded-full border-2 border-noto-secondary object-cover ${className}`}
+  className={`${size} rounded-full border-2 border-noto-secondary dark:border-blue-400 object-cover transition-colors duration-200 ${className}`}
         onError={() => setImageError(true)}
       />
     );
@@ -52,7 +52,7 @@ const UserAvatar = ({ user, size = 'w-8 h-8', className = '' }) => {
   // Fallback: Show first letter
   return (
     <div
-      className={`${size} rounded-full border-2 border-noto-secondary flex items-center justify-center text-white font-semibold ${getBackgroundColor(
+      className={`${size} rounded-full border-2 border-noto-secondary dark:border-blue-400 flex items-center justify-center text-white font-semibold transition-colors duration-200 ${getBackgroundColor(
         user?.displayName
       )} ${className}`}
     >

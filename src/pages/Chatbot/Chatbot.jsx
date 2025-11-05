@@ -32,36 +32,53 @@ const Chatbot = ({ documentText, initialMode = "document", disableDocumentMode =
 
   const MARKDOWN_COMPONENTS = {
     h1: ({ node, ...props }) => (
-      <h1 className="text-lg font-bold text-gray-800 mb-2" {...props} />
+      <h1
+        className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-2"
+        {...props}
+      />
     ),
     h2: ({ node, ...props }) => (
-      <h2 className="text-base font-semibold text-gray-800 mb-2" {...props} />
+      <h2
+        className="text-base font-semibold text-gray-800 dark:text-gray-100 mb-2"
+        {...props}
+      />
     ),
     h3: ({ node, ...props }) => (
-      <h3 className="text-sm font-semibold text-gray-800 mb-1" {...props} />
+      <h3
+        className="text-sm font-semibold text-gray-800 dark:text-gray-100 mb-1"
+        {...props}
+      />
     ),
     p: ({ node, ...props }) => (
-      <p className="text-gray-700 mb-2 leading-relaxed" {...props} />
+      <p
+        className="text-gray-700 dark:text-gray-200 mb-2 leading-relaxed"
+        {...props}
+      />
     ),
     ul: ({ node, ...props }) => (
       <ul
-        className="list-disc list-inside text-gray-700 mb-2 space-y-1"
+        className="list-disc list-inside text-gray-700 dark:text-gray-200 mb-2 space-y-1"
         {...props}
       />
     ),
     ol: ({ node, ...props }) => (
       <ol
-        className="list-decimal list-inside text-gray-700 mb-2 space-y-1"
+        className="list-decimal list-inside text-gray-700 dark:text-gray-200 mb-2 space-y-1"
         {...props}
       />
     ),
-    li: ({ node, ...props }) => <li className="text-gray-700" {...props} />,
+    li: ({ node, ...props }) => (
+      <li className="text-gray-700 dark:text-gray-200" {...props} />
+    ),
     strong: ({ node, ...props }) => (
-      <strong className="font-semibold text-gray-800" {...props} />
+      <strong
+        className="font-semibold text-gray-800 dark:text-gray-100"
+        {...props}
+      />
     ),
     code: ({ node, ...props }) => (
       <code
-        className="bg-gray-100 px-2 py-1 rounded text-sm font-mono"
+        className="bg-gray-100 dark:bg-gray-800 dark:text-gray-100 px-2 py-1 rounded text-sm font-mono"
         {...props}
       />
     ),
@@ -613,7 +630,7 @@ Try refreshing the page first. If problems continue, the service may be temporar
     !documentText.includes("UNSUPPORTED_FILE_TYPE");
 
   return (
-    <div className="h-full flex flex-col bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+    <div className="h-full flex flex-col bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
       {/* Header */}
       <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-3 sm:p-4 flex-shrink-0">
         <div className="flex items-center justify-between">
@@ -705,16 +722,16 @@ Try refreshing the page first. If problems continue, the service may be temporar
       </div>
 
   {/* Chat Messages */}
-  <div className="flex-1 overflow-y-auto p-2 sm:p-3 bg-gray-50 min-h-0">
+  <div className="flex-1 overflow-y-auto p-2 sm:p-3 bg-gray-50 dark:bg-gray-950 min-h-0 transition-colors duration-300">
         {chatHistory.length === 0 ? (
           <div className="text-center py-4 sm:py-6">
-            <div className="bg-gradient-to-br from-blue-100 to-indigo-100 rounded-full w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center mx-auto mb-2 sm:mb-3">
-              <Bot className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
+            <div className="bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-500/20 dark:to-indigo-500/20 rounded-full w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center mx-auto mb-2 sm:mb-3">
+              <Bot className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600 dark:text-blue-300" />
             </div>
-            <h4 className="text-xs sm:text-sm font-semibold text-gray-800 mb-2">
+            <h4 className="text-xs sm:text-sm font-semibold text-gray-800 dark:text-gray-100 mb-2">
               Ready to help!
             </h4>
-            <p className="text-xs text-gray-600 px-2">
+            <p className="text-xs text-gray-600 dark:text-gray-300 px-2">
               {mode === "document"
                 ? hasDocumentContent
                   ? "Ask questions about this document"
@@ -759,10 +776,10 @@ Try refreshing the page first. If problems continue, the service may be temporar
 
                   {/* Message Content */}
                   <div
-                    className={`rounded-lg px-2 sm:px-3 py-2 shadow-sm text-xs ${
+                    className={`rounded-lg px-2 sm:px-3 py-2 shadow-sm text-xs transition-colors duration-300 ${
                       message.role === "user"
                         ? "bg-gradient-to-br from-blue-500 to-blue-600 text-white"
-                        : "bg-white border border-gray-200"
+                        : "bg-white border border-gray-200 dark:bg-gray-900 dark:border-gray-700"
                     }`}
                   >
                     {message.role === "ai" ? (
@@ -781,7 +798,7 @@ Try refreshing the page first. If problems continue, the service may be temporar
                         className={`text-xs ${
                           message.role === "user"
                             ? "text-blue-100"
-                            : "text-gray-500"
+                            : "text-gray-500 dark:text-gray-400"
                         }`}
                       >
                         {formatTime(message.timestamp)}
@@ -790,10 +807,10 @@ Try refreshing the page first. If problems continue, the service may be temporar
                       {message.role === "ai" && (
                         <button
                           onClick={() => copyMessage(message.content)}
-                          className="p-0.5 hover:bg-gray-100 rounded transition-colors"
+                          className="p-0.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors"
                           title="Copy message"
                         >
-                          <Copy className="w-2.5 h-2.5 text-gray-500" />
+                          <Copy className="w-2.5 h-2.5 text-gray-500 dark:text-gray-300" />
                         </button>
                       )}
                     </div>
@@ -811,15 +828,15 @@ Try refreshing the page first. If problems continue, the service may be temporar
                       <Bot className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-white" />
                     </div>
                   </div>
-                  <div className="bg-white border border-gray-200 rounded-lg px-2 sm:px-3 py-2 shadow-sm">
+                  <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-2 sm:px-3 py-2 shadow-sm transition-colors duration-300">
                     <div className="flex space-x-1">
-                      <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"></div>
+                      <div className="w-1.5 h-1.5 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce"></div>
                       <div
-                        className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"
+                        className="w-1.5 h-1.5 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce"
                         style={{ animationDelay: "0.1s" }}
                       ></div>
                       <div
-                        className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"
+                        className="w-1.5 h-1.5 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce"
                         style={{ animationDelay: "0.2s" }}
                       ></div>
                     </div>
@@ -833,7 +850,7 @@ Try refreshing the page first. If problems continue, the service may be temporar
       </div>
 
   {/* Input Area (sticky within Chatbot container) */}
-  <div className="p-2 sm:p-3 bg-white border-t border-gray-200 flex-shrink-0 sticky bottom-0">
+  <div className="p-2 sm:p-3 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 flex-shrink-0 sticky bottom-0 transition-colors duration-300">
         <form 
           onSubmit={(e) => {
             e.preventDefault();
@@ -854,7 +871,7 @@ Try refreshing the page first. If problems continue, the service may be temporar
                     : "Ask about document (limited)..."
                 : "Ask me anything..."
             }
-            className="flex-1 px-2 sm:px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none text-xs"
+            className="flex-1 px-2 sm:px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent resize-none text-xs bg-white dark:bg-gray-800 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 transition-colors duration-300"
             rows={window.innerWidth < 640 ? 1 : 2}
             disabled={loading}
           />
@@ -869,7 +886,7 @@ Try refreshing the page first. If problems continue, the service may be temporar
         </form>
 
         <div className="mt-1 sm:mt-2 text-center">
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-gray-500 dark:text-gray-400">
             Press{" "}
             <kbd className="bg-gray-200 px-1 py-0.5 rounded text-xs">Enter</kbd>{" "}
             to send

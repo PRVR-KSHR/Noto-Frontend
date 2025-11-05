@@ -415,33 +415,33 @@ const handleSubmit = async (e) => {
   }
 
   return (
-      <div className="py-4 sm:py-8">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300 py-4 sm:py-8">
         <div className="container max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-6 sm:mb-8">
-          <div className="inline-flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 bg-gradient-noto rounded-full mb-4">
+          <div className="inline-flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 bg-gradient-noto rounded-full mb-4 shadow-lg">
             <UploadIcon className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
           </div>
-          <h1 className="text-2xl sm:text-4xl font-heading font-bold text-noto-primary mb-2">
+          <h1 className="text-2xl sm:text-4xl font-heading font-bold text-noto-primary dark:text-blue-200 mb-2 transition-colors duration-300">
             Upload Materials
           </h1>
-          <p className="text-sm sm:text-base text-gray-600 px-4">
+          <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300 px-4 transition-colors duration-300">
             Share your study materials with the NOTO community
           </p>
           
           {/* Admin Verification Notice */}
           <div className="mt-4 mx-auto max-w-lg">
             <div 
-              className="bg-amber-50 border border-amber-200 rounded-lg p-3 cursor-help"
+              className="bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-500/40 rounded-lg p-3 cursor-help transition-colors duration-300"
               title="All uploads are reviewed by our admin team to ensure quality before going public. Reviews are typically completed within 24 hours. You can track the verification status anytime in your Profile."
             >
               <div className="flex items-center justify-center space-x-2">
-                <AlertCircle className="w-4 h-4 text-amber-600" />
-                <span className="text-amber-800 text-xs sm:text-sm font-medium">
+                <AlertCircle className="w-4 h-4 text-amber-600 dark:text-amber-300" />
+                <span className="text-amber-800 dark:text-amber-200 text-xs sm:text-sm font-medium">
                   📋 Admin verification required before going live <br /> (usually within 24 hours)
                 </span>
               </div>
-              <p className="text-amber-700 text-xs mt-1 text-center">
+              <p className="text-amber-700 dark:text-amber-200/80 text-xs mt-1 text-center">
                 Hover for more details • Track status in Profile
               </p>
             </div>
@@ -449,13 +449,13 @@ const handleSubmit = async (e) => {
         </div>
 
         {/* Upload Form */}
-        <div className="card">
+        <div className="card text-gray-800 dark:text-gray-100">
           <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
             {/* Uploaded By Info */}
-            <div className="bg-noto-light/30 p-3 sm:p-4 rounded-lg">
+            <div className="bg-noto-light/30 dark:bg-gray-700/40 p-3 sm:p-4 rounded-lg transition-colors duration-300">
               <div className="flex items-center space-x-3">
-                <User className="w-5 h-5 text-noto-primary" />
-                <span className="text-gray-700">
+                <User className="w-5 h-5 text-noto-primary dark:text-blue-300" />
+                <span className="text-gray-700 dark:text-gray-200">
                   <strong>Uploaded by:</strong>{" "}
                   {userProfile?.displayName || user?.displayName || "Anonymous"}
                 </span>
@@ -464,7 +464,7 @@ const handleSubmit = async (e) => {
 
             {/* 1. Category Selection */}
             <div>
-              <label className="block text-sm font-semibold text-noto-primary mb-2">
+              <label className="block text-sm font-semibold text-gray-800 dark:text-blue-200 mb-2 transition-colors duration-300">
                 Select Category *
               </label>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
@@ -482,8 +482,8 @@ const handleSubmit = async (e) => {
                       }
                       className={`p-3 sm:p-4 rounded-lg border-2 transition-all duration-200 flex items-center space-x-2 text-left ${
                         formData.category === category.value
-                          ? "border-noto-primary bg-noto-primary/5 text-noto-primary"
-                          : "border-gray-200 hover:border-noto-secondary"
+                          ? "border-noto-primary bg-noto-primary/5 text-noto-primary dark:border-blue-400 dark:bg-blue-900/30 dark:text-blue-200"
+                          : "border-gray-200 dark:border-gray-600 hover:border-noto-secondary dark:hover:border-blue-400"
                       }`}
                     >
                       <Icon className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
@@ -499,7 +499,7 @@ const handleSubmit = async (e) => {
 
             {/* 2. Document Type Selection - NEW */}
             <div>
-              <label className="block text-sm font-semibold text-noto-primary mb-2">
+              <label className="block text-sm font-semibold text-gray-800 dark:text-blue-200 mb-2 transition-colors duration-300">
                 Document Type *
               </label>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
@@ -513,8 +513,8 @@ const handleSubmit = async (e) => {
                   }
                   className={`p-3 sm:p-4 rounded-lg border-2 transition-all duration-200 flex flex-col items-center space-y-2 text-center ${
                     formData.documentType === "typed"
-                      ? "border-noto-primary bg-noto-primary/5 text-noto-primary"
-                      : "border-gray-200 hover:border-noto-secondary"
+                      ? "border-noto-primary bg-noto-primary/5 text-noto-primary dark:border-blue-400 dark:bg-blue-900/30 dark:text-blue-200"
+                      : "border-gray-200 dark:border-gray-600 hover:border-noto-secondary dark:hover:border-blue-400"
                   }`}
                 >
                   <FileText className="w-5 h-5 flex-shrink-0" />
@@ -530,8 +530,8 @@ const handleSubmit = async (e) => {
                   }}
                   className={`p-3 sm:p-4 rounded-lg border-2 transition-all duration-200 flex flex-col items-center space-y-2 text-center ${
                     formData.documentType === "handwritten"
-                      ? "border-noto-primary bg-noto-primary/5 text-noto-primary"
-                      : "border-gray-200 hover:border-noto-secondary"
+                      ? "border-noto-primary bg-noto-primary/5 text-noto-primary dark:border-blue-400 dark:bg-blue-900/30 dark:text-blue-200"
+                      : "border-gray-200 dark:border-gray-600 hover:border-noto-secondary dark:hover:border-blue-400"
                   }`}
                 >
                   <PenTool className="w-5 h-5 flex-shrink-0" />
@@ -651,11 +651,11 @@ const handleSubmit = async (e) => {
 
             {/* 3. Course Selection with Search - UPDATED */}
             <div className="relative">
-              <label className="block text-sm font-semibold text-noto-primary mb-2">
+              <label className="block text-sm font-semibold text-gray-800 dark:text-blue-200 mb-2 transition-colors duration-300">
                 Course *
               </label>
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 w-4 h-4" />
                 <input
                   type="text"
                   value={courseSearch}
@@ -669,19 +669,19 @@ const handleSubmit = async (e) => {
                   }}
                   onFocus={() => setShowCourseDropdown(true)}
                   placeholder="Search course (e.g., BTech, BCA, MBA)..."
-                  className="input text-sm sm:text-base pl-10"
+                  className="input text-sm sm:text-base pl-10 bg-white dark:bg-gray-900/60 text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 border border-noto-light dark:border-gray-700"
                 />
               </div>
 
               {/* Course Dropdown */}
               {showCourseDropdown && (
-                <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                <div className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg max-h-60 overflow-y-auto">
                   {filteredCourses.map((course, index) => (
                     <button
                       key={index}
                       type="button"
                       onClick={() => handleCourseSelect(course)}
-                      className="w-full px-4 py-2 text-left hover:bg-noto-light/30 transition-colors duration-200"
+                      className="w-full px-4 py-2 text-left text-gray-700 dark:text-gray-100 hover:bg-noto-light/30 dark:hover:bg-gray-800 transition-colors duration-200"
                     >
                       {course}
                     </button>
@@ -695,7 +695,7 @@ const handleSubmit = async (e) => {
 
             {/* 3. Subject Field - NEW: Free text input */}
             <div>
-              <label className="block text-sm font-semibold text-noto-primary mb-2">
+              <label className="block text-sm font-semibold text-gray-800 dark:text-blue-200 mb-2 transition-colors duration-300">
                 Subject *
               </label>
               <input
@@ -713,7 +713,7 @@ const handleSubmit = async (e) => {
 
             {/* 4. Title */}
             <div>
-              <label className="block text-sm font-semibold text-noto-primary mb-2">
+              <label className="block text-sm font-semibold text-gray-800 dark:text-blue-200 mb-2 transition-colors duration-300">
                 Material Title *
               </label>
               <input
@@ -732,7 +732,7 @@ const handleSubmit = async (e) => {
             {/* 5. Academic Details Row */}
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-semibold text-noto-primary mb-2">
+                <label className="block text-sm font-semibold text-gray-800 dark:text-blue-200 mb-2 transition-colors duration-300">
                   Semester *
                 </label>
                 <select
@@ -754,7 +754,7 @@ const handleSubmit = async (e) => {
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-noto-primary mb-2">
+                <label className="block text-sm font-semibold text-gray-800 dark:text-blue-200 mb-2 transition-colors duration-300">
                   Year *
                 </label>
                 <select
@@ -780,7 +780,7 @@ const handleSubmit = async (e) => {
 
             {/* 6. College Name */}
             <div>
-              <label className="block text-sm font-semibold text-noto-primary mb-2">
+              <label className="block text-sm font-semibold text-gray-800 dark:text-blue-200 mb-2 transition-colors duration-300">
                 College Name *
               </label>
               <input
@@ -800,7 +800,7 @@ const handleSubmit = async (e) => {
 
             {/* 7. Professor Name (Required) */}
             <div>
-              <label className="block text-sm font-semibold text-noto-primary mb-2">
+              <label className="block text-sm font-semibold text-gray-800 dark:text-blue-200 mb-2 transition-colors duration-300">
                 Professor Name <span className="text-red-500">*</span>
               </label>
               <input
@@ -841,7 +841,7 @@ const handleSubmit = async (e) => {
 
             {/* 8. File Upload */}
             <div>
-              <label className="block text-sm font-semibold text-noto-primary mb-2">
+              <label className="block text-sm font-semibold text-gray-800 dark:text-blue-200 mb-2 transition-colors duration-300">
                 Upload File *
               </label>
               <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-noto-primary transition-colors duration-200">
@@ -875,10 +875,10 @@ const handleSubmit = async (e) => {
             {/* Important Messages */}
             <div className="space-y-2">
               {/* Storage Limit Warning */}
-              <div className="bg-gradient-to-r from-red-50 to-orange-50 border-l-4 border-red-500 p-3 rounded-lg shadow-sm">
+              <div className="bg-gradient-to-r from-red-50 to-orange-50 dark:from-red-900/30 dark:to-orange-900/30 border-l-4 border-red-500 dark:border-red-400 p-3 rounded-lg shadow-sm transition-colors duration-300">
                 <div className="flex items-center justify-center space-x-2">
                   <span className="text-lg animate-pulse">💾</span>
-                  <p className="font-semibold text-red-700 text-center text-xs sm:text-sm">
+                  <p className="font-semibold text-red-700 dark:text-red-300 text-center text-xs sm:text-sm">
                     Due to cloud space shortage, the limit is only 5 documents per user.
                   </p>
                 </div>
@@ -886,10 +886,10 @@ const handleSubmit = async (e) => {
 
               {/* Handwritten Processing Time Note */}
               {formData.documentType === "handwritten" && (
-                <div className="bg-gradient-to-r from-amber-50 to-yellow-50 border-l-4 border-amber-500 p-3 rounded-lg shadow-sm">
+                <div className="bg-gradient-to-r from-amber-50 to-yellow-50 dark:from-amber-900/30 dark:to-yellow-900/30 border-l-4 border-amber-500 dark:border-amber-400 p-3 rounded-lg shadow-sm transition-colors duration-300">
                   <div className="flex items-center justify-center space-x-2">
                     <span className="text-lg animate-pulse">⏱️</span>
-                    <p className="font-medium text-amber-800 text-center text-xs sm:text-sm">
+                    <p className="font-medium text-amber-800 dark:text-amber-200 text-center text-xs sm:text-sm">
                       Processing may take 30-60 seconds for handwritten documents
                     </p>
                   </div>
@@ -921,12 +921,12 @@ const handleSubmit = async (e) => {
         </div>
 
         {/* Guidelines */}
-        <div className="mt-8 bg-blue-50 p-6 rounded-lg">
-          <h3 className="text-lg font-semibold text-noto-primary mb-4 flex items-center">
-            <AlertCircle className="w-5 h-5 mr-2" />
+        <div className="mt-8 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 p-6 rounded-lg transition-colors duration-300">
+          <h3 className="text-lg font-semibold text-noto-primary dark:text-blue-200 mb-4 flex items-center transition-colors duration-300">
+            <AlertCircle className="w-5 h-5 mr-2 text-noto-primary dark:text-blue-300" />
             Upload Guidelines
           </h3>
-          <ul className="text-gray-700 space-y-2 text-sm">
+          <ul className="text-gray-700 dark:text-gray-200 space-y-2 text-sm transition-colors duration-300">
             <li>• Ensure materials are original or properly cited</li>
             <li>• Use clear, descriptive titles for better searchability</li>
             <li>• Maximum file size: 5MB</li>

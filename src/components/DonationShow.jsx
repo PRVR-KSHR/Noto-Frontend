@@ -88,9 +88,19 @@ const DonationShow = () => {
   }, []);
 
   // Create seamless infinite loop - triple the donations for smooth continuity
-  const infiniteDonations = donations.length > 0 
-    ? [...donations, ...donations, ...donations] 
-    : [];
+  const MIN_VISIBLE_ITEMS = 12;
+  const baseDonations = donations.length > 0 ? [...donations] : [];
+
+  let displayDonations = [...baseDonations];
+  if (displayDonations.length > 0 && displayDonations.length < MIN_VISIBLE_ITEMS) {
+    // Repeat donors so the marquee never runs out of items on wider screens
+    const repeatCount = Math.ceil(MIN_VISIBLE_ITEMS / displayDonations.length);
+    displayDonations = Array.from({ length: repeatCount }, () => baseDonations)
+      .flat()
+      .slice(0, MIN_VISIBLE_ITEMS);
+  }
+
+  const marqueeDuration = Math.max(24, displayDonations.length * 3);
 
   if (isLoading) {
     return (
@@ -128,7 +138,7 @@ const DonationShow = () => {
           )}
         </div>
         
-        <div className="overflow-hidden">
+        <div className="overflow-hidden relative marquee-mask">
           <div className="marquee-content-loading">
             <div className="flex whitespace-nowrap">
               {[...Array(15)].map((_, i) => (
@@ -167,32 +177,27 @@ const DonationShow = () => {
     );
   }
 
-  return (
+  return (  
     <div className="w-full overflow-hidden py-10 -mt-20">
       {/* Inline CSS for infinite marquee animation */}
       <style jsx>{`
-        @keyframes infiniteScroll {
+        @keyframes marqueeScroll {
           from {
             transform: translateX(0);
           }
           to {
-            transform: translateX(-100%);
+            transform: translateX(-50%);
           }
         }
-        
-        .marquee-content {
-          animation: infiniteScroll 30s linear infinite;
+
+        .marquee-track {
           display: flex;
           width: max-content;
+          animation: marqueeScroll var(--marquee-duration, 30s) linear infinite;
         }
-        
-        .marquee-container:hover .marquee-content {
+
+        .marquee-container:hover .marquee-track {
           animation-play-state: paused;
-        }
-        
-        .marquee-wrapper {
-          display: flex;
-          width: 200%; /* Double width to accommodate duplicate content */
         }
       `}</style>
       
@@ -205,90 +210,46 @@ const DonationShow = () => {
       </div>
 
       {/* True Infinite Marquee */}
-      <div className="marquee-container overflow-hidden">
-        <div className="marquee-content">
-          {/* First set of donations */}
-          <div className="flex whitespace-nowrap">
-            {donations.map((donation, index) => (
-              <div
-                key={`set1-${donation._id}-${index}`}
-                className="inline-flex items-center space-x-3 mx-6 group cursor-default flex-shrink-0"
-              >
-                {/* Heart Icon */}
-                <Heart 
-                  className="w-3 h-3 text-pink-500 group-hover:scale-110 transition-transform duration-200 flex-shrink-0" 
-                  fill="currentColor"
-                />
-                
-                {/* Donor Info */}
-                <span className="font-medium text-gray-700 text-sm group-hover:text-pink-600 transition-colors duration-200">
-                  {donation.donorName}
-                </span>
-                
-                <span className="text-gray-300 text-xs">•</span>
-                
-                {/* Amount with Rupee Symbol */}
-                <div className="inline-flex items-center space-x-1 bg-gradient-to-r from-green-100 to-emerald-100 px-3 py-1 rounded-full group-hover:from-green-200 group-hover:to-emerald-200 transition-all duration-200 shadow-sm">
-                  <IndianRupee className="w-3 h-3 text-green-600" />
-                  <span className="font-bold text-green-700 text-sm">
-                    {donation.amount.toLocaleString()}
+      <div className="marquee-container marquee-mask relative overflow-hidden">
+        <div
+          className="marquee-track"
+          style={{ '--marquee-duration': `${marqueeDuration}s` }}
+        >
+          {[0, 1].map((groupIndex) => (
+            <div key={`marquee-group-${groupIndex}`} className="marquee-group flex whitespace-nowrap">
+              {displayDonations.map((donation, index) => (
+                <div
+                  key={`donation-${groupIndex}-${index}`}
+                  className="inline-flex items-center space-x-3 mx-6 group cursor-default flex-shrink-0"
+                >
+                  <Heart
+                    className="w-3 h-3 text-pink-500 group-hover:scale-110 transition-transform duration-200 flex-shrink-0"
+                    fill="currentColor"
+                  />
+                  <span className="font-medium text-gray-700 dark:text-pink-200 text-sm group-hover:text-pink-600 transition-colors duration-200">
+                    {donation.donorName}
                   </span>
-                </div>
-
-                {/* Thank you message if notes exist */}
-                {donation.notes && (
-                  <>
-                    <span className="text-gray-300 text-xs">•</span>
-                    <span className="text-xs text-gray-500 italic max-w-20 truncate">
-                      "{donation.notes}"
+                  <span className="text-gray-300 text-xs">•</span>
+                  <div className="inline-flex items-center space-x-1 bg-gradient-to-r from-green-100 to-emerald-100 px-3 py-1 rounded-full group-hover:from-green-200 group-hover:to-emerald-200 transition-all duration-200 shadow-sm">
+                    <IndianRupee className="w-3 h-3 text-green-600" />
+                    <span className="font-bold text-green-700 text-sm">
+                      {donation.amount.toLocaleString()}
                     </span>
-                  </>
-                )}
-              </div>
-            ))}
-          </div>
-          
-          {/* Duplicate set for seamless infinite loop */}
-          <div className="flex whitespace-nowrap">
-            {donations.map((donation, index) => (
-              <div
-                key={`set2-${donation._id}-${index}`}
-                className="inline-flex items-center space-x-3 mx-6 group cursor-default flex-shrink-0"
-              >
-                {/* Heart Icon */}
-                <Heart 
-                  className="w-3 h-3 text-pink-500 group-hover:scale-110 transition-transform duration-200 flex-shrink-0" 
-                  fill="currentColor"
-                />
-                
-                {/* Donor Info */}
-                <span className="font-medium text-gray-700 text-sm group-hover:text-pink-600 transition-colors duration-200">
-                  {donation.donorName}
-                </span>
-                
-                <span className="text-gray-300 text-xs">•</span>
-                
-                {/* Amount with Rupee Symbol */}
-                <div className="inline-flex items-center space-x-1 bg-gradient-to-r from-green-100 to-emerald-100 px-3 py-1 rounded-full group-hover:from-green-200 group-hover:to-emerald-200 transition-all duration-200 shadow-sm">
-                  <IndianRupee className="w-3 h-3 text-green-600" />
-                  <span className="font-bold text-green-700 text-sm">
-                    {donation.amount.toLocaleString()}
-                  </span>
+                  </div>
+                  {donation.notes && (
+                    <>
+                      <span className="text-gray-300 text-xs">•</span>
+                      <span className="text-xs text-gray-500 italic max-w-20 truncate">
+                        "{donation.notes}"
+                      </span>
+                    </>
+                  )}
                 </div>
-
-                {/* Thank you message if notes exist */}
-                {donation.notes && (
-                  <>
-                    <span className="text-gray-300 text-xs">•</span>
-                    <span className="text-xs text-gray-500 italic max-w-20 truncate">
-                      "{donation.notes}"
-                    </span>
-                  </>
-                )}
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ))}
         </div>
+
       </div>
     </div>
   );

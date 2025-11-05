@@ -1,5 +1,5 @@
-import React from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import React from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const ErrorPage = ({ errorCode = 404, errorMessage, errorDetails }) => {
   const navigate = useNavigate();
@@ -10,53 +10,56 @@ const ErrorPage = ({ errorCode = 404, errorMessage, errorDetails }) => {
     switch (code) {
       case 400:
         return {
-          message: 'Bad Request',
-          details: 'The request could not be understood by the server.'
+          message: "Bad Request",
+          details: "The request could not be understood by the server.",
         };
       case 401:
         return {
-          message: 'Unauthorized Access',
-          details: 'Please log in to access this page.'
+          message: "Unauthorized Access",
+          details: "Please log in to access this page.",
         };
       case 403:
         return {
-          message: 'Access Forbidden',
-          details: 'You do not have permission to access this resource.'
+          message: "Access Forbidden",
+          details: "You do not have permission to access this resource.",
         };
       case 404:
         return {
           message: "Look like you're lost",
-          details: 'The page you are looking for is not available!'
+          details: "The page you are looking for is not available!",
         };
       case 408:
         return {
-          message: 'Request Timeout',
-          details: 'The server timed out waiting for the request.'
+          message: "Request Timeout",
+          details: "The server timed out waiting for the request.",
         };
       case 500:
         return {
-          message: 'Internal Server Error',
-          details: 'Something went wrong on our end. Please try again later.'
+          message: "Internal Server Error",
+          details: "Something went wrong on our end. Please try again later.",
         };
       case 502:
         return {
-          message: 'Bad Gateway',
-          details: 'The server received an invalid response. Please try again later.'
+          message: "Bad Gateway",
+          details:
+            "The server received an invalid response. Please try again later.",
         };
       case 503:
         return {
-          message: 'Service Unavailable',
-          details: 'The server is temporarily unavailable. Please try again later.'
+          message: "Service Unavailable",
+          details:
+            "The server is temporarily unavailable. Please try again later.",
         };
       case 504:
         return {
-          message: 'Gateway Timeout',
-          details: 'The server did not respond in time. Please try again later.'
+          message: "Gateway Timeout",
+          details:
+            "The server did not respond in time. Please try again later.",
         };
       default:
         return {
-          message: 'Something Went Wrong',
-          details: `An error occurred (Error Code: ${code}). Please try again.`
+          message: "Something Went Wrong",
+          details: `An error occurred (Error Code: ${code}). Please try again.`,
         };
     }
   };
@@ -66,7 +69,7 @@ const ErrorPage = ({ errorCode = 404, errorMessage, errorDetails }) => {
   const error = location.state?.error || {
     code: errorCode,
     message: errorMessage || defaultError.message,
-    details: errorDetails || defaultError.details
+    details: errorDetails || defaultError.details,
   };
 
   return (
@@ -84,19 +87,10 @@ const ErrorPage = ({ errorCode = 404, errorMessage, errorDetails }) => {
             </div>
 
             <div className="mt-[-50px]">
-              {/* Error Code Badge */}
-              <div className="flex justify-center mb-4">
-                <span className="inline-block bg-red-100 text-red-800 text-xs font-semibold px-4 py-2 rounded-full border-2 border-red-300">
-                  Error Code: {error.code}
-                </span>
-              </div>
-              
               <h3 className="text-2xl text-black sm:text-3xl font-bold mb-4">
                 {error.message}
               </h3>
-              <p className="mb-6 text-black sm:mb-5">
-                {error.details}
-              </p>
+              <p className="mb-6 text-black sm:mb-5">{error.details}</p>
 
               <button
                 onClick={() => navigate("/")}

@@ -24,6 +24,7 @@ import {
   RefreshCw,
   FileText
 } from 'lucide-react';
+import PencilLoader from '../../components/PencilLoader/PencilLoader';
 
 const AdminDashboard = () => {
   const { user } = useAuth();
@@ -543,20 +544,25 @@ const AdminDashboard = () => {
 
   const getPriorityColor = (priority) => {
     switch (priority) {
-      case 'urgent': return 'text-red-600 bg-red-50';
-      case 'high': return 'text-orange-600 bg-orange-50';
-      case 'medium': return 'text-yellow-600 bg-yellow-50';
-      case 'low': return 'text-green-600 bg-green-50';
-      default: return 'text-gray-600 bg-gray-50';
+      case 'urgent':
+        return 'text-red-600 bg-red-50 dark:text-red-300 dark:bg-red-900/40';
+      case 'high':
+        return 'text-orange-600 bg-orange-50 dark:text-orange-300 dark:bg-orange-900/40';
+      case 'medium':
+        return 'text-yellow-600 bg-yellow-50 dark:text-yellow-300 dark:bg-yellow-900/40';
+      case 'low':
+        return 'text-green-600 bg-green-50 dark:text-green-300 dark:bg-green-900/40';
+      default:
+        return 'text-gray-600 bg-gray-50 dark:text-gray-300 dark:bg-gray-800/60';
     }
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Checking admin access...</p>
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center transition-colors duration-300">
+        <div className="flex flex-col items-center gap-4">
+          <PencilLoader size="w-20 h-20" />
+          <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">Checking admin access...</p>
         </div>
       </div>
     );
@@ -564,113 +570,106 @@ const AdminDashboard = () => {
 
   return (
     <>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-10">
         
         {/* Header */}
         <div className="mb-6 sm:mb-8">
           <div className="flex items-center gap-2 sm:gap-3 mb-2">
-            <Shield className="h-6 w-6 sm:h-8 sm:w-8 text-blue-600" />
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Admin Dashboard</h1>
+            <Shield className="h-6 w-6 sm:h-8 sm:w-8 text-blue-600 dark:text-blue-400" />
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100">Admin Dashboard</h1>
           </div>
-          <p className="text-sm sm:text-base text-gray-600">Manage Donations and Events settings</p>
+          <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">Manage donations, events, and student messages in one place.</p>
         </div>
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
-          <div className="bg-white rounded-lg shadow p-4 sm:p-6">
+          <div className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-lg shadow-sm dark:shadow-gray-900/40 p-4 sm:p-6 transition-colors duration-300">
             <div className="flex items-center">
-              <div className="p-2 bg-green-100 rounded-lg">
-                <IndianRupee className="h-5 w-5 sm:h-6 sm:w-6 text-green-600" />
+              <div className="p-2 bg-green-100 dark:bg-green-900/40 rounded-lg">
+                <IndianRupee className="h-5 w-5 sm:h-6 sm:w-6 text-green-600 dark:text-green-400" />
               </div>
               <div className="ml-3 sm:ml-4">
-                <p className="text-xs sm:text-sm font-medium text-gray-600">Total Amount</p>
-                <p className="text-lg sm:text-2xl font-bold text-gray-900">
+                <p className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">Total Amount</p>
+                <p className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
                   ₹{stats.totalAmount?.toLocaleString() || 0}
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow p-4 sm:p-6">
+          <div className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-lg shadow-sm dark:shadow-gray-900/40 p-4 sm:p-6 transition-colors duration-300">
             <div className="flex items-center">
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <Users className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
+              <div className="p-2 bg-blue-100 dark:bg-blue-900/40 rounded-lg">
+                <Users className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600 dark:text-blue-400" />
               </div>
               <div className="ml-3 sm:ml-4">
-                <p className="text-xs sm:text-sm font-medium text-gray-600">Total Donations</p>
-                <p className="text-lg sm:text-2xl font-bold text-gray-900">{stats.totalDonations || 0}</p>
+                <p className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">Total Donations</p>
+                <p className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-gray-100">{stats.totalDonations || 0}</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow p-4 sm:p-6">
+          <div className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-lg shadow-sm dark:shadow-gray-900/40 p-4 sm:p-6 transition-colors duration-300">
             <div className="flex items-center">
-              <div className="p-2 bg-purple-100 rounded-lg">
-                <Calendar className="h-5 w-5 sm:h-6 sm:w-6 text-purple-600" />
+              <div className="p-2 bg-purple-100 dark:bg-purple-900/40 rounded-lg">
+                <Calendar className="h-5 w-5 sm:h-6 sm:w-6 text-purple-600 dark:text-purple-400" />
               </div>
               <div className="ml-3 sm:ml-4">
-                <p className="text-xs sm:text-sm font-medium text-gray-600">Active Events</p>
-                <p className="text-lg sm:text-2xl font-bold text-gray-900">{events.filter(event => event.isActive).length || 0}</p>
+                <p className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">Active Events</p>
+                <p className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-gray-100">{events.filter(event => event.isActive).length || 0}</p>
               </div>
             </div>
           </div>
         </div>
 
         {/* Navigation Tabs */}
-        <div className="bg-white rounded-lg shadow mb-6">
-          <div className="border-b border-gray-200">
-            <nav className="-mb-px flex flex-col sm:flex-row sm:space-x-8 px-4 sm:px-6" aria-label="Tabs">
+        <div className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-lg shadow-sm dark:shadow-gray-900/40 mb-6 transition-colors duration-300">
+          <div className="px-4 sm:px-6 py-3 border-b border-gray-200 dark:border-gray-700">
+            <nav className="flex flex-wrap gap-2" aria-label="Tabs">
               <button
                 onClick={() => setActiveTab('donations')}
-                className={`py-3 sm:py-4 px-2 sm:px-1 border-b-2 font-medium text-xs sm:text-sm text-left sm:text-center ${
+                className={`flex items-center gap-2 rounded-lg px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                   activeTab === 'donations'
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    ? 'border-2 border-blue-400 bg-blue-50 text-blue-600 dark:border-blue-500/70 dark:bg-blue-900/30 dark:text-blue-300 shadow-sm'
+                    : 'border border-gray-200 text-gray-500 dark:border-gray-700 dark:text-gray-400 hover:text-gray-700 hover:bg-gray-50 dark:hover:text-gray-200 dark:hover:bg-gray-800/60'
                 }`}
               >
-                <div className="flex items-center gap-2">
-                  <IndianRupee className="h-4 w-4" />
-                  Donations
-                </div>
+                <IndianRupee className="h-4 w-4" />
+                Donations
               </button>
               <button
                 onClick={() => setActiveTab('events')}
-                className={`py-3 sm:py-4 px-2 sm:px-1 border-b-2 font-medium text-xs sm:text-sm text-left sm:text-center ${
+                className={`flex items-center gap-2 rounded-lg px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                   activeTab === 'events'
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    ? 'border-2 border-blue-400 bg-blue-50 text-blue-600 dark:border-blue-500/70 dark:bg-blue-900/30 dark:text-blue-300 shadow-sm'
+                    : 'border border-gray-200 text-gray-500 dark:border-gray-700 dark:text-gray-400 hover:text-gray-700 hover:bg-gray-50 dark:hover:text-gray-200 dark:hover:bg-gray-800/60'
                 }`}
               >
-                <div className="flex items-center gap-2">
-                  <Calendar className="h-4 w-4" />
-                  Events
-                </div>
+                <Calendar className="h-4 w-4" />
+                Events
               </button>
               <button
                 onClick={() => setActiveTab('messages')}
-                className={`py-3 sm:py-4 px-2 sm:px-1 border-b-2 font-medium text-xs sm:text-sm text-left sm:text-center ${
+                className={`flex items-center gap-2 rounded-lg px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                   activeTab === 'messages'
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    ? 'border-2 border-blue-400 bg-blue-50 text-blue-600 dark:border-blue-500/70 dark:bg-blue-900/30 dark:text-blue-300 shadow-sm'
+                    : 'border border-gray-200 text-gray-500 dark:border-gray-700 dark:text-gray-400 hover:text-gray-700 hover:bg-gray-50 dark:hover:text-gray-200 dark:hover:bg-gray-800/60'
                 }`}
               >
-                <div className="flex items-center gap-2">
-                  <MessageSquare className="h-4 w-4" />
-                  Messages ({messageStats.pending})
-                </div>
+                <MessageSquare className="h-4 w-4" />
+                Messages ({messageStats.pending})
               </button>
               <button
                 onClick={() => setActiveTab('materials')}
-                className={`py-3 sm:py-4 px-2 sm:px-1 border-b-2 font-medium text-xs sm:text-sm text-left sm:text-center ${
+                className={`flex items-center gap-2 rounded-lg px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                   activeTab === 'materials'
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    ? 'border-2 border-blue-400 bg-blue-50 text-blue-600 dark:border-blue-500/70 dark:bg-blue-900/30 dark:text-blue-300 shadow-sm'
+                    : 'border border-gray-200 text-gray-500 dark:border-gray-700 dark:text-gray-400 hover:text-gray-700 hover:bg-gray-50 dark:hover:text-gray-200 dark:hover:bg-gray-800/60'
                 }`}
               >
-                <div className="flex items-center gap-2">
-                  <FileText className="h-4 w-4" />
-                  Material Verification ({pendingMaterials.length})
-                </div>
+                <FileText className="h-4 w-4" />
+                Material Verification ({pendingMaterials.length})
               </button>
             </nav>
           </div>
@@ -678,300 +677,89 @@ const AdminDashboard = () => {
 
         {/* Donations Tab Content */}
         {activeTab === 'donations' && (
-          <div>
-            {/* Add Donation Button */}
-            <div className="mb-4 sm:mb-6">
+          <div className="space-y-4 sm:space-y-6">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Manage Donations</h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Control marquee shout-outs and celebrate supporters in real time.
+                </p>
+              </div>
               <button
                 onClick={() => setShowAddForm(!showAddForm)}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-3 sm:px-4 py-2 rounded-lg flex items-center gap-2 transition-colors text-sm sm:text-base"
+                className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-50 dark:focus:ring-offset-gray-900"
               >
                 <Plus className="h-4 w-4" />
-                <span className="hidden sm:inline">Add New Donation</span>
-                <span className="sm:hidden">Add Donation</span>
+                {showAddForm ? 'Close Donation Form' : 'Add New Donation'}
               </button>
             </div>
 
-        {/* Add/Edit Form */}
-        {showAddForm && (
-          <div className="bg-white rounded-lg shadow p-4 sm:p-6 mb-4 sm:mb-6">
-            <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">
-              {editingDonation ? 'Edit Donation' : 'Add New Donation'}
-            </h3>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
-                    Donor Name *
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.donorName}
-                    onChange={(e) => setFormData({...formData, donorName: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
-                    placeholder="Enter donor name"
-                    maxLength={100}
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
-                    Amount (₹) *
-                  </label>
-                  <input
-                    type="number"
-                    value={formData.amount}
-                    onChange={(e) => setFormData({...formData, amount: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
-                    placeholder="Enter amount"
-                    min="1"
-                    max="1000000"
-                    required
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
-                  Notes (Optional)
-                </label>
-                <textarea
-                  value={formData.notes}
-                  onChange={(e) => setFormData({...formData, notes: e.target.value})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
-                  placeholder="Add any notes about this donation"
-                  rows="3"
-                  maxLength={500}
-                />
-              </div>
-
-              <div className="flex flex-col sm:flex-row gap-3">
-                <button
-                  type="submit"
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors text-sm sm:text-base"
-                >
-                  {editingDonation ? 'Update Donation' : 'Add Donation'}
-                </button>
-                <button
-                  type="button"
-                  onClick={handleCancel}
-                  className="bg-gray-300 hover:bg-gray-400 text-gray-700 px-4 py-2 rounded-lg transition-colors text-sm sm:text-base"
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
-          </div>
-        )}
-
-        {/* Donations List */}
-        <div className="bg-white rounded-lg shadow">
-          <div className="p-4 sm:p-6 border-b border-gray-200 flex justify-between items-center">
-            <div>
-              <h3 className="text-base sm:text-lg font-semibold text-gray-900">All Donations</h3>
-              <p className="text-xs sm:text-sm text-gray-600 mt-1">Manage donations displayed in the marquee</p>
-            </div>
-            <button
-              onClick={() => fetchDashboardData()}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-3 sm:px-4 py-2 rounded-lg flex items-center gap-2 transition-colors text-xs sm:text-sm"
-              title="Refresh donations data"
-            >
-              <RefreshCw className="h-3 w-3 sm:h-4 sm:w-4" />
-              <span className="hidden sm:inline">Refresh</span>
-            </button>
-          </div>
-
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Donor Name
-                  </th>
-                  <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Amount
-                  </th>
-                  <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Status
-                  </th>
-                  <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Date Added
-                  </th>
-                  <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {donations.length === 0 ? (
-                  <tr>
-                    <td colSpan="5" className="px-3 sm:px-6 py-8 text-center text-gray-500 text-sm">
-                      No donations added yet. Click "Add New Donation" to get started.
-                    </td>
-                  </tr>
-                ) : (
-                  donations.map((donation) => (
-                    <tr key={donation._id} className="hover:bg-gray-50">
-                      <td className="px-3 sm:px-6 py-4">
-                        <div className="font-medium text-gray-900 text-sm">
-                          {donation.donorName}
-                        </div>
-                        {donation.notes && (
-                          <div className="text-xs sm:text-sm text-gray-500 mt-1">
-                            {donation.notes}
-                          </div>
-                        )}
-                      </td>
-                      <td className="px-3 sm:px-6 py-4">
-                        <span className="text-green-600 font-semibold text-sm">
-                          ₹{donation.amount.toLocaleString()}
-                        </span>
-                      </td>
-                      <td className="px-3 sm:px-6 py-4">
-                        <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
-                          donation.isActive 
-                            ? 'bg-green-100 text-green-800' 
-                            : 'bg-red-100 text-red-800'
-                        }`}>
-                          {donation.isActive ? 'Active' : 'Hidden'}
-                        </span>
-                      </td>
-                      <td className="px-3 sm:px-6 py-4 text-xs sm:text-sm text-gray-500">
-                        {new Date(donation.createdAt).toLocaleDateString()}
-                      </td>
-                      <td className="px-3 sm:px-6 py-4">
-                        <div className="flex items-center gap-1 sm:gap-2">
-                          <button
-                            onClick={() => handleEdit(donation)}
-                            className="p-1 text-blue-600 hover:bg-blue-100 rounded transition-colors"
-                            title="Edit donation"
-                          >
-                            <Edit3 className="h-4 w-4" />
-                          </button>
-                          <button
-                            onClick={() => handleToggleActive(donation)}
-                            className={`p-1 rounded transition-colors ₹{
-                              donation.isActive
-                                ? 'text-orange-600 hover:bg-orange-100'
-                                : 'text-green-600 hover:bg-green-100'
-                            }`}
-                            title={donation.isActive ? 'Hide from marquee' : 'Show in marquee'}
-                          >
-                            {donation.isActive ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                          </button>
-                          <button
-                            onClick={() => handleDelete(donation)}
-                            className="p-1 text-red-600 hover:bg-red-100 rounded transition-colors"
-                            title="Delete donation"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
-          </div>
-        )}
-
-        {/* Events Tab Content */}
-        {activeTab === 'events' && (
-          <div>
-            {/* Add Event Button */}
-            <div className="mb-6">
-              <button
-                onClick={() => setShowEventForm(!showEventForm)}
-                className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
-              >
-                <Plus className="h-4 w-4" />
-                Add New Event
-              </button>
-            </div>
-
-            {/* Add/Edit Event Form */}
-            {showEventForm && (
-              <div className="bg-white rounded-lg shadow p-6 mb-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                  {editingEvent ? 'Edit Event' : 'Add New Event'}
+            {showAddForm && (
+              <div className="rounded-lg border border-gray-100 bg-white p-4 sm:p-6 shadow-sm transition-colors dark:border-gray-700 dark:bg-gray-800 dark:shadow-gray-900/40">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                  {editingDonation ? 'Edit Donation' : 'Add New Donation'}
                 </h3>
-                <form onSubmit={handleEventSubmit} className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Section Title
-                    </label>
-                    <input
-                      type="text"
-                      value={eventFormData.sectionTitle}
-                      onChange={(e) => setEventFormData({...eventFormData, sectionTitle: e.target.value})}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-                      placeholder="e.g., 🎉 Current Events, 🏆 Achievements, 🤝 Sponsorships"
-                      maxLength={50}
-                    />
-                    <p className="text-xs text-gray-500 mt-1">This will be displayed as the main heading on homepage. Leave empty for default.</p>
+                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                  Highlight donors that keep our mission running smoothly.
+                </p>
+                <form onSubmit={handleSubmit} className="mt-4 space-y-4">
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <div>
+                      <label className="mb-1 block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Donor Name *
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.donorName}
+                        onChange={(e) => setFormData({ ...formData, donorName: e.target.value })}
+                        className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100"
+                        placeholder="Enter donor name"
+                        maxLength={100}
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="mb-1 block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Amount (₹) *
+                      </label>
+                      <input
+                        type="number"
+                        value={formData.amount}
+                        onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
+                        className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100"
+                        placeholder="Enter amount"
+                        min="1"
+                        max="1000000"
+                        required
+                      />
+                    </div>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Description *
+                    <label className="mb-1 block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Notes (Optional)
                     </label>
                     <textarea
-                      value={eventFormData.description}
-                      onChange={(e) => setEventFormData({...eventFormData, description: e.target.value})}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 min-h-[80px]"
-                      placeholder="Enter event description or announcement details"
-                      maxLength={200}
-                      required
-                      rows={3}
+                      value={formData.notes}
+                      onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                      className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100"
+                      placeholder="Add any notes about this donation"
+                      rows="3"
+                      maxLength={500}
                     />
-                    <p className="text-xs text-gray-500 mt-1">This will be displayed below the section title. {200 - eventFormData.description.length} characters remaining.</p>
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Event Image {!editingEvent && '*'}
-                    </label>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleEventImageChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-                      required={!editingEvent}
-                    />
-                    <p className="text-xs text-gray-500 mt-1">Max size: 5MB. Supported: JPG, PNG, GIF</p>
                   </div>
 
-                  <div className="flex gap-3 pt-4">
+                  <div className="flex flex-col gap-3 sm:flex-row">
                     <button
                       type="submit"
-                      disabled={eventFormLoading}
-                      className={`px-6 py-2 rounded-lg transition-colors text-white ${
-                        eventFormLoading 
-                          ? 'bg-gray-400 cursor-not-allowed' 
-                          : 'bg-green-600 hover:bg-green-700'
-                      }`}
+                      className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-50 dark:focus:ring-offset-gray-900"
                     >
-                      {eventFormLoading ? (
-                        <div className="flex items-center gap-2">
-                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                          {editingEvent ? 'Updating...' : 'Creating...'}
-                        </div>
-                      ) : (
-                        editingEvent ? 'Update Event' : 'Create Event'
-                      )}
+                      {editingDonation ? 'Update Donation' : 'Add Donation'}
                     </button>
                     <button
                       type="button"
-                      onClick={handleEventCancel}
-                      disabled={eventFormLoading}
-                      className={`px-6 py-2 rounded-lg transition-colors ${
-                        eventFormLoading 
-                          ? 'bg-gray-200 text-gray-400 cursor-not-allowed' 
-                          : 'bg-gray-300 hover:bg-gray-400 text-gray-700'
-                      }`}
+                      onClick={handleCancel}
+                      className="inline-flex items-center justify-center rounded-lg bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 focus:ring-offset-gray-50 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600 dark:focus:ring-gray-500 dark:focus:ring-offset-gray-900"
                     >
                       Cancel
                     </button>
@@ -980,104 +768,98 @@ const AdminDashboard = () => {
               </div>
             )}
 
-            {/* Events List */}
-            <div className="bg-white rounded-lg shadow">
-              <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-                <h3 className="text-lg font-semibold text-gray-900">Events List</h3>
+            <div className="rounded-lg border border-gray-100 bg-white shadow-sm transition-colors dark:border-gray-700 dark:bg-gray-800 dark:shadow-gray-900/40">
+              <div className="flex flex-col gap-2 justify-between border-b border-gray-200 px-4 py-4 sm:flex-row sm:items-center sm:px-6 dark:border-gray-700">
+                <div>
+                  <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-100">All Donations</h3>
+                  <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
+                    Manage supporters displayed in the homepage marquee.
+                  </p>
+                </div>
                 <button
                   onClick={() => fetchDashboardData()}
-                  className="bg-green-600 hover:bg-green-700 text-white px-3 sm:px-4 py-2 rounded-lg flex items-center gap-2 transition-colors text-xs sm:text-sm"
-                  title="Refresh events data"
+                  className="inline-flex items-center gap-2 rounded-lg border border-blue-500/20 bg-blue-50 px-4 py-2 text-xs font-medium text-blue-700 transition-colors hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-blue-500/40 dark:bg-blue-900/30 dark:text-blue-300 dark:hover:bg-blue-900/50"
+                  title="Refresh donations data"
                 >
-                  <RefreshCw className="h-3 w-3 sm:h-4 sm:w-4" />
-                  <span className="hidden sm:inline">Refresh</span>
+                  <RefreshCw className="h-4 w-4" />
+                  Refresh
                 </button>
               </div>
+
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-gray-50">
+                  <thead className="bg-gray-50 text-left text-xs font-medium uppercase tracking-wide text-gray-500 dark:bg-gray-800/80 dark:text-gray-300">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Event Details
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Image
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Status
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Created
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Actions
-                      </th>
+                      <th className="px-3 sm:px-6 py-3">Donor Name</th>
+                      <th className="px-3 sm:px-6 py-3">Amount</th>
+                      <th className="px-3 sm:px-6 py-3">Status</th>
+                      <th className="px-3 sm:px-6 py-3">Date Added</th>
+                      <th className="px-3 sm:px-6 py-3">Actions</th>
                     </tr>
                   </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {events.length === 0 ? (
+                  <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-800">
+                    {donations.length === 0 ? (
                       <tr>
-                        <td colSpan="5" className="px-6 py-8 text-center text-gray-500">
-                          <Calendar className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-                          <p className="text-lg font-medium text-gray-900 mb-2">No events yet</p>
-                          <p>
-                            No events added yet. Click "Add New Event" to get started.
-                          </p>
+                        <td colSpan="5" className="px-3 sm:px-6 py-8 text-center text-sm text-gray-500 dark:text-gray-300">
+                          No donations added yet. Click "Add New Donation" to get started.
                         </td>
                       </tr>
                     ) : (
-                      events.map((event) => (
-                        <tr key={event._id} className="hover:bg-gray-50">
-                          <td className="px-6 py-4">
-                            <div>
-                              <p className="text-sm font-medium text-gray-900">{event.description}</p>
-                              <p className="text-xs text-gray-500">Section: {event.sectionTitle || '🎉 Current Events'}</p>
-                              <p className="text-xs text-gray-500">Created by: {event.createdBy}</p>
+                      donations.map((donation) => (
+                        <tr key={donation._id} className="hover:bg-gray-50 dark:hover:bg-gray-700/40">
+                          <td className="px-3 sm:px-6 py-4">
+                            <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                              {donation.donorName}
                             </div>
+                            {donation.notes && (
+                              <div className="mt-1 text-xs sm:text-sm text-gray-500 dark:text-gray-300">
+                                {donation.notes}
+                              </div>
+                            )}
                           </td>
-                          <td className="px-6 py-4">
-                            <img 
-                              src={event.imageUrl} 
-                              alt={event.description}
-                              className="h-16 w-24 object-cover rounded-lg border border-gray-200"
-                            />
-                          </td>
-                          <td className="px-6 py-4">
-                            <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                              event.isActive 
-                                ? 'bg-green-100 text-green-800' 
-                                : 'bg-gray-100 text-gray-800'
-                            }`}>
-                              {event.isActive ? 'Active' : 'Inactive'}
+                          <td className="px-3 sm:px-6 py-4">
+                            <span className="text-sm font-semibold text-green-600 dark:text-green-400">
+                              ₹{donation.amount.toLocaleString()}
                             </span>
                           </td>
-                          <td className="px-6 py-4 text-sm text-gray-500">
-                            {new Date(event.createdAt).toLocaleDateString()}
+                          <td className="px-3 sm:px-6 py-4">
+                            <span
+                              className={`inline-flex px-2 py-1 text-xs font-medium uppercase tracking-wide rounded-full ${
+                                donation.isActive
+                                  ? 'bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300'
+                                  : 'bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300'
+                              }`}
+                            >
+                              {donation.isActive ? 'Active' : 'Hidden'}
+                            </span>
                           </td>
-                          <td className="px-6 py-4">
-                            <div className="flex space-x-2">
+                          <td className="px-3 sm:px-6 py-4 text-xs sm:text-sm text-gray-500 dark:text-gray-300">
+                            {new Date(donation.createdAt).toLocaleDateString()}
+                          </td>
+                          <td className="px-3 sm:px-6 py-4">
+                            <div className="flex items-center gap-1 sm:gap-2">
                               <button
-                                onClick={() => handleEventEdit(event)}
-                                className="p-1 text-blue-600 hover:bg-blue-100 rounded transition-colors"
-                                title="Edit event"
+                                onClick={() => handleEdit(donation)}
+                                className="rounded p-1 text-blue-600 transition-colors hover:bg-blue-100 dark:text-blue-300 dark:hover:bg-blue-900/40"
+                                title="Edit donation"
                               >
                                 <Edit3 className="h-4 w-4" />
                               </button>
                               <button
-                                onClick={() => handleEventToggle(event)}
-                                className={`p-1 rounded transition-colors ${
-                                  event.isActive
-                                    ? 'text-orange-600 hover:bg-orange-100'
-                                    : 'text-green-600 hover:bg-green-100'
+                                onClick={() => handleToggleActive(donation)}
+                                className={`rounded p-1 transition-colors ${
+                                  donation.isActive
+                                    ? 'text-orange-600 hover:bg-orange-100 dark:text-orange-300 dark:hover:bg-orange-900/40'
+                                    : 'text-green-600 hover:bg-green-100 dark:text-green-300 dark:hover:bg-green-900/40'
                                 }`}
-                                title={event.isActive ? 'Deactivate event' : 'Activate event'}
+                                title={donation.isActive ? 'Hide from marquee' : 'Show in marquee'}
                               >
-                                {event.isActive ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                                {donation.isActive ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                               </button>
                               <button
-                                onClick={() => handleEventDelete(event)}
-                                className="p-1 text-red-600 hover:bg-red-100 rounded transition-colors"
-                                title="Delete event"
+                                onClick={() => handleDelete(donation)}
+                                className="rounded p-1 text-red-600 transition-colors hover:bg-red-100 dark:text-red-300 dark:hover:bg-red-900/40"
+                                title="Delete donation"
                               >
                                 <Trash2 className="h-4 w-4" />
                               </button>
@@ -1093,58 +875,306 @@ const AdminDashboard = () => {
           </div>
         )}
 
+        {/* Events Tab Content */}
+        {activeTab === 'events' && (
+          <div className="space-y-6">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Manage Events</h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400">Keep the homepage spotlight fresh with timely updates.</p>
+              </div>
+              <button
+                onClick={() => setShowEventForm(!showEventForm)}
+                className="inline-flex items-center gap-2 rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-gray-50 dark:focus:ring-offset-gray-900"
+              >
+                <Plus className="h-4 w-4" />
+                {showEventForm ? 'Close Event Form' : 'Add New Event'}
+              </button>
+            </div>
+
+            {showEventForm && (
+              <div className="rounded-lg border border-gray-100 bg-white p-6 shadow-sm transition-colors dark:border-gray-700 dark:bg-gray-800 dark:shadow-gray-900/40">
+                <h3 className="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
+                  {editingEvent ? 'Edit Event' : 'Add New Event'}
+                </h3>
+                <form onSubmit={handleEventSubmit} className="space-y-4">
+                  <div>
+                    <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Section Title
+                    </label>
+                    <input
+                      type="text"
+                      value={eventFormData.sectionTitle}
+                      onChange={(e) => setEventFormData({ ...eventFormData, sectionTitle: e.target.value })}
+                      className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100"
+                      placeholder="e.g., 🎉 Current Events, 🏆 Achievements, 🤝 Sponsorships"
+                      maxLength={50}
+                    />
+                    <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                      Appears as the main heading on the homepage events block. Leave empty for default.
+                    </p>
+                  </div>
+
+                  <div>
+                    <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Description *
+                    </label>
+                    <textarea
+                      value={eventFormData.description}
+                      onChange={(e) => setEventFormData({ ...eventFormData, description: e.target.value })}
+                      className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100"
+                      placeholder="Enter event description or announcement details"
+                      maxLength={200}
+                      required
+                      rows={3}
+                    />
+                    <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                      This is shown beneath the heading. {200 - eventFormData.description.length} characters remaining.
+                    </p>
+                  </div>
+
+                  <div>
+                    <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Event Image {!editingEvent && '*'}
+                    </label>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleEventImageChange}
+                      className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100"
+                      required={!editingEvent}
+                    />
+                    <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">Max size 5MB • Supported: JPG, PNG, GIF</p>
+                  </div>
+
+                  <div className="flex flex-wrap gap-3 pt-2">
+                    <button
+                      type="submit"
+                      disabled={eventFormLoading}
+                      className={`inline-flex items-center justify-center gap-2 rounded-lg px-5 py-2 text-sm font-medium text-white transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-gray-50 dark:focus:ring-offset-gray-900 ${
+                        eventFormLoading ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700'
+                      }`}
+                    >
+                      {eventFormLoading ? (
+                        <>
+                          <div className="h-4 w-4 animate-spin rounded-full border-b-2 border-white" />
+                          {editingEvent ? 'Updating...' : 'Creating...'}
+                        </>
+                      ) : (
+                        editingEvent ? 'Update Event' : 'Create Event'
+                      )}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleEventCancel}
+                      disabled={eventFormLoading}
+                      className={`inline-flex items-center justify-center gap-2 rounded-lg px-5 py-2 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 focus:ring-offset-gray-50 dark:focus:ring-gray-600 dark:focus:ring-offset-gray-900 ${
+                        eventFormLoading
+                          ? 'bg-gray-200 text-gray-400 cursor-not-allowed dark:bg-gray-800 dark:text-gray-500'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600'
+                      }`}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </form>
+              </div>
+            )}
+
+            <div className="rounded-lg border border-gray-100 bg-white shadow-sm transition-colors dark:border-gray-700 dark:bg-gray-800 dark:shadow-gray-900/40">
+              <div className="flex flex-col gap-4 border-b border-gray-200 px-6 py-4 dark:border-gray-700 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Events Overview</h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    Review the announcements that power the homepage highlights.
+                  </p>
+                </div>
+                <div className="flex flex-wrap items-center gap-3">
+                  <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
+                    <span className="h-2.5 w-2.5 rounded-full bg-green-500" />
+                    Active: {events.filter((event) => event.isActive).length}
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
+                    <span className="h-2.5 w-2.5 rounded-full bg-gray-400" />
+                    Inactive: {events.filter((event) => !event.isActive).length}
+                  </div>
+                  <button
+                    onClick={() => fetchDashboardData()}
+                    className="inline-flex items-center gap-2 rounded-lg border border-green-500/20 bg-green-50 px-4 py-2 text-sm font-medium text-green-700 transition-colors hover:bg-green-100 focus:outline-none focus:ring-2 focus:ring-green-500 dark:border-green-500/40 dark:bg-green-900/30 dark:text-green-300 dark:hover:bg-green-900/50"
+                    title="Refresh events data"
+                  >
+                    <RefreshCw className="h-4 w-4" />
+                    Refresh
+                  </button>
+                </div>
+              </div>
+
+              <div className="p-4 sm:p-6">
+                {events.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-gray-300 bg-gray-50 px-6 py-10 text-center dark:border-gray-600 dark:bg-gray-900/40">
+                    <Calendar className="mb-4 h-12 w-12 text-gray-300 dark:text-gray-600" />
+                    <h4 className="text-lg font-semibold text-gray-900 dark:text-gray-100">No events yet</h4>
+                    <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                      Create your first announcement to bring life to the homepage events section.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 gap-4 sm:gap-6 xl:grid-cols-2">
+                    {events.map((event) => {
+                      const formattedDate = new Date(event.createdAt).toLocaleDateString();
+                      return (
+                        <article
+                          key={event._id}
+                          className="group relative overflow-hidden rounded-xl border border-gray-200 bg-gray-50/80 p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:border-blue-400 hover:shadow-md dark:border-gray-700 dark:bg-gray-900/40 dark:hover:border-blue-500/60"
+                        >
+                          <div className="flex flex-col gap-4 lg:flex-row">
+                            <div className="lg:w-48">
+                              <div className="relative h-40 overflow-hidden rounded-lg border border-gray-200 bg-gray-100 dark:border-gray-700 dark:bg-gray-800">
+                                {event.imageUrl ? (
+                                  <img
+                                    src={event.imageUrl}
+                                    alt={event.sectionTitle || event.description}
+                                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                                  />
+                                ) : (
+                                  <div className="flex h-full w-full items-center justify-center text-xs font-medium text-gray-400 dark:text-gray-500">
+                                    No image
+                                  </div>
+                                )}
+                                <span
+                                  className={`absolute top-3 left-3 inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold text-white shadow-sm ${
+                                    event.isActive ? 'bg-green-600/90' : 'bg-gray-500/80'
+                                  }`}
+                                >
+                                  {event.isActive ? 'Active' : 'Inactive'}
+                                </span>
+                              </div>
+                            </div>
+
+                            <div className="flex-1">
+                              <div className="flex flex-col gap-2">
+                                <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                                  Section Title
+                                </p>
+                                <h4 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                                  {event.sectionTitle || '🎉 Current Events'}
+                                </h4>
+                                <p className="text-sm text-gray-600 dark:text-gray-300">
+                                  {event.description}
+                                </p>
+                              </div>
+
+                              <div className="mt-4 flex flex-wrap items-center gap-3 text-xs text-gray-500 dark:text-gray-400">
+                                <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2.5 py-1 text-blue-600 dark:bg-blue-900/30 dark:text-blue-300">
+                                  <Calendar className="h-3 w-3" />
+                                  {formattedDate}
+                                </span>
+                                {event.createdBy && (
+                                  <span className="inline-flex items-center gap-1 rounded-full bg-gray-100 px-2.5 py-1 text-gray-600 dark:bg-gray-800 dark:text-gray-300">
+                                    <Users className="h-3 w-3" />
+                                    {event.createdBy}
+                                  </span>
+                                )}
+                                <span className="inline-flex items-center gap-1 rounded-full bg-gray-100 px-2.5 py-1 text-gray-600 dark:bg-gray-800 dark:text-gray-300">
+                                  <FileText className="h-3 w-3" />
+                                  ID: {event._id.slice(-6)}
+                                </span>
+                              </div>
+
+                              <div className="mt-5 flex flex-wrap items-center gap-2">
+                                <button
+                                  onClick={() => handleEventEdit(event)}
+                                  className="inline-flex items-center gap-2 rounded-lg border border-blue-200 px-3 py-1.5 text-sm font-medium text-blue-600 transition-colors hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-blue-500/40 dark:text-blue-300 dark:hover:bg-blue-900/40"
+                                  title="Edit event"
+                                >
+                                  <Edit3 className="h-4 w-4" />
+                                  Edit
+                                </button>
+                                <button
+                                  onClick={() => handleEventToggle(event)}
+                                  className={`inline-flex items-center gap-2 rounded-lg border px-3 py-1.5 text-sm font-medium transition-colors focus:outline-none focus:ring-2 ${
+                                    event.isActive
+                                      ? 'border-orange-300 text-orange-600 hover:bg-orange-50 focus:ring-orange-400 dark:border-orange-500/40 dark:text-orange-300 dark:hover:bg-orange-900/40'
+                                      : 'border-green-300 text-green-600 hover:bg-green-50 focus:ring-green-400 dark:border-green-500/40 dark:text-green-300 dark:hover:bg-green-900/40'
+                                  }`}
+                                  title={event.isActive ? 'Deactivate event' : 'Activate event'}
+                                >
+                                  {event.isActive ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                                  {event.isActive ? 'Hide' : 'Show'}
+                                </button>
+                                <button
+                                  onClick={() => handleEventDelete(event)}
+                                  className="inline-flex items-center gap-2 rounded-lg border border-red-200 px-3 py-1.5 text-sm font-medium text-red-600 transition-colors hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-400 dark:border-red-500/40 dark:text-red-300 dark:hover:bg-red-900/40"
+                                  title="Delete event"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                  Delete
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </article>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Messages Tab Content */}
         {activeTab === 'messages' && (
           <div>
             {/* Message Statistics */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-4 sm:mb-6">
-              <div className="bg-white rounded-lg shadow p-3 sm:p-4">
+              <div className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-lg shadow-sm dark:shadow-gray-900/40 p-3 sm:p-4 transition-colors duration-300">
                 <div className="flex items-center">
                   <Clock className="h-4 w-4 sm:h-5 sm:w-5 text-yellow-500 mr-2" />
                   <div>
-                    <p className="text-xs sm:text-sm text-gray-600">Pending</p>
-                    <p className="text-lg sm:text-xl font-bold text-yellow-600">{messageStats.pending}</p>
+                    <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Pending</p>
+                    <p className="text-lg sm:text-xl font-bold text-yellow-600 dark:text-yellow-400">{messageStats.pending}</p>
                   </div>
                 </div>
               </div>
-              <div className="bg-white rounded-lg shadow p-3 sm:p-4">
+              <div className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-lg shadow-sm dark:shadow-gray-900/40 p-3 sm:p-4 transition-colors duration-300">
                 <div className="flex items-center">
                   <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 text-green-500 mr-2" />
                   <div>
-                    <p className="text-xs sm:text-sm text-gray-600">Approved</p>
-                    <p className="text-lg sm:text-xl font-bold text-green-600">{messageStats.approved}</p>
+                    <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Approved</p>
+                    <p className="text-lg sm:text-xl font-bold text-green-600 dark:text-green-400">{messageStats.approved}</p>
                   </div>
                 </div>
               </div>
-              <div className="bg-white rounded-lg shadow p-3 sm:p-4">
+              <div className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-lg shadow-sm dark:shadow-gray-900/40 p-3 sm:p-4 transition-colors duration-300">
                 <div className="flex items-center">
                   <XCircle className="h-4 w-4 sm:h-5 sm:w-5 text-red-500 mr-2" />
                   <div>
-                    <p className="text-xs sm:text-sm text-gray-600">Rejected</p>
-                    <p className="text-lg sm:text-xl font-bold text-red-600">{messageStats.rejected}</p>
+                    <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Rejected</p>
+                    <p className="text-lg sm:text-xl font-bold text-red-600 dark:text-red-400">{messageStats.rejected}</p>
                   </div>
                 </div>
               </div>
-              <div className="bg-white rounded-lg shadow p-3 sm:p-4">
+              <div className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-lg shadow-sm dark:shadow-gray-900/40 p-3 sm:p-4 transition-colors duration-300">
                 <div className="flex items-center">
                   <MessageSquare className="h-4 w-4 sm:h-5 sm:w-5 text-gray-500 mr-2" />
                   <div>
-                    <p className="text-xs sm:text-sm text-gray-600">Total</p>
-                    <p className="text-lg sm:text-xl font-bold text-gray-600">{messageStats.total}</p>
+                    <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Total</p>
+                    <p className="text-lg sm:text-xl font-bold text-gray-600 dark:text-gray-200">{messageStats.total}</p>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Message Filters */}
-            <div className="bg-white rounded-lg shadow p-4 mb-4 sm:mb-6">
+            <div className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-lg shadow-sm dark:shadow-gray-900/40 p-4 mb-4 sm:mb-6 transition-colors duration-300">
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
                 <div>
-                  <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Status</label>
+                  <label className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Status</label>
                   <select
                     value={messageFilters.status}
                     onChange={(e) => setMessageFilters({...messageFilters, status: e.target.value})}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                    className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 bg-white dark:bg-gray-900 text-sm text-gray-700 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                   >
                     <option value="all">All Status</option>
                     <option value="pending">Pending</option>
@@ -1153,11 +1183,11 @@ const AdminDashboard = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Category</label>
+                  <label className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Category</label>
                   <select
                     value={messageFilters.category}
                     onChange={(e) => setMessageFilters({...messageFilters, category: e.target.value})}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                    className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 bg-white dark:bg-gray-900 text-sm text-gray-700 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                   >
                     <option value="all">All Categories</option>
                     <option value="event_request">Event Request</option>
@@ -1170,11 +1200,11 @@ const AdminDashboard = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Priority</label>
+                  <label className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Priority</label>
                   <select
                     value={messageFilters.priority}
                     onChange={(e) => setMessageFilters({...messageFilters, priority: e.target.value})}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                    className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 bg-white dark:bg-gray-900 text-sm text-gray-700 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                   >
                     <option value="all">All Priorities</option>
                     <option value="urgent">Urgent</option>
@@ -1187,12 +1217,12 @@ const AdminDashboard = () => {
             </div>
 
             {/* Messages List */}
-            <div className="bg-white rounded-lg shadow">
-              <div className="px-4 sm:px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-                <h3 className="text-base sm:text-lg font-medium text-gray-900">Student Messages</h3>
+            <div className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-lg shadow-sm dark:shadow-gray-900/40 transition-colors duration-300">
+              <div className="px-4 sm:px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+                <h3 className="text-base sm:text-lg font-medium text-gray-900 dark:text-gray-100">Student Messages</h3>
                 <button
                   onClick={() => fetchDashboardData()}
-                  className="bg-orange-600 hover:bg-orange-700 text-white px-3 sm:px-4 py-2 rounded-lg flex items-center gap-2 transition-colors text-xs sm:text-sm"
+                  className="bg-orange-600 hover:bg-orange-700 text-white px-3 sm:px-4 py-2 rounded-lg flex items-center gap-2 transition-colors text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 focus:ring-offset-gray-50 dark:focus:ring-offset-gray-900"
                   title="Refresh messages data"
                 >
                   <RefreshCw className="h-3 w-3 sm:h-4 sm:w-4" />
@@ -1203,13 +1233,13 @@ const AdminDashboard = () => {
               {/* Mobile Card Layout */}
               <div className="block sm:hidden">
                 {getFilteredMessages().length === 0 ? (
-                  <div className="px-4 py-12 text-center text-gray-500 text-sm">
+                  <div className="px-4 py-12 text-center text-gray-500 dark:text-gray-400 text-sm">
                     No messages found matching current filters
                   </div>
                 ) : (
-                  <div className="divide-y divide-gray-200">
+                  <div className="divide-y divide-gray-200 dark:divide-gray-700">
                     {getFilteredMessages().map((message) => (
-                      <div key={message._id} className="p-4 hover:bg-gray-50">
+                      <div key={message._id} className="p-4 bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800/60 transition-colors duration-200">
                         <div className="flex items-start justify-between">
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 mb-2">
@@ -1217,15 +1247,15 @@ const AdminDashboard = () => {
                                 {message.priority}
                               </span>
                             </div>
-                            <h4 className="text-sm font-medium text-gray-900 mb-1">{message.subject}</h4>
-                            <p className="text-xs text-gray-600 mb-2">{message.userName} • {message.userEmail}</p>
-                            <p className="text-xs text-gray-600 mb-2 whitespace-pre-wrap break-words">{message.message}</p>
+                            <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-1">{message.subject}</h4>
+                            <p className="text-xs text-gray-600 dark:text-gray-400 mb-2">{message.userName} • {message.userEmail}</p>
+                            <p className="text-xs text-gray-600 dark:text-gray-300 mb-2 whitespace-pre-wrap break-words">{message.message}</p>
                             {message.adminResponse && (
-                              <div className="mt-2 text-xs text-blue-700 bg-blue-50 border border-blue-100 rounded p-2 whitespace-pre-wrap break-words">
+                              <div className="mt-2 text-xs text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-900/30 border border-blue-100 dark:border-blue-500/40 rounded p-2 whitespace-pre-wrap break-words">
                                 <span className="font-medium">Your reply:</span> {message.adminResponse}
                               </div>
                             )}
-                            <div className="flex items-center gap-2 text-xs text-gray-500">
+                            <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
                               <span className="capitalize">{message.category.replace('_', ' ')}</span>
                               <span>•</span>
                               <span>{new Date(message.createdAt).toLocaleDateString()}</span>
@@ -1235,13 +1265,13 @@ const AdminDashboard = () => {
                         <div className="flex gap-2 mt-3">
                           <button
                             onClick={() => setReplyingTo(message)}
-                            className="px-3 py-1 text-xs bg-blue-100 text-blue-700 rounded hover:bg-blue-200 flex-1"
+                            className="px-3 py-1 text-xs bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 rounded hover:bg-blue-200 dark:hover:bg-blue-900/60 flex-1 transition-colors"
                           >
                             Reply
                           </button>
                           <button
                             onClick={() => handleDeleteMessage(message._id)}
-                            className="px-3 py-1 text-xs bg-red-100 text-red-700 rounded hover:bg-red-200"
+                            className="px-3 py-1 text-xs bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 rounded hover:bg-red-200 dark:hover:bg-red-900/60 transition-colors"
                           >
                             Delete
                           </button>
@@ -1254,55 +1284,55 @@ const AdminDashboard = () => {
 
               {/* Desktop Table Layout */}
               <div className="hidden sm:block overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
+                <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                  <thead className="bg-gray-50 dark:bg-gray-900/60">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                         Student & Subject
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                         Category & Priority
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                         Date
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                         Reply
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                         Actions
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
+                  <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
                     {getFilteredMessages().length === 0 ? (
                       <tr>
-                        <td colSpan="5" className="px-6 py-12 text-center text-gray-500">
+                        <td colSpan="5" className="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
                           No messages found matching current filters
                         </td>
                       </tr>
                     ) : (
                       getFilteredMessages().map((message) => (
-                        <tr key={message._id} className="hover:bg-gray-50">
+                        <tr key={message._id} className="hover:bg-gray-50 dark:hover:bg-gray-800/60 transition-colors">
                           <td className="px-6 py-4">
                             <div>
-                              <div className="text-sm font-medium text-gray-900">
+                              <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
                                 {message.userName}
                               </div>
-                              <div className="text-sm text-gray-500">
+                              <div className="text-sm text-gray-500 dark:text-gray-400">
                                 {message.userEmail}
                               </div>
-                              <div className="text-sm font-medium text-gray-700 mt-1">
+                              <div className="text-sm font-medium text-gray-700 dark:text-gray-300 mt-1">
                                 {message.subject}
                               </div>
-                              <div className="text-sm text-gray-600 mt-1 whitespace-pre-wrap break-words max-w-md">
+                              <div className="text-sm text-gray-600 dark:text-gray-300 mt-1 whitespace-pre-wrap break-words max-w-md">
                                 {message.message}
                               </div>
                             </div>
                           </td>
                           <td className="px-6 py-4">
                             <div>
-                              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300">
                                 {message.category.replace('_', ' ').toUpperCase()}
                               </span>
                               <div className="mt-1">
@@ -1312,35 +1342,35 @@ const AdminDashboard = () => {
                               </div>
                             </div>
                           </td>
-                          <td className="px-6 py-4 text-sm text-gray-500">
+                          <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
                             {new Date(message.createdAt).toLocaleDateString()}
                           </td>
-                          <td className="px-6 py-4 text-sm text-gray-700">
+                          <td className="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">
                             {message.adminResponse ? (
                               <div className="max-w-xs whitespace-pre-wrap break-words">
                                 {message.adminResponse}
                                 {message.respondedAt && (
-                                  <div className="text-xs text-gray-500 mt-1">
+                                  <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                                     {new Date(message.respondedAt).toLocaleDateString()}
                                   </div>
                                 )}
                               </div>
                             ) : (
-                              <span className="text-gray-400 italic">No reply yet</span>
+                              <span className="text-gray-400 dark:text-gray-500 italic">No reply yet</span>
                             )}
                           </td>
                           <td className="px-6 py-4">
                             <div className="flex items-center space-x-2">
                               <button
                                 onClick={() => setReplyingTo(message)}
-                                className="p-1 text-blue-600 hover:bg-blue-100 rounded transition-colors"
+                                className="p-1 text-blue-600 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/40 rounded transition-colors"
                                 title="Reply to message"
                               >
                                 <Send className="h-4 w-4" />
                               </button>
                               <button
                                 onClick={() => handleDeleteMessage(message._id)}
-                                className="p-1 text-red-600 hover:bg-red-100 rounded transition-colors"
+                                className="p-1 text-red-600 dark:text-red-300 hover:bg-red-100 dark:hover:bg-red-900/40 rounded transition-colors"
                                 title="Delete message"
                               >
                                 <Trash2 className="h-4 w-4" />
@@ -1360,102 +1390,106 @@ const AdminDashboard = () => {
         {/* Material Verification Tab Content */}
         {activeTab === 'materials' && (
           <div>
-            <div className="bg-white rounded-lg shadow">
-              <div className="px-4 sm:px-6 py-4">
-                <h3 className="text-lg font-medium text-gray-900 mb-4">
+            <div className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-lg shadow-sm dark:shadow-gray-900/40 transition-colors duration-300">
+              <div className="px-4 sm:px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-1">
                   Material Verification Queue
                 </h3>
-                
-                {pendingMaterials.length === 0 ? (
-                  <div className="text-center py-8">
-                    <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <p className="text-gray-500">No materials pending verification</p>
-                  </div>
-                ) : (
-                  <div className="overflow-x-auto">
-                    <table className="min-w-full divide-y divide-gray-200">
-                      <thead className="bg-gray-50">
-                        <tr>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Material Details
-                          </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Uploaded By
-                          </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Upload Date
-                          </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Actions
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody className="bg-white divide-y divide-gray-200">
-                        {pendingMaterials.map((material) => (
-                          <tr key={material._id} className="hover:bg-gray-50">
-                            <td className="px-6 py-4">
-                              <div className="flex flex-col">
-                                <div className="text-sm font-medium text-gray-900">
-                                  {material.title}
-                                </div>
-                                <div className="text-sm text-gray-500">
-                                  {material.category?.type} • {material.category?.subject}
-                                </div>
-                                <div className="text-xs text-gray-400">
-                                  {material.metadata?.course} • Semester {material.category?.semester}
-                                </div>
-                              </div>
-                            </td>
-                            <td className="px-6 py-4">
-                              <div className="text-sm text-gray-900">
-                                User ID: {material.uploadedBy}
-                              </div>
-                              <div className="text-xs text-gray-500">
-                                College: {material.metadata?.collegeName}
-                              </div>
-                            </td>
-                            <td className="px-6 py-4 text-sm text-gray-500">
-                              {new Date(material.createdAt).toLocaleDateString()}
-                            </td>
-                            <td className="px-6 py-4">
-                              <div className="flex space-x-2">
-                                {/* View Document Button - Navigate to view page */}
-                                <button
-                                  onClick={() => navigate(`/materials/view/${material._id}`)}
-                                  className="inline-flex items-center px-3 py-1 rounded-md text-sm font-medium bg-purple-100 text-purple-800 hover:bg-purple-200 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                                  title="View full document with all details"
-                                >
-                                  <Eye className="h-4 w-4 mr-1" />
-                                  View
-                                </button>
-                                
-                                <button
-                                  onClick={() => handleVerifyMaterial(material._id, material.title)}
-                                  className="inline-flex items-center px-3 py-1 rounded-md text-sm font-medium bg-green-100 text-green-800 hover:bg-green-200 focus:outline-none focus:ring-2 focus:ring-green-500"
-                                >
-                                  <CheckCircle className="h-4 w-4 mr-1" />
-                                  Verify
-                                </button>
-                                <button
-                                  onClick={() => handleRejectMaterial(material._id, material.title)}
-                                  className="inline-flex items-center px-3 py-1 rounded-md text-sm font-medium bg-red-100 text-red-800 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-red-500"
-                                >
-                                  <XCircle className="h-4 w-4 mr-1" />
-                                  Reject
-                                </button>
-                              </div>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Review pending uploads before they go live for students.
+                </p>
               </div>
+
+              {pendingMaterials.length === 0 ? (
+                <div className="text-center py-10">
+                  <FileText className="h-12 w-12 text-gray-400 dark:text-gray-600 mx-auto mb-4" />
+                  <p className="text-gray-500 dark:text-gray-400">No materials pending verification</p>
+                </div>
+              ) : (
+                <div className="px-4 sm:px-6 py-4 overflow-x-auto">
+                  <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                    <thead className="bg-gray-50 dark:bg-gray-900/60">
+                      <tr>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                          Material Details
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                          Uploaded By
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                          Upload Date
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                          Actions
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
+                      {pendingMaterials.map((material) => (
+                        <tr key={material._id} className="hover:bg-gray-50 dark:hover:bg-gray-800/60 transition-colors">
+                          <td className="px-6 py-4">
+                            <div className="flex flex-col">
+                              <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                                {material.title}
+                              </div>
+                              <div className="text-sm text-gray-500 dark:text-gray-400">
+                                {material.category?.type} • {material.category?.subject}
+                              </div>
+                              <div className="text-xs text-gray-400 dark:text-gray-500">
+                                {material.metadata?.course} • Semester {material.category?.semester}
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4">
+                            <div className="text-sm text-gray-900 dark:text-gray-200">
+                              User ID: {material.uploadedBy}
+                            </div>
+                            <div className="text-xs text-gray-500 dark:text-gray-400">
+                              College: {material.metadata?.collegeName}
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                            {new Date(material.createdAt).toLocaleDateString()}
+                          </td>
+                          <td className="px-6 py-4">
+                            <div className="flex space-x-2">
+                              {/* View Document Button - Navigate to view page */}
+                              <button
+                                onClick={() => navigate(`/materials/view/${material._id}`)}
+                                className="inline-flex items-center px-3 py-1 rounded-md text-sm font-medium bg-purple-100 text-purple-800 hover:bg-purple-200 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-purple-900/40 dark:text-purple-200 dark:hover:bg-purple-900/60"
+                                title="View full document with all details"
+                              >
+                                <Eye className="h-4 w-4 mr-1" />
+                                View
+                              </button>
+                              
+                              <button
+                                onClick={() => handleVerifyMaterial(material._id, material.title)}
+                                className="inline-flex items-center px-3 py-1 rounded-md text-sm font-medium bg-green-100 text-green-800 hover:bg-green-200 focus:outline-none focus:ring-2 focus:ring-green-500 dark:bg-green-900/40 dark:text-green-200 dark:hover:bg-green-900/60"
+                              >
+                                <CheckCircle className="h-4 w-4 mr-1" />
+                                Verify
+                              </button>
+                              <button
+                                onClick={() => handleRejectMaterial(material._id, material.title)}
+                                className="inline-flex items-center px-3 py-1 rounded-md text-sm font-medium bg-red-100 text-red-800 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-red-500 dark:bg-red-900/40 dark:text-red-200 dark:hover:bg-red-900/60"
+                              >
+                                <XCircle className="h-4 w-4 mr-1" />
+                                Reject
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </div>
           </div>
         )}
       </div>
+    </div>
 
       {/* NEW: Enhanced Rejection Modal */}
       {showRejectModal && rejectingMaterial && (
