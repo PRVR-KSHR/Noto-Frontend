@@ -332,35 +332,35 @@ const Materials = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen bg-white">
+      <div className="flex items-center justify-center h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
         <div className="text-center">
           <PencilLoader size="w-24 h-24" />
-          <p className="text-noto-primary mt-6 text-lg font-medium">Loading materials...</p>
+          <p className="text-noto-primary dark:text-blue-400 mt-6 text-lg font-medium transition-colors duration-300">Loading materials...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
       {/* RESPONSIVE: Header */}
-      <div className="bg-white shadow-sm border-b text-center">
+      <div className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 text-center transition-colors duration-300">
         <div className="max-w-screen-2xl mt-10 mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <h1 className="text-2xl sm:text-3xl font-bold text-noto-primary mb-2">
+          <h1 className="text-2xl sm:text-3xl font-bold text-noto-primary dark:text-blue-400 mb-2 transition-colors duration-300">
             Study Materials
           </h1>
-          <p className="text-gray-600 mb-4">
+          <p className="text-gray-600 dark:text-gray-400 mb-4 transition-colors duration-300">
             Browse and download academic resources shared by students
           </p>
 
           {/* Centered Info Banner - Below Description */}
           {showInfoBanner && (
-            <div className="inline-flex items-center gap-3 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg px-4 py-3 shadow-sm mt-2">
+            <div className="inline-flex items-center gap-3 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/40 dark:to-indigo-900/40 border border-blue-200 dark:border-blue-500/40 rounded-lg px-4 py-3 shadow-sm mt-2 transition-colors duration-300">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                  <Info className="w-4 h-4 text-blue-600" />
+                <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/60 rounded-full flex items-center justify-center flex-shrink-0 transition-colors duration-300">
+                  <Info className="w-4 h-4 text-blue-600 dark:text-blue-300" />
                 </div>
-                <p className="text-sm text-gray-700">
+                <p className="text-sm text-gray-700 dark:text-gray-200 transition-colors duration-300">
                   <span className="font-medium">Have suggestions?</span> Share your feedback with admin
                 </p>
               </div>
@@ -368,7 +368,7 @@ const Materials = () => {
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => navigate("/profile?tab=messages")}
-                  className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-md transition-colors text-sm font-medium whitespace-nowrap"
+                  className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white px-3 py-1.5 rounded-md transition-colors text-sm font-medium whitespace-nowrap"
                 >
                   <MessageSquare className="w-3.5 h-3.5" />
                   <span>Message</span>
@@ -377,7 +377,7 @@ const Materials = () => {
                 
                 <button
                   onClick={() => setShowInfoBanner(false)}
-                  className="w-7 h-7 flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-200 rounded-full transition-colors flex-shrink-0"
+                  className="w-7 h-7 flex items-center justify-center text-gray-400 dark:text-gray-300 hover:text-gray-600 dark:hover:text-gray-100 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full transition-colors flex-shrink-0"
                   aria-label="Close"
                 >
                   <X className="w-4 h-4" />
@@ -389,7 +389,7 @@ const Materials = () => {
       </div>
 
       {/* RESPONSIVE: Category Filter Section */}
-      <div className="bg-white border-b">
+      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 transition-colors duration-300">
         <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-wrap justify-center gap-3 sm:gap-4">
             {categories.map((category) => {
@@ -399,10 +399,10 @@ const Materials = () => {
                 <button
                   key={category.value}
                   onClick={() => setSelectedCategory(category.value)}
-                  className={`flex items-center px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-medium transition-colors text-sm sm:text-base ${
+                  className={`flex items-center px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-medium transition-all text-sm sm:text-base ${
                     isActive
-                      ? "bg-noto-primary text-white"
-                      : "bg-white text-gray-700 hover:bg-gray-100 border border-gray-200"
+                      ? "bg-noto-primary dark:bg-blue-600 text-white shadow-md hover:shadow-lg"
+                      : "bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 border border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500"
                   }`}
                 >
                   <Icon className="w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-2" />
@@ -418,7 +418,7 @@ const Materials = () => {
       {/* RESPONSIVE: Main Layout */}
       <div className="flex flex-col lg:flex-row">
         {/* RESPONSIVE: Left Sidebar - Full width on mobile, fixed width on lg+ */}
-        <div className="w-full lg:w-80 bg-white border-r border-gray-200 lg:min-h-screen flex-shrink-0">
+        <div className="w-full lg:w-80 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 lg:min-h-screen flex-shrink-0 transition-colors duration-300">
           <div className="p-4">
             <Filters 
               onFilterChange={handleFilterChange} 
@@ -433,8 +433,8 @@ const Materials = () => {
         <div className="flex-1 p-4 sm:p-6">
           {/* Materials Count */}
           <div className="mb-6">
-            <p className="text-gray-600 text-sm sm:text-base">
-              <span className="font-semibold">{filteredMaterials.length}</span>{" "}
+            <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base transition-colors duration-300">
+              <span className="font-semibold text-noto-primary dark:text-blue-400 transition-colors duration-300">{filteredMaterials.length}</span>{" "}
               {filteredMaterials.length === 1 ? "material" : "materials"} found
               {selectedCategory !== "all" &&
                 ` in ${getCategoryInfo(selectedCategory).label}`}
@@ -444,11 +444,11 @@ const Materials = () => {
           {/* RESPONSIVE: Materials Grid */}
           {filteredMaterials.length === 0 ? (
             <div className="text-center py-12">
-              <BookOpen className="w-12 h-12 sm:w-16 sm:h-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg sm:text-xl font-semibold text-gray-700 mb-2">
+              <BookOpen className="w-12 h-12 sm:w-16 sm:h-16 text-gray-400 dark:text-gray-600 mx-auto mb-4 transition-colors duration-300" />
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-700 dark:text-gray-300 mb-2 transition-colors duration-300">
                 No materials found
               </h3>
-              <p className="text-gray-400">
+              <p className="text-gray-400 dark:text-gray-500 transition-colors duration-300">
                 {selectedCategory === "all"
                   ? "No materials have been uploaded yet."
                   : `No ${getCategoryInfo(selectedCategory).label.toLowerCase()} available with current filters.`}
@@ -472,20 +472,32 @@ const Materials = () => {
                 return (
                   <div
                     key={material._id}
-                    className={`bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow border group cursor-pointer ${
+                    className={`bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg dark:hover:shadow-xl transition-all duration-300 border border-gray-200 dark:border-gray-700 group cursor-pointer ${
                       isNewCard ? 'animate-fade-in-smooth' : ''
                     }`}
                     style={{
                       animationDelay: isNewCard ? animationDelay : '0ms',
                       animationFillMode: 'both'
                     }}
+                    onClick={() => handleViewFile(material._id)}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter" || event.key === " ") {
+                        event.preventDefault();
+                        handleViewFile(material._id);
+                      }
+                    }}
                   >
-                    <div className="p-4">
-                      <div className="bg-noto-primary/10 p-4 pb-6 mb-2 rounded-lg relative overflow-hidden">
-                        <div className="absolute inset-0 bg-noto-primary/15 bg-black backdrop-blur-sm group-hover:opacity-100 opacity-0 z-20 transition-all duration-300 flex items-center justify-center">
+                    <div className="p-4 transition-colors duration-300">
+                      <div className="bg-noto-primary/10 dark:bg-blue-900/30 p-4 pb-6 mb-2 rounded-lg relative overflow-hidden transition-colors duration-300">
+                        <div className="absolute inset-0 bg-noto-primary/15 dark:bg-blue-900/40 backdrop-blur-sm group-hover:opacity-100 opacity-0 z-20 transition-all duration-300 flex items-center justify-center">
                           <button
-                            onClick={() => handleViewFile(material._id)} /* ✅ UPDATED: Now navigates to view page */
-                            className="opacity-0 group-hover:opacity-100 transform scale-75 group-hover:scale-100 transition-all duration-300 bg-noto-primary hover:bg-noto-primary-dark text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-medium shadow-lg flex items-center gap-2 text-sm sm:text-base"
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              handleViewFile(material._id);
+                            }}
+                            className="opacity-0 group-hover:opacity-100 transform scale-75 group-hover:scale-100 transition-all duration-300 bg-noto-primary dark:bg-blue-600 hover:bg-noto-primary-dark dark:hover:bg-blue-500 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-medium shadow-lg flex items-center gap-2 text-sm sm:text-base"
                           >
                             <Eye className="w-4 h-4" />
                             View
@@ -494,18 +506,18 @@ const Materials = () => {
 
                         {/* Category Badge */}
                         <div className="flex items-center mb-2 relative justify-between">
-                          <div className="flex items-center bg-noto-primary/20 px-2 sm:px-3 py-1 rounded-full -ml-1">
-                            <CategoryIcon className="w-3 h-3 sm:w-[14px] sm:h-[14px] text-noto-primary mr-1" />
-                            <span className="text-[10px] sm:text-[12px] font-medium text-noto-primary capitalize">
+                          <div className="flex items-center bg-noto-primary/20 dark:bg-blue-900/40 px-2 sm:px-3 py-1 rounded-full -ml-1 transition-colors duration-300">
+                            <CategoryIcon className="w-3 h-3 sm:w-[14px] sm:h-[14px] text-noto-primary dark:text-blue-300 mr-1 transition-colors duration-300" />
+                            <span className="text-[10px] sm:text-[12px] font-medium text-noto-primary dark:text-blue-200 capitalize transition-colors duration-300">
                               {material.category.type}
                             </span>
                           </div>
                           
                           {/* Star Count Display */}
                           {(material.stats?.starCount > 0) && (
-                            <div className="flex items-center bg-yellow-100 px-2 py-1 rounded-full">
-                              <Star className="w-3 h-3 text-yellow-600 fill-yellow-600 mr-1" />
-                              <span className="text-[10px] sm:text-[12px] font-semibold text-yellow-700">
+                            <div className="flex items-center bg-yellow-100 dark:bg-yellow-900/40 px-2 py-1 rounded-full transition-colors duration-300">
+                              <Star className="w-3 h-3 text-yellow-600 dark:text-yellow-400 fill-yellow-600 dark:fill-yellow-400 mr-1 transition-colors duration-300" />
+                              <span className="text-[10px] sm:text-[12px] font-semibold text-yellow-700 dark:text-yellow-300 transition-colors duration-300">
                                 {material.stats.starCount}
                               </span>
                             </div>
@@ -513,27 +525,27 @@ const Materials = () => {
                         </div>
 
                         {/* Title */}
-                        <h1 className="text-2xl font-semibold text-gray-700 mb-2 font-noto capitalize line-clamp-2 sm:line-clamp-1 relative">
+                        <h1 className="text-2xl font-semibold text-gray-700 dark:text-gray-100 mb-2 font-noto capitalize line-clamp-2 sm:line-clamp-1 relative transition-colors duration-300">
                           {material.title}
                         </h1>
-                        <div className="flex flex-col sm:flex-row items-start sm:items-center text-[10px] sm:text-[12px] relative text-gray-700 gap-2 sm:gap-4">
+                        <div className="flex flex-col sm:flex-row items-start sm:items-center text-[10px] sm:text-[12px] relative text-gray-700 dark:text-gray-300 gap-2 sm:gap-4 transition-colors duration-300">
                           <span className="flex items-center">
-                            <BookOpen className="w-3 h-3 sm:w-[12px] sm:h-[12px] mr-1 sm:mr-2" />
+                            <BookOpen className="w-3 h-3 sm:w-[12px] sm:h-[12px] mr-1 sm:mr-2 text-noto-primary dark:text-blue-300 transition-colors duration-300" />
                             {material.category.subject}
                           </span>
-                          <span className="hidden sm:inline">{"|"}</span>
+                          <span className="hidden sm:inline text-gray-400 dark:text-gray-500 transition-colors duration-300">{"|"}</span>
                           <span>{`Semester ${material.category.semester}`}</span>
                         </div>
 
                         {/* File Info */}
-                        <div className="my-1 text-sm text-gray-700">
+                        <div className="my-1 text-sm text-gray-700 dark:text-gray-300 transition-colors duration-300">
                           <div className="flex items-center text-[10px] sm:text-[12px]">
-                            <GraduationCap className="w-3 h-3 sm:w-[14px] sm:h-[14px] mr-1 sm:mr-2" />
+                            <GraduationCap className="w-3 h-3 sm:w-[14px] sm:h-[14px] mr-1 sm:mr-2 text-noto-primary dark:text-blue-300 transition-colors duration-300" />
                             <span className="truncate">{material.category.branch}</span>
                           </div>
 
                           <div className="flex items-center text-[10px] sm:text-[12px] mt-1">
-                            <Building2 className="w-3 h-3 sm:w-[12px] sm:h-[12px] mr-1 sm:mr-2 text-gray-700" />
+                            <Building2 className="w-3 h-3 sm:w-[12px] sm:h-[12px] mr-1 sm:mr-2 text-noto-primary dark:text-blue-300 transition-colors duration-300" />
                             <span className="font-dark truncate">
                               {material.metadata.collegeName}
                             </span>
@@ -542,14 +554,14 @@ const Materials = () => {
                           {/* ✅ NEW: Added file size display */}
                           <div className="flex items-center justify-between text-[10px] sm:text-[12px] mt-1">
                             <div className="flex items-center">
-                              <User className="w-3 h-3 sm:w-[12px] sm:h-[12px] mr-1 sm:mr-2" />
+                              <User className="w-3 h-3 sm:w-[12px] sm:h-[12px] mr-1 sm:mr-2 text-noto-primary dark:text-blue-300 transition-colors duration-300" />
                               <span className="truncate">
                                 Professor: {material.metadata?.professorName || "Not specified"}
                               </span>
                             </div>
                             {/* ✅ NEW: File size badge */}
                             {material.fileSize && (
-                              <span className="bg-gray-100 px-2 py-1 rounded text-[9px] sm:text-[10px]">
+                              <span className="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-2 py-1 rounded text-[9px] sm:text-[10px] transition-colors duration-300">
                                 {formatFileSize(material.fileSize)}
                               </span>
                             )}
@@ -564,7 +576,7 @@ const Materials = () => {
                             {new Date(material.createdAt).toLocaleDateString()}
                           </p>
                           <p className="flex items-center gap-1 sm:gap-2 text-[10px] sm:text-[12px]">
-                            <span>Uploaded By:</span>
+                             <span className="text-noto-primary dark:text-blue-400 transition-colors duration-300">Uploaded By:</span>
                             <span className="font-bold -ml-1 truncate">
                               {material.uploader?.displayName || "Unknown User"}
                             </span>
@@ -581,14 +593,14 @@ const Materials = () => {
                                 handleStar(material._id, isStarred);
                               }}
                               className={`w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center transition-colors flex-shrink-0 ${
-                                isStarred
-                                  ? "bg-yellow-100 text-yellow-600 hover:bg-yellow-200"
-                                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                              }`}
+                                  isStarred
+                                    ? "bg-yellow-100 text-yellow-600 hover:bg-yellow-200 dark:bg-yellow-900/50 dark:text-yellow-300 dark:hover:bg-yellow-800/60"
+                                    : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
+                                }`}
                               title={isStarred ? "Remove star" : "Add star"}
                             >
                               <Star 
-                                className={`w-3 h-3 sm:w-4 sm:h-4 ${isStarred ? 'fill-yellow-600' : ''}`}
+                                className={`w-3 h-3 sm:w-4 sm:h-4 ${isStarred ? 'fill-yellow-600 dark:fill-yellow-300' : ''}`}
                               />
                             </button>
                           )}
@@ -601,10 +613,10 @@ const Materials = () => {
                                 handleBookmark(material._id, isBookmarked);
                               }}
                               className={`w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center transition-colors flex-shrink-0 ${
-                                isBookmarked
-                                  ? "bg-yellow-100 text-yellow-600 hover:bg-yellow-200"
-                                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                              }`}
+                                  isBookmarked
+                                    ? "bg-yellow-100 text-yellow-600 hover:bg-yellow-200 dark:bg-yellow-900/50 dark:text-yellow-300 dark:hover:bg-yellow-800/60"
+                                    : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
+                                }`}
                               title={isBookmarked ? "Remove bookmark" : "Add bookmark"}
                             >
                               {isBookmarked ? (

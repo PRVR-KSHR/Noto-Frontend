@@ -23,8 +23,18 @@
     --noto-font :  "Bricolage Grotesque", sans-serif;
   }
 
+  .dark {
+    --background: 222.2 47.4% 11.2%;
+    --foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 199 89% 71%;
+  }
+
   @theme {
-    --font-sans: var(--noto-font); /* This makes font-sans use Bricolage Grotesque */
+    --font-sans: var(--noto-font);
   }
 
   * {
@@ -32,8 +42,8 @@
   }
 
   body {
-    @apply bg-background text-foreground;
-    font-family: var(--noto-font); /* Apply Bricolage Grotesque directly */
+    @apply bg-background text-foreground transition-colors duration-300;
+    font-family: var(--noto-font);
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 
@@ -44,52 +54,105 @@
   h5,
   h6 {
     @apply font-semibold text-noto-primary;
-    font-family: var(--noto-font); /* Ensure headings use the same font */
+    font-family: var(--noto-font);
+  }
+
+  .dark h1,
+  .dark h2,
+  .dark h3,
+  .dark h4,
+  .dark h5,
+  .dark h6 {
+    @apply text-white;
+  }
+
+  p,
+  span,
+  label {
+    @apply transition-colors duration-300;
+  }
+
+  /* Custom Scrollbar Styling */
+  ::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 10px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, var(--noto-primary) 0%, var(--noto-secondary) 100%);
+    border-radius: 10px;
+    border: 2px solid #f1f5f9;
+    transition: background 0.3s ease;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, var(--noto-dark) 0%, var(--noto-primary) 100%);
+  }
+
+  .dark ::-webkit-scrollbar-track {
+    background: #1f2937;
+  }
+
+  .dark ::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #3b82f6 0%, #60a5fa 100%);
+    border: 2px solid #1f2937;
+  }
+
+  .dark ::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #2563eb 0%, #3b82f6 100%);
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--noto-primary) #f1f5f9;
+  }
+
+  .dark * {
+    scrollbar-color: #3b82f6 #1f2937;
   }
 }
 
 @layer components {
-  /* noto Button Components */
   .btn-primary {
-    @apply bg-noto-primary hover:bg-noto-dark text-white font-medium py-2 px-4 rounded-lg transition-all duration-200;
+    @apply bg-noto-primary hover:bg-noto-dark text-white font-medium py-2 px-4 rounded-lg transition-all duration-200 dark:bg-blue-600 dark:hover:bg-blue-500;
   }
 
   .btn-secondary {
-    @apply bg-noto-secondary hover:bg-opacity-80 text-white font-medium py-2 px-4 rounded-lg transition-all duration-200;
+    @apply bg-noto-secondary hover:bg-opacity-80 text-white font-medium py-2 px-4 rounded-lg transition-all duration-200 dark:bg-blue-500 dark:hover:bg-blue-400;
   }
 
   .btn-outline {
-    @apply border-2 border-noto-primary text-noto-primary hover:bg-noto-primary hover:text-white font-medium py-2 px-4 rounded-lg transition-all duration-200;
+    @apply border-2 border-noto-primary text-noto-primary hover:bg-noto-primary hover:text-white font-medium py-2 px-4 rounded-lg transition-all duration-200 dark:border-blue-500 dark:text-blue-300 dark:hover:bg-blue-500;
   }
 
-  /* noto Card Component */
   .card {
-    @apply bg-white rounded-xl border border-noto-light/50 p-6 hover:shadow-lg transition-all duration-200;
+    @apply bg-white rounded-xl border border-noto-light/50 p-6 hover:shadow-lg transition-all duration-200 dark:bg-gray-800 dark:border-gray-700 dark:hover:shadow-gray-900;
   }
 
-  /* noto Input Component */
   .input {
-    @apply w-full px-4 py-2 border border-noto-light rounded-lg focus:ring-2 focus:ring-noto-secondary focus:border-transparent outline-none transition-all duration-200;
+    @apply w-full px-4 py-2 border border-noto-light rounded-lg focus:ring-2 focus:ring-noto-secondary focus:border-transparent outline-none transition-all duration-200 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100 dark:placeholder-gray-400 dark:focus:ring-blue-500;
   }
 
-  /* noto Navbar */
   .navbar {
-    @apply bg-white/95 backdrop-blur-sm border-b border-noto-light shadow-sm;
+    @apply bg-white/95 backdrop-blur-sm border-b border-noto-light shadow-sm dark:bg-gray-900/90 dark:border-gray-700 dark:shadow-gray-900;
   }
 
-  /* noto Section */
   .section {
-    @apply py-16 px-4;
+    @apply py-16 px-4 transition-colors duration-300;
   }
 
-  /* noto Container */
   .container {
     @apply max-w-7xl mx-auto;
   }
 }
 
 @layer utilities {
-    .hero-subtle-gradient {
+  .hero-subtle-gradient {
     background: linear-gradient(
       180deg,
       rgba(255, 255, 255, 1) 0%,
@@ -103,11 +166,10 @@
   }
 
   .logo {
-  width: 150px;
-  height: auto;
-}
+    width: 150px;
+    height: auto;
+  }
 
-  /* Smooth blur transition at the bottom */
   .hero-subtle-gradient::after {
     content: '';
     position: absolute;
@@ -126,7 +188,6 @@
     z-index: 1;
   }
 
-  /* Optional: Add very subtle vertical lines texture for depth */
   .hero-subtle-gradient::before {
     content: '';
     position: absolute;
@@ -149,12 +210,11 @@
     position: relative;
     z-index: 3;
   }
-  /* Font utilities */
+
   .noto-font--noto-font {
     font-family: var(--noto-font);
   }
 
-  /* Custom animations */
   @keyframes fadeIn {
     from {
       opacity: 0;
@@ -183,7 +243,6 @@
     animation: slideUp 0.3s ease-out;
   }
 
-  /* noto specific utilities */
   .text-gradient {
     @apply bg-gradient-to-r from-noto-primary to-noto-secondary bg-clip-text text-transparent;
   }
@@ -191,8 +250,6 @@
   .bg-gradient-noto {
     @apply bg-gradient-to-br from-noto-primary to-noto-secondary;
   }
-
-
 
   .pencil {
     display: block;
@@ -253,8 +310,6 @@
     transform: translate(100px, 100px) rotate(-113deg);
   }
 
-  
-  /* Pencil Animation Keyframes */
   @keyframes pencilBody1 {
     from,
     to {
@@ -366,8 +421,8 @@
     }
   }
 
-  /* Modal fade-in animation */
-  @keyframes fadeIn {
+  /* Additional modal fade animation retained */
+  @keyframes modalFadeIn {
     from {
       opacity: 0;
       transform: scale(0.95);
@@ -378,7 +433,7 @@
     }
   }
 
-  .animate-fade-in {
-    animation: fadeIn 0.2s ease-out;
+  .animate-modal-fade-in {
+    animation: modalFadeIn 0.2s ease-out;
   }
 }
