@@ -842,19 +842,19 @@ Error: ${error.message}`;
             {/* Modal Body */}
             <div className="p-3 sm:p-6 space-y-3 sm:space-y-5">
               {/* Main Message */}
-              <div className="bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-500/10 dark:to-orange-500/10 border-l-4 border-amber-500 rounded-lg p-3 sm:p-5 shadow-sm">
+              <div className="bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-500/10 dark:to-orange-500/10 border-l-4 border-amber-500 dark:border-amber-500/60 rounded-lg p-3 sm:p-5 shadow-sm transition-colors duration-300">
                 <div className="flex items-start space-x-2 sm:space-x-3">
                   <div className="flex-shrink-0">
                     <span className="text-2xl sm:text-3xl">⚠️</span>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h4 className="text-base sm:text-lg font-bold text-gray-900 mb-1 sm:mb-2">
+                    <h4 className="text-base sm:text-lg font-bold text-gray-900 dark:text-gray-100 mb-1 sm:mb-2">
                       Why We Show This Message
                     </h4>
-                    <p className="text-gray-700 leading-relaxed text-xs sm:text-sm">
-                      We rely on <strong className="text-amber-700">free cloud storage</strong> with limited monthly bandwidth. 
+                    <p className="text-gray-700 dark:text-gray-200 leading-relaxed text-xs sm:text-sm">
+                      We rely on <strong className="text-amber-700 dark:text-amber-300">free cloud storage</strong> with limited monthly bandwidth. 
                       Every download counts toward our quota. By viewing online, you help us keep this 
-                      service <strong className="text-green-700">free for everyone</strong>! 🌟
+                      service <strong className="text-green-700 dark:text-green-300">free for everyone</strong>! 🌟
                     </p>
                   </div>
                 </div>
@@ -862,12 +862,12 @@ Error: ${error.message}`;
 
               {/* Best Practices Section */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                <div className="bg-green-50 dark:bg-green-500/10 border border-green-200 dark:border-green-500/40 rounded-lg sm:rounded-xl p-3 sm:p-4">
+                <div className="bg-green-50 dark:bg-green-500/10 border border-green-200 dark:border-green-500/40 rounded-lg sm:rounded-xl p-3 sm:p-4 transition-colors duration-300">
                   <div className="flex items-center space-x-2 mb-2 sm:mb-3">
                     <span className="text-xl sm:text-2xl">✅</span>
-                    <h5 className="font-bold text-green-900 text-sm sm:text-base">Recommended</h5>
+                    <h5 className="font-bold text-green-900 dark:text-green-200 text-sm sm:text-base">Recommended</h5>
                   </div>
-                  <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-green-800">
+                  <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-green-800 dark:text-green-100">
                     <li className="flex items-start">
                       <span className="mr-1.5 sm:mr-2">•</span>
                       <span>View documents online (instant & free)</span>
@@ -883,12 +883,12 @@ Error: ${error.message}`;
                   </ul>
                 </div>
 
-                <div className="bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/40 rounded-lg sm:rounded-xl p-3 sm:p-4">
+                <div className="bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/40 rounded-lg sm:rounded-xl p-3 sm:p-4 transition-colors duration-300">
                   <div className="flex items-center space-x-2 mb-2 sm:mb-3">
                     <span className="text-xl sm:text-2xl">💾</span>
-                    <h5 className="font-bold text-blue-900 text-sm sm:text-base">Download When</h5>
+                    <h5 className="font-bold text-blue-900 dark:text-blue-200 text-sm sm:text-base">Download When</h5>
                   </div>
-                  <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-blue-800">
+                  <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-blue-800 dark:text-blue-100">
                     <li className="flex items-start">
                       <span className="mr-1.5 sm:mr-2">•</span>
                       <span>You need offline access</span>
@@ -906,11 +906,11 @@ Error: ${error.message}`;
               </div>
 
               {/* Quick Action Note */}
-              <div className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-500/10 dark:to-pink-500/10 border-2 border-purple-300 dark:border-purple-500/50 rounded-lg sm:rounded-xl p-3 sm:p-4">
+              <div className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-500/10 dark:to-pink-500/10 border-2 border-purple-300 dark:border-purple-500/50 rounded-lg sm:rounded-xl p-3 sm:p-4 transition-colors duration-300">
                 <div className="flex items-start sm:items-center space-x-2 sm:space-x-3">
                   <span className="text-2xl sm:text-3xl flex-shrink-0">🎯</span>
                   <div className="flex-1 min-w-0">
-                    <p className="text-purple-900 font-semibold text-xs sm:text-sm">
+                    <p className="text-purple-900 dark:text-purple-200 font-semibold text-xs sm:text-sm">
                       After clicking "I Understand", the download button will be enabled. 
                       Click it again to start your download!
                     </p>
@@ -928,7 +928,7 @@ Error: ${error.message}`;
                 <span className="text-sm sm:text-lg">I Understand - Enable Download</span>
                 <Download className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
               </button>
-              <p className="text-center text-[10px] sm:text-xs text-gray-500 mt-2 sm:mt-3">
+              <p className="text-center text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 mt-2 sm:mt-3">
                 This message appears once per document to promote mindful downloading 💚
               </p>
             </div>

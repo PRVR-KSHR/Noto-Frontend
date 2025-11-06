@@ -355,17 +355,18 @@ const Materials = () => {
 
           {/* Centered Info Banner - Below Description */}
           {showInfoBanner && (
-            <div className="inline-flex items-center gap-3 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/40 dark:to-indigo-900/40 border border-blue-200 dark:border-blue-500/40 rounded-lg px-4 py-3 shadow-sm mt-2 transition-colors duration-300">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/60 rounded-full flex items-center justify-center flex-shrink-0 transition-colors duration-300">
-                  <Info className="w-4 h-4 text-blue-600 dark:text-blue-300" />
+            <div className="relative w-full max-w-2xl sm:max-w-3xl mx-auto bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/40 dark:to-indigo-900/40 border border-blue-200 dark:border-blue-500/40 rounded-lg px-4 py-4 shadow-sm mt-2 transition-colors duration-300 flex flex-col items-center gap-3 sm:flex-row sm:items-center sm:justify-center">
+              
+              <div className="flex flex-col sm:flex-row sm:items-center gap-3 flex-1 text-left">
+                <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/60 rounded-full flex items-center justify-center flex-shrink-0 transition-colors duration-300 mx-auto sm:mx-0">
+                  <Info className="w-5 h-5 text-blue-600 dark:text-blue-300" />
                 </div>
-                <p className="text-sm text-gray-700 dark:text-gray-200 transition-colors duration-300">
-                  <span className="font-medium">Have suggestions?</span> Share your feedback with admin
+                <p className="text-sm sm:text-base text-gray-700 dark:text-gray-200 transition-colors duration-300 leading-relaxed text-center">
+                  <span className="font-medium">Have suggestions?</span> Share your feedback with admin.
                 </p>
               </div>
-              
-              <div className="flex items-center gap-2">
+
+              <div className="flex items-center justify-between sm:justify-end gap-2 sm:gap-3">
                 <button
                   onClick={() => navigate("/profile?tab=messages")}
                   className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white px-3 py-1.5 rounded-md transition-colors text-sm font-medium whitespace-nowrap"
@@ -377,7 +378,7 @@ const Materials = () => {
                 
                 <button
                   onClick={() => setShowInfoBanner(false)}
-                  className="w-7 h-7 flex items-center justify-center text-gray-400 dark:text-gray-300 hover:text-gray-600 dark:hover:text-gray-100 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full transition-colors flex-shrink-0"
+                  className="w-8 h-8 flex items-center justify-center text-blue-600 dark:text-blue-300 bg-blue-100 dark:bg-blue-900/80  rounded-lg transition-colors flex-shrink-0 "
                   aria-label="Close"
                 >
                   <X className="w-4 h-4" />
@@ -575,9 +576,9 @@ const Materials = () => {
                           <p className="text-neutral-400 -mb-1 text-[9px] sm:text-[10px]">
                             {new Date(material.createdAt).toLocaleDateString()}
                           </p>
-                          <p className="flex items-center gap-1 sm:gap-2 text-[10px] sm:text-[12px]">
-                             <span className="text-noto-primary dark:text-blue-400 transition-colors duration-300">Uploaded By:</span>
-                            <span className="font-bold -ml-1 truncate">
+                          <p className="flex items-center gap-1 sm:gap-2 text-[10px] sm:text-[12px] text-gray-600 dark:text-gray-200 transition-colors duration-300">
+                             <span className="text-noto-primary dark:text-blue-400 font-medium transition-colors duration-300">Uploaded By:</span>
+                            <span className="font-semibold -ml-0.5 truncate text-gray-800 dark:text-gray-100">
                               {material.uploader?.displayName || "Unknown User"}
                             </span>
                           </p>

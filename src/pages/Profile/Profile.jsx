@@ -1063,10 +1063,10 @@ const Profile = () => {
 
       {/* ✅ NEW: Message Form Modal */}
       {showMessageForm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
-            <div className="px-4 sm:px-6 py-4 border-b border-gray-200">
-              <h3 className="text-lg font-medium text-gray-900">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-colors">
+          <div className="bg-white dark:bg-gray-900 rounded-lg shadow-xl dark:shadow-gray-950/70 max-w-md w-full max-h-[90vh] overflow-y-auto border border-transparent dark:border-gray-700">
+            <div className="px-4 sm:px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+              <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
                 Send Message to Admin
               </h3>
             </div>
@@ -1075,7 +1075,7 @@ const Profile = () => {
               className="px-4 sm:px-6 py-4 space-y-4"
             >
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                   Category *
                 </label>
                 <select
@@ -1083,7 +1083,7 @@ const Profile = () => {
                   onChange={(e) =>
                     setMessageForm({ ...messageForm, category: e.target.value })
                   }
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   required
                 >
                   <option value="general">General Inquiry</option>
@@ -1096,7 +1096,7 @@ const Profile = () => {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                   Subject *
                 </label>
                 <input
@@ -1105,26 +1105,26 @@ const Profile = () => {
                   onChange={(e) =>
                     setMessageForm({ ...messageForm, subject: e.target.value })
                   }
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Enter message subject..."
                   maxLength="200"
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                   Message *
                 </label>
                 <textarea
                   value={messageForm.message}
                   onChange={(e) => handleMessageChange(e.target.value)}
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   rows="6"
                   placeholder="Enter your message (max 1200 words)..."
                   required
                 />
                 <div className="flex justify-between items-center mt-1">
-                  <p className="text-xs sm:text-sm text-gray-500">
+                  <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
                     {countWords(messageForm.message)}/1200 words
                   </p>
                   {countWords(messageForm.message) >= 1150 && (
@@ -1145,7 +1145,7 @@ const Profile = () => {
                       category: "general",
                     });
                   }}
-                  className="px-4 py-2 text-sm text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+                  className="px-4 py-2 text-sm text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-colors"
                 >
                   Cancel
                 </button>

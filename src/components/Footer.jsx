@@ -1,10 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Mail, Github, Twitter, Heart } from 'lucide-react';
-import logo from '../../src/assets/logo.png'
+import logo from '../../src/assets/logo.png';
+import packageJson from '../../package.json';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
+  const appVersion = packageJson?.version ? `v${packageJson.version}` : 'v0.0.0';
   
   const quickLinks = [
     { name: 'Home', path: '/' },
@@ -107,7 +109,8 @@ const Footer = () => {
                 <span className="text-noto-secondary dark:text-blue-400 font-medium text-xs sm:text-sm transition-colors duration-300">From BCA+MCA(DUAL) 2021-26</span>
               </div>
             </div>
-            <div className="text-gray-300 dark:text-gray-400 text-sm text-center md:text-right transition-colors duration-300">
+            <div className="text-gray-300 dark:text-gray-400 text-sm text-center md:text-right transition-colors duration-300 space-y-1">
+              <p className="font-medium text-gray-200 dark:text-gray-100">NOTO {appVersion}</p>
               <p>&copy; {currentYear} NOTO. All rights reserved.</p>
             </div>
           </div>
