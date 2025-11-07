@@ -28,30 +28,30 @@ const Login = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center px-4">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 dark:from-gray-950 dark:via-gray-950 dark:to-black flex items-center justify-center px-4 transition-colors duration-300">
         <div className="text-center space-y-4">
-          <div className="animate-spin rounded-full h-16 w-16 border-4 border-noto-primary border-t-transparent mx-auto"></div>
-          <p className="text-noto-primary font-medium">Signing you in...</p>
+          <div className="animate-spin rounded-full h-16 w-16 border-4 border-noto-primary dark:border-blue-400 border-t-transparent mx-auto"></div>
+          <p className="text-noto-primary dark:text-gray-200 font-medium">Signing you in...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center px-4 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 dark:from-gray-950 dark:via-gray-950 dark:to-black flex items-center justify-center px-4 py-8 transition-colors duration-300">
       <div className="max-w-md w-full">
         {/* Login Card */}
-        <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8 backdrop-blur-sm">
+        <div className="bg-white/90 dark:bg-gray-900/80 rounded-2xl shadow-xl dark:shadow-2xl border border-gray-100 dark:border-gray-800 p-8 backdrop-blur-sm transition-colors duration-300">
           <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-20 h-20 rounded-full mb-6 shadow-lg">
+            <div className="inline-flex items-center justify-center w-20 h-20 rounded-full mb-6 shadow-lg dark:shadow-2xl">
                <div className="w-20 h-20 rounded-lg flex items-center justify-center">
                 <img src={logo}></img>
               </div>
             </div>
-            <h1 className="text-3xl font-bold text-noto-primary mb-3">
+            <h1 className="text-3xl font-bold text-noto-primary dark:text-blue-300 mb-3">
               Welcome to noto
             </h1>
-            <p className="text-gray-600 text-lg">
+            <p className="text-gray-600 dark:text-gray-300 text-lg">
               Sign in to access thousands of study materials
             </p>
           </div>
@@ -60,7 +60,7 @@ const Login = () => {
           <button
             onClick={handleGoogleLogin}
             disabled={loading}
-            className="w-full bg-white border-2 border-gray-200 text-gray-700 font-semibold py-4 px-6 rounded-xl hover:bg-gray-50 hover:border-noto-primary hover:shadow-md transition-all duration-300 flex items-center justify-center space-x-3 mb-8 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+            className="w-full bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-100 font-semibold py-4 px-6 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-noto-primary dark:hover:border-blue-400 hover:shadow-md transition-all duration-300 flex items-center justify-center space-x-3 mb-8 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
           >
             <svg className="w-6 h-6" viewBox="0 0 24 24">
               <path
@@ -88,21 +88,21 @@ const Login = () => {
           <div className="space-y-4 mb-6">
             <div className="flex items-center space-x-3">
               <div className="w-3 h-3 bg-gradient-to-r from-noto-primary to-noto-secondary rounded-full"></div>
-              <span className="text-gray-700 font-medium">Access 10,000+ study materials</span>
+              <span className="text-gray-700 dark:text-gray-200 font-medium">Access 10,000+ study materials</span>
             </div>
             <div className="flex items-center space-x-3">
               <div className="w-3 h-3 bg-gradient-to-r from-noto-primary to-noto-secondary rounded-full"></div>
-              <span className="text-gray-700 font-medium">Share your notes with community</span>
+              <span className="text-gray-700 dark:text-gray-200 font-medium">Share your notes with community</span>
             </div>
             <div className="flex items-center space-x-3">
               <div className="w-3 h-3 bg-gradient-to-r from-noto-primary to-noto-secondary rounded-full"></div>
-              <span className="text-gray-700 font-medium">Download materials instantly</span>
+              <span className="text-gray-700 dark:text-gray-200 font-medium">Download materials instantly</span>
             </div>
           </div>
 
           {/* Divider */}
-          <div className="border-t border-gray-100 pt-6">
-            <p className="text-center text-sm text-gray-500">
+          <div className="border-t border-gray-100 dark:border-gray-800 pt-6">
+            <p className="text-center text-sm text-gray-500 dark:text-gray-400">
               🚀 Join over 5,000 students already studying smarter
             </p>
           </div>
@@ -110,11 +110,11 @@ const Login = () => {
 
         {/* Additional Info */}
         <div className="text-center mt-6">
-          <p className="text-gray-500 text-sm leading-relaxed">
+          <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed">
             By signing in, you agree to our{' '}
-            <span className="text-noto-primary hover:underline cursor-pointer">Terms of Service</span>
+            <span className="text-noto-primary dark:text-blue-400 hover:underline cursor-pointer">Terms of Service</span>
             {' '}and{' '}
-            <span className="text-noto-primary hover:underline cursor-pointer">Privacy Policy</span>
+            <span className="text-noto-primary dark:text-blue-400 hover:underline cursor-pointer">Privacy Policy</span>
           </p>
         </div>
       </div>
