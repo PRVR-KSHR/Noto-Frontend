@@ -22,9 +22,13 @@ import {
   XCircle,
   AlertCircle,
   RefreshCw,
-  FileText
+  FileText,
+  BookOpen,
+  UserCheck
 } from 'lucide-react';
 import PencilLoader from '../../components/PencilLoader/PencilLoader';
+import ProfessorVerificationTab from '../../components/AdminDashboard/ProfessorVerificationTab';
+import MaterialManagementTab from '../../components/AdminDashboard/MaterialManagementTab';
 
 const AdminDashboard = () => {
   const { user } = useAuth();
@@ -36,6 +40,9 @@ const AdminDashboard = () => {
   const [donations, setDonations] = useState([]);
   const [events, setEvents] = useState([]);
   const [pendingMaterials, setPendingMaterials] = useState([]); // NEW: Pending materials
+  const [pendingProfessors, setPendingProfessors] = useState([]); // NEW: Pending professor applications
+  const [totalMaterials, setTotalMaterials] = useState(0); // NEW: Total materials count
+  const [activeProfessors, setActiveProfessors] = useState(0); // NEW: Active professors count
   const [activeTab, setActiveTab] = useState('donations');
   const [stats, setStats] = useState({
     totalAmount: 0,
@@ -49,8 +56,7 @@ const AdminDashboard = () => {
   const [editingDonation, setEditingDonation] = useState(null);
   const [formData, setFormData] = useState({
     donorName: '',
-    amount: '',
-    notes: ''
+    amount: ''
   });
 
   // Form states for events
@@ -60,6 +66,7 @@ const AdminDashboard = () => {
   const [eventFormData, setEventFormData] = useState({
     sectionTitle: '',
     description: '',
+    eventLink: '',
     eventImage: null
   });
 
@@ -119,12 +126,15 @@ const AdminDashboard = () => {
 
   const fetchDashboardData = async () => {
     try {
-      const [donationsResponse, statsResponse, eventsResponse, messagesResponse, materialsResponse] = await Promise.all([
+      const [donationsResponse, statsResponse, eventsResponse, messagesResponse, materialsResponse, professorsResponse, totalMaterialsResponse, activeProfessorsResponse] = await Promise.all([
         adminAPI.getDonations(),
         adminAPI.getDonationStats(),
         adminAPI.getEvents(),
         adminMessageAPI.getAllMessages(),
-        adminAPI.getPendingMaterials() // NEW: Fetch pending materials
+        adminAPI.getPendingMaterials(), // NEW: Fetch pending materials
+        adminAPI.getPendingProfessors(), // NEW: Fetch pending professor applications
+        adminAPI.getTotalMaterials(), // NEW: Fetch total materials
+        adminAPI.getActiveProfessors() // NEW: Fetch active professors
       ]);
 
       setDonations(donationsResponse.data.donations || []);
@@ -136,6 +146,9 @@ const AdminDashboard = () => {
       });
       setEvents(eventsResponse.events || []);
       setPendingMaterials(materialsResponse.data || []); // NEW: Set pending materials
+      setPendingProfessors(professorsResponse.applications || []); // NEW: Set pending professors
+      setTotalMaterials(totalMaterialsResponse.data?.pagination?.totalItems || 0); // ✅ FIXED: Get totalItems from pagination
+      setActiveProfessors(activeProfessorsResponse.applications?.length || 0); // NEW: Set active professors count
       
       // Set messages and calculate stats - with better error handling
       console.log('Messages response:', messagesResponse); // Debug log
@@ -178,21 +191,19 @@ const AdminDashboard = () => {
         await adminAPI.updateDonation(editingDonation._id, {
           donorName: formData.donorName.trim(),
           amount: amount,
-          notes: formData.notes.trim(),
           isActive: true
         });
         toast.success('Donation updated successfully');
       } else {
         await adminAPI.addDonation({
           donorName: formData.donorName.trim(),
-          amount: amount,
-          notes: formData.notes.trim()
+          amount: amount
         });
         toast.success('Donation added successfully');
       }
 
       // Reset form and refresh data
-      setFormData({ donorName: '', amount: '', notes: '' });
+      setFormData({ donorName: '', amount: '' });
       setShowAddForm(false);
       setEditingDonation(null);
       await fetchDashboardData();
@@ -207,8 +218,7 @@ const AdminDashboard = () => {
   const handleEdit = (donation) => {
     setFormData({
       donorName: donation.donorName,
-      amount: donation.amount.toString(),
-      notes: donation.notes || ''
+      amount: donation.amount.toString()
     });
     setEditingDonation(donation);
     setShowAddForm(true);
@@ -244,7 +254,7 @@ const AdminDashboard = () => {
   };
 
   const handleCancel = () => {
-    setFormData({ donorName: '', amount: '', notes: '' });
+    setFormData({ donorName: '', amount: '' });
     setShowAddForm(false);
     setEditingDonation(null);
   };
@@ -269,6 +279,7 @@ const AdminDashboard = () => {
       const formDataToSend = new FormData();
       formDataToSend.append('description', eventFormData.description.trim());
       formDataToSend.append('sectionTitle', eventFormData.sectionTitle.trim() || '🎉 Current Events');
+      formDataToSend.append('eventLink', eventFormData.eventLink ? eventFormData.eventLink.trim() : '');
       
       if (eventFormData.eventImage) {
         formDataToSend.append('eventImage', eventFormData.eventImage);
@@ -312,6 +323,7 @@ const AdminDashboard = () => {
     setEventFormData({
       sectionTitle: event.sectionTitle || '',
       description: event.description || '',
+      eventLink: event.eventLink || '',
       eventImage: null
     });
     setShowEventForm(true);
@@ -342,7 +354,7 @@ const AdminDashboard = () => {
   };
 
   const handleEventCancel = () => {
-    setEventFormData({ sectionTitle: '', description: '', eventImage: null });
+    setEventFormData({ sectionTitle: '', description: '', eventLink: '', eventImage: null });
     setShowEventForm(false);
     setEditingEvent(null);
   };
@@ -583,29 +595,17 @@ const AdminDashboard = () => {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
           <div className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-lg shadow-sm dark:shadow-gray-900/40 p-4 sm:p-6 transition-colors duration-300">
             <div className="flex items-center">
               <div className="p-2 bg-green-100 dark:bg-green-900/40 rounded-lg">
                 <IndianRupee className="h-5 w-5 sm:h-6 sm:w-6 text-green-600 dark:text-green-400" />
               </div>
               <div className="ml-3 sm:ml-4">
-                <p className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">Total Amount</p>
+                <p className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">Total Donation Amount</p>
                 <p className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
                   ₹{stats.totalAmount?.toLocaleString() || 0}
                 </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-lg shadow-sm dark:shadow-gray-900/40 p-4 sm:p-6 transition-colors duration-300">
-            <div className="flex items-center">
-              <div className="p-2 bg-blue-100 dark:bg-blue-900/40 rounded-lg">
-                <Users className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600 dark:text-blue-400" />
-              </div>
-              <div className="ml-3 sm:ml-4">
-                <p className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">Total Donations</p>
-                <p className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-gray-100">{stats.totalDonations || 0}</p>
               </div>
             </div>
           </div>
@@ -618,6 +618,30 @@ const AdminDashboard = () => {
               <div className="ml-3 sm:ml-4">
                 <p className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">Active Events</p>
                 <p className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-gray-100">{events.filter(event => event.isActive).length || 0}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-lg shadow-sm dark:shadow-gray-900/40 p-4 sm:p-6 transition-colors duration-300">
+            <div className="flex items-center">
+              <div className="p-2 bg-blue-100 dark:bg-blue-900/40 rounded-lg">
+                <BookOpen className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600 dark:text-blue-400" />
+              </div>
+              <div className="ml-3 sm:ml-4">
+                <p className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">Total Materials</p>
+                <p className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-gray-100">{totalMaterials || 0}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-lg shadow-sm dark:shadow-gray-900/40 p-4 sm:p-6 transition-colors duration-300">
+            <div className="flex items-center">
+              <div className="p-2 bg-orange-100 dark:bg-orange-900/40 rounded-lg">
+                <UserCheck className="h-5 w-5 sm:h-6 sm:w-6 text-orange-600 dark:text-orange-400" />
+              </div>
+              <div className="ml-3 sm:ml-4">
+                <p className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">Active Professors</p>
+                <p className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-gray-100">{activeProfessors || 0}</p>
               </div>
             </div>
           </div>
@@ -670,6 +694,28 @@ const AdminDashboard = () => {
               >
                 <FileText className="h-4 w-4" />
                 Material Verification ({pendingMaterials.length})
+              </button>
+              <button
+                onClick={() => setActiveTab('professors')}
+                className={`flex items-center gap-2 rounded-lg px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  activeTab === 'professors'
+                    ? 'border-2 border-blue-400 bg-blue-50 text-blue-600 dark:border-blue-500/70 dark:bg-blue-900/30 dark:text-blue-300 shadow-sm'
+                    : 'border border-gray-200 text-gray-500 dark:border-gray-700 dark:text-gray-400 hover:text-gray-700 hover:bg-gray-50 dark:hover:text-gray-200 dark:hover:bg-gray-800/60'
+                }`}
+              >
+                <Shield className="h-4 w-4" />
+                Professor Verification ({pendingProfessors.length})
+              </button>
+              <button
+                onClick={() => setActiveTab('materialManagement')}
+                className={`flex items-center gap-2 rounded-lg px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  activeTab === 'materialManagement'
+                    ? 'border-2 border-blue-400 bg-blue-50 text-blue-600 dark:border-blue-500/70 dark:bg-blue-900/30 dark:text-blue-300 shadow-sm'
+                    : 'border border-gray-200 text-gray-500 dark:border-gray-700 dark:text-gray-400 hover:text-gray-700 hover:bg-gray-50 dark:hover:text-gray-200 dark:hover:bg-gray-800/60'
+                }`}
+              >
+                <Eye className="h-4 w-4" />
+                Material Management
               </button>
             </nav>
           </div>
@@ -735,20 +781,6 @@ const AdminDashboard = () => {
                     </div>
                   </div>
 
-                  <div>
-                    <label className="mb-1 block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Notes (Optional)
-                    </label>
-                    <textarea
-                      value={formData.notes}
-                      onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                      className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100"
-                      placeholder="Add any notes about this donation"
-                      rows="3"
-                      maxLength={500}
-                    />
-                  </div>
-
                   <div className="flex flex-col gap-3 sm:flex-row">
                     <button
                       type="submit"
@@ -811,11 +843,6 @@ const AdminDashboard = () => {
                             <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
                               {donation.donorName}
                             </div>
-                            {donation.notes && (
-                              <div className="mt-1 text-xs sm:text-sm text-gray-500 dark:text-gray-300">
-                                {donation.notes}
-                              </div>
-                            )}
                           </td>
                           <td className="px-3 sm:px-6 py-4">
                             <span className="text-sm font-semibold text-green-600 dark:text-green-400">
@@ -947,6 +974,20 @@ const AdminDashboard = () => {
                     <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">Max size 5MB • Supported: JPG, PNG, GIF</p>
                   </div>
 
+                  <div>
+                    <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Event Link (Optional)
+                    </label>
+                    <input
+                      type="url"
+                      value={eventFormData.eventLink || ''}
+                      onChange={(e) => setEventFormData({ ...eventFormData, eventLink: e.target.value })}
+                      className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100"
+                      placeholder="e.g., https://example.com/event or https://forms.google.com/..."
+                    />
+                    <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">Add a link to your event, registration form, or more details page (optional)</p>
+                  </div>
+
                   <div className="flex flex-wrap gap-3 pt-2">
                     <button
                       type="submit"
@@ -1062,6 +1103,19 @@ const AdminDashboard = () => {
                                 <p className="text-sm text-gray-600 dark:text-gray-300">
                                   {event.description}
                                 </p>
+                                {event.eventLink && (
+                                  <div className="mt-2">
+                                    <a
+                                      href={event.eventLink}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="text-xs text-blue-600 dark:text-blue-400 hover:underline break-all"
+                                      title="Open event link"
+                                    >
+                                      🔗 {event.eventLink}
+                                    </a>
+                                  </div>
+                                )}
                               </div>
 
                               <div className="mt-4 flex flex-wrap items-center gap-3 text-xs text-gray-500 dark:text-gray-400">
@@ -1488,6 +1542,12 @@ const AdminDashboard = () => {
             </div>
           </div>
         )}
+
+        {/* Professor Verification Tab */}
+        {activeTab === 'professors' && <ProfessorVerificationTab />}
+
+        {/* Material Management Tab */}
+        {activeTab === 'materialManagement' && <MaterialManagementTab />}
       </div>
     </div>
 

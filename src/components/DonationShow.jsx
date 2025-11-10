@@ -203,7 +203,7 @@ const DonationShow = () => {
       
       {/* Title */}
       <div className="text-center mb-3">
-        <h3 className="text-sm font-medium text-gray-600 flex items-center justify-center gap-2">
+        <h3 className="text-[12px] md:text-sm font-medium text-gray-600 flex items-center justify-center gap-2">
           🙏 Recent Supporters
           <Heart className="w-4 h-4 text-pink-500" fill="currentColor" />
         </h3>
@@ -226,13 +226,13 @@ const DonationShow = () => {
                     className="w-3 h-3 text-pink-500 group-hover:scale-110 transition-transform duration-200 flex-shrink-0"
                     fill="currentColor"
                   />
-                  <span className="font-medium text-gray-700 dark:text-pink-200 text-sm group-hover:text-pink-600 transition-colors duration-200">
+                  <span className="font-medium text-gray-700 dark:text-pink-200 text-[11px] md:text-sm group-hover:text-pink-600 transition-colors duration-200">
                     {donation.donorName}
                   </span>
                   <span className="text-gray-300 text-xs">•</span>
                   <div className="inline-flex items-center space-x-1 bg-gradient-to-r from-green-100 to-emerald-100 px-3 py-1 rounded-full group-hover:from-green-200 group-hover:to-emerald-200 transition-all duration-200 shadow-sm">
                     <IndianRupee className="w-3 h-3 text-green-600" />
-                    <span className="font-bold text-green-700 text-sm">
+                    <span className="font-bold text-green-700 text-[10px] md:text-sm">
                       {donation.amount.toLocaleString()}
                     </span>
                   </div>

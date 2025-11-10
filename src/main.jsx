@@ -1,3 +1,5 @@
+// Silence console output in production for notoapp.tech domains (keeps console.error)
+import './utils/silenceConsole.js'
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.jsx'

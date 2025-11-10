@@ -1,0 +1,20 @@
+# robots.txt for https://www.notoapp.tech
+# Last updated: 2025-11-09
+
+User-agent: *
+# Allow core site
+Allow: /
+# Disallow build/debug temporary paths (adjust if they exist)
+Disallow: /temp-uploads/
+Disallow: /admin-api/
+
+# Crawl-delay (optional; uncomment if server under load)
+# Crawl-delay: 2
+
+# Sitemaps
+Sitemap: https://www.notoapp.tech/sitemap.xml
+
+# Explicit index/follow
+# Some crawlers respect this directive even in robots.txt
+# (Primary control should be via meta robots on pages.)
+

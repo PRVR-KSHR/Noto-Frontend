@@ -114,26 +114,26 @@ const Home = () => {
 
   return (
     <div className="min-h-screen dark:bg-gray-900 transition-colors duration-300">
-      <section className="relative min-h-screen overflow-hidden px-4 sm:px-6 lg:px-8 flex items-center dark:bg-gray-900 transition-colors duration-300">
+  <section className="relative min-h-[80vh] sm:min-h-[85vh] lg:min-h-screen overflow-hidden px-4 lg:px-8 flex items-start lg:items-center dark:bg-gray-900 transition-colors duration-300 pt-28 md:pt-0 pb-8">
         <HeroBackgroundSVG className="absolute -z-999" />
 
-        <div className="container relative z-10 mx-auto -mt-">
+        <div className="container relative z-10 mx-auto ">
           <div className="max-w-4xl text-center mx-auto">
             <DonationShow />
             <div
-              className="bg-gradient-to-br text-sm from-pink-500 to-red-600 text-white px-1 py-1 md:px-2 md:py-2 rounded-full mx-auto mb-6 inline-flex items-center hover:bg-gradient-to-br hover:from-red-600 hover:to-pink-500 shadow-xl transition-colors cursor-pointer"
+              className="bg-gradient-to-br text-[10px] md:text-sm from-pink-500 to-red-600 text-white px-1 py-1 md:px-2 md:py-2 rounded-full mx-auto mb-6 inline-flex items-center hover:bg-gradient-to-br hover:from-red-600 hover:to-pink-500 shadow-xl transition-colors cursor-pointer"
               onClick={handleContributeClick}
               role="button"
               tabIndex={0}
               aria-label="Contribute to support free education"
             >
               <Heart
-                className="text-white w-5 h-5 mr-2 animate-pulse transition-transform duration-300 group-hover:scale-125"
+                className="text-white w-3 h-3 md:w-5 md:h-5 mr-[4px] md:mr-2 animate-pulse transition-transform duration-300 group-hover:scale-125"
                 fill="currentColor"
               />
               Support Cloud Storage Costs
             </div>
-            <h1 className="text-3xl md:text-6xl lg:text-[75px] font-bold text-center leading-tight sm:mb-8 text-gray-800 dark:text-gray-100 transition-colors duration-300">
+            <h1 className="text-4xl md:text-6xl lg:text-[75px] font-bold text-center leading-tight sm:mb-8 text-gray-800 dark:text-gray-100 transition-colors duration-300">
               Share{" "}
               <RiBookShelfFill className="italic inline-block p-2 sm:p-3 md:p-4 rounded-2xl sm:rounded-3xl shadow-xl border-x border-t mx-1 sm:mx-2 w-10 h-10 md:w-20 md:h-20 bg-white/20 dark:bg-gray-700/30" />{" "}
               Notes, <br />
@@ -260,9 +260,19 @@ const Home = () => {
                         <p className="text-sm sm:text-base md:text-lg text-gray-700 dark:text-gray-300 mb-3 text-center leading-relaxed transition-colors duration-300">
                           {event.description}
                         </p>
-                        <p className="text-gray-500 dark:text-gray-400 text-center text-xs sm:text-sm transition-colors duration-300">
+                        <p className="text-gray-500 dark:text-gray-400 text-center text-xs sm:text-sm transition-colors duration-300 mb-3">
                           Posted on {new Date(event.createdAt).toLocaleDateString()}
                         </p>
+                        {event.eventLink && (
+                          <a
+                            href={event.eventLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-block w-full text-center bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 text-sm"
+                          >
+                            View Event →
+                          </a>
+                        )}
                       </div>
                     </div>
                   ))}

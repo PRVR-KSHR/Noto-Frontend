@@ -3,6 +3,7 @@ import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { fileAPI } from "../../utils/api";
+import ProfessorSearch from "../../components/ProfessorSearch/ProfessorSearch";
 import {
   Upload as UploadIcon,
   Search,
@@ -43,6 +44,7 @@ const Upload = () => {
   const [uploading, setUploading] = useState(false);
   const [errors, setErrors] = useState({});
   const [showHandwrittenModal, setShowHandwrittenModal] = useState(false);
+  const [taggedProfessors, setTaggedProfessors] = useState([]); // NEW: Track tagged professors
 
 
   // Redirect if not logged in
@@ -209,6 +211,15 @@ const handleSubmit = async (e) => {
     uploadData.append("semester", formData.semester || "");
     uploadData.append("year", formData.year?.toString() || new Date().getFullYear().toString());
     uploadData.append("documentType", formData.documentType || "typed"); // NEW: Include document type
+    
+    // NEW: Add tagged professors (as JSON array) with all necessary fields
+    if (taggedProfessors.length > 0) {
+      uploadData.append("taggedProfessors", JSON.stringify(taggedProfessors.map(p => ({ 
+        _id: p._id, 
+        fullName: p.fullName,
+        collegeName: p.collegeName || ''
+      }))));
+    }
 
 
     if (!formData.file) {
@@ -259,7 +270,7 @@ const handleSubmit = async (e) => {
             </div>
             <div className="flex items-start gap-2 text-sm opacity-95">
               <span>📋</span>
-              <span>Your material is now under admin review and will typically be verified within <strong>24 hours</strong>.</span>
+              <span>Your material is now awaiting verification from tagged professors or admin, and will typically be verified within <strong>24 hours</strong>.</span>
             </div>
             <div className="text-xs opacity-80 flex items-center gap-1">
               <span>✓ You can track the status in your <strong>Profile</strong></span>
@@ -297,6 +308,7 @@ const handleSubmit = async (e) => {
       file: null,
       documentType: "typed", // NEW: Reset to default
     });
+    setTaggedProfessors([]); // NEW: Reset tagged professors
 
     setCourseSearch("");
     setUploadProgress(0);
@@ -382,7 +394,7 @@ const handleSubmit = async (e) => {
     setShowCourseDropdown(false);
   };
 
-  // UPDATED: Form validation - added subject, documentType, removed description
+  // UPDATED: Form validation - professorName is REQUIRED, taggedProfessors is OPTIONAL
   const validateForm = () => {
     const newErrors = {};
 
@@ -393,11 +405,14 @@ const handleSubmit = async (e) => {
     if (!formData.subject.trim()) newErrors.subject = "Subject is required";
     if (!formData.collegeName.trim())
       newErrors.collegeName = "College name is required";
+    // ✅ UPDATED: professorName is now REQUIRED
     if (!formData.professorName.trim())
       newErrors.professorName = "Professor name is required";
     if (!formData.semester) newErrors.semester = "Semester is required";
     if (!formData.year) newErrors.year = "Year is required";
     if (!formData.file) newErrors.file = "Please select a file to upload";
+    // ✅ UPDATED: taggedProfessors is now OPTIONAL (not required)
+    // Users can upload without tagging professors - will be verified by admin only
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -433,12 +448,12 @@ const handleSubmit = async (e) => {
           <div className="mt-4 mx-auto max-w-lg">
             <div 
               className="bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-500/40 rounded-lg p-3 cursor-help transition-colors duration-300"
-              title="All uploads are reviewed by our admin team to ensure quality before going public. Reviews are typically completed within 24 hours. You can track the verification status anytime in your Profile."
+              title="If you tagged professors, they will verify your material. Otherwise, it will be reviewed by our admin team to ensure quality before going public. Verification is typically completed within 24 hours. You can track the verification status anytime in your Profile."
             >
               <div className="flex items-center justify-center space-x-2">
                 <AlertCircle className="w-4 h-4 text-amber-600 dark:text-amber-300" />
                 <span className="text-amber-800 dark:text-amber-200 text-xs sm:text-sm font-medium">
-                  📋 Admin verification required before going live <br /> (usually within 24 hours)
+                  📋 Tagged professor or admin verification required before going live <br /> (usually within 24 hours)
                 </span>
               </div>
               <p className="text-amber-700 dark:text-amber-200/80 text-xs mt-1 text-center">
@@ -798,23 +813,47 @@ const handleSubmit = async (e) => {
               )}
             </div>
 
-            {/* 7. Professor Name (Required) */}
+            {/* 7. Professor Name (REQUIRED - teacher of the subject) */}
             <div>
               <label className="block text-sm font-semibold text-gray-800 dark:text-blue-200 mb-2 transition-colors duration-300">
-                Professor Name <span className="text-red-500">*</span>
+                Professor Name *
               </label>
+              <p className="text-xs text-gray-600 dark:text-gray-400 mb-3">
+                Enter the name of the professor who teaches this subject
+              </p>
               <input
                 type="text"
                 name="professorName"
                 value={formData.professorName}
                 onChange={handleInputChange}
-                placeholder="e.g., Dr. Smith"
+                placeholder="e.g., Dr. Smith or Prof. John Doe"
                 className={`input ${errors.professorName ? "border-red-500" : ""}`}
-                required
               />
               {errors.professorName && (
                 <p className="text-red-500 text-xs mt-1">
                   {errors.professorName}
+                </p>
+              )}
+            </div>
+
+            {/* 7b. Tag Professors for Verification (Optional) */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-800 dark:text-blue-200 mb-2 transition-colors duration-300">
+                Tag Professors for Verification
+              </label>
+              <p className="text-xs text-gray-600 dark:text-gray-400 mb-3">
+                If you tag professors, they will verify your material. If not, it will be verified by admin only.
+              </p>
+              <ProfessorSearch 
+                onProfessorsSelected={setTaggedProfessors}
+                initialProfessors={taggedProfessors}
+                collegeName={formData.collegeName}
+                subject={formData.subject}
+              />
+              {errors.taggedProfessors && (
+                <p className="text-red-500 text-sm mt-2 flex items-center gap-1">
+                  <AlertCircle className="w-4 h-4" />
+                  {errors.taggedProfessors}
                 </p>
               )}
             </div>
