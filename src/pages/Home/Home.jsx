@@ -114,7 +114,8 @@ const Home = () => {
 
   return (
     <div className="min-h-screen dark:bg-gray-900 transition-colors duration-300">
-  <section className="relative min-h-[80vh] sm:min-h-[85vh] lg:min-h-screen overflow-hidden px-4 lg:px-8 flex items-start lg:items-center dark:bg-gray-900 transition-colors duration-300 pt-28 md:pt-0 pb-8">
+  {/* Hero Section: reduced mobile min-height & bottom padding for less whitespace below on phones */}
+  <section className="relative min-h-[58vh] sm:min-h-[70vh] lg:min-h-[92vh] overflow-hidden px-4 lg:px-8 flex items-start sm:items-center lg:items-center dark:bg-gray-900 transition-colors duration-300 pt-20 md:pt-0 pb-2">
         <HeroBackgroundSVG className="absolute -z-999" />
 
         <div className="container relative z-10 mx-auto ">
