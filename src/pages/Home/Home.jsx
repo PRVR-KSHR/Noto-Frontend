@@ -288,7 +288,8 @@ const Home = () => {
           <HeroBackgroundSVG className="w-full h-full opacity-30 dark:opacity-15" />
         </div>
 
-        <div className="relative max-w-6xl mx-auto py-12 sm:py-16 lg:py-20">
+  {/* Reduce top padding on mobile to tighten space below hero */}
+  <div className="relative max-w-6xl mx-auto pt-6 pb-12 sm:py-14 lg:py-20">
           <div className="absolute inset-0 rounded-[40px] bg-gradient-to-br from-blue-100/60 via-pink-50/40 to-blue-100/60 dark:from-blue-900/30 dark:via-gray-900/50 dark:to-blue-900/30 blur-3xl -z-10"></div>
 
           <div className="relative rounded-[32px] border border-white/70 dark:border-gray-700/60 bg-white/80 dark:bg-gray-900/70 shadow-2xl backdrop-blur-xl p-6 sm:p-8 lg:p-10">
