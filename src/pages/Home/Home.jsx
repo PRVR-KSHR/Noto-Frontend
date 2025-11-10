@@ -114,8 +114,8 @@ const Home = () => {
 
   return (
     <div className="min-h-screen dark:bg-gray-900 transition-colors duration-300">
-  {/* Hero Section: reduced mobile min-height & bottom padding for less whitespace below on phones */}
-  <section className="relative min-h-[58vh] sm:min-h-[70vh] lg:min-h-[92vh] overflow-hidden px-4 lg:px-8 flex items-start sm:items-center lg:items-center dark:bg-gray-900 transition-colors duration-300 pt-20 md:pt-0 pb-2">
+  {/* Hero: aggressive mobile height reduction; -mt on events to pull up */}
+  <section className="relative min-h-[50vh] sm:min-h-[68vh] lg:min-h-[92vh] overflow-hidden px-4 lg:px-8 flex items-start sm:items-center lg:items-center dark:bg-gray-900 transition-colors duration-300 pt-16 md:pt-0 pb-0">
         <HeroBackgroundSVG className="absolute -z-999" />
 
         <div className="container relative z-10 mx-auto ">
@@ -181,7 +181,7 @@ const Home = () => {
           ([sectionTitle, events], sectionIndex) => (
             <section
               key={sectionTitle}
-              className={`section ${
+              className={`section -mt-12 sm:-mt-0 ${
                 sectionIndex % 2 === 0
                   ? "bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-blue-900/20 dark:to-indigo-900/20"
                   : "bg-gradient-to-br from-green-50 to-emerald-100 dark:from-green-900/20 dark:to-emerald-900/20"
@@ -289,7 +289,7 @@ const Home = () => {
         </div>
 
   {/* Reduce top padding on mobile to tighten space below hero */}
-  <div className="relative max-w-6xl mx-auto pt-6 pb-12 sm:py-14 lg:py-20">
+  <div className="relative max-w-6xl mx-auto py-6 sm:py-12 lg:py-20">
           <div className="absolute inset-0 rounded-[40px] bg-gradient-to-br from-blue-100/60 via-pink-50/40 to-blue-100/60 dark:from-blue-900/30 dark:via-gray-900/50 dark:to-blue-900/30 blur-3xl -z-10"></div>
 
           <div className="relative rounded-[32px] border border-white/70 dark:border-gray-700/60 bg-white/80 dark:bg-gray-900/70 shadow-2xl backdrop-blur-xl p-6 sm:p-8 lg:p-10">
