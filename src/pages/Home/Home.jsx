@@ -260,9 +260,19 @@ const Home = () => {
                         <p className="text-sm sm:text-base md:text-lg text-gray-700 dark:text-gray-300 mb-3 text-center leading-relaxed transition-colors duration-300">
                           {event.description}
                         </p>
-                        <p className="text-gray-500 dark:text-gray-400 text-center text-xs sm:text-sm transition-colors duration-300">
+                        <p className="text-gray-500 dark:text-gray-400 text-center text-xs sm:text-sm transition-colors duration-300 mb-3">
                           Posted on {new Date(event.createdAt).toLocaleDateString()}
                         </p>
+                        {event.eventLink && (
+                          <a
+                            href={event.eventLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-block w-full text-center bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 text-sm"
+                          >
+                            View Event →
+                          </a>
+                        )}
                       </div>
                     </div>
                   ))}

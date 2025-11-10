@@ -24,6 +24,7 @@ import {
   MessageSquare,
   ArrowRight,
   X,
+  CheckCircle,
 } from "lucide-react";
 
 const Materials = () => {
@@ -567,6 +568,25 @@ const Materials = () => {
                               </span>
                             )}
                           </div>
+
+                          {/* ✅ NEW: Verified By Section */}
+                          {material.verification?.status === 'verified' && (
+                            <div className="flex items-center text-[10px] sm:text-[12px] mt-1">
+                              <CheckCircle className="w-3 h-3 sm:w-[12px] sm:h-[12px] mr-1 sm:mr-2 text-green-600 dark:text-green-400 transition-colors duration-300" />
+                              <span className="truncate text-green-700 dark:text-green-300 font-medium">
+                                Verified by: {
+                                  material.verification?.adminVerified 
+                                    ? "Admin" 
+                                    : material.verification?.professorVerified 
+                                    ? material.taggedProfessors
+                                        ?.filter(p => p.verificationStatus === 'approved')
+                                        .map(p => p.professorName)
+                                        .join(', ') || "Professors"
+                                    : "Verified"
+                                }
+                              </span>
+                            </div>
+                          )}
                         </div>
                       </div>
 

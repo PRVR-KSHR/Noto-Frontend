@@ -321,6 +321,24 @@ export const adminAPI = {
   rejectMaterial: async (materialId, reason) => {
     const response = await api.post(`/admin/materials/${materialId}/reject`, { reason });
     return response.data;
+  },
+
+  // ✅ NEW: Get pending professor applications (admin only)
+  getPendingProfessors: async () => {
+    const response = await api.get('/professors/admin/all?status=pending');
+    return response.data;
+  },
+
+  // ✅ NEW: Get total materials count
+  getTotalMaterials: async () => {
+    const response = await api.get('/files');
+    return response.data;
+  },
+
+  // ✅ NEW: Get approved/active professors count
+  getActiveProfessors: async () => {
+    const response = await api.get('/professors/admin/all?status=approved');
+    return response.data;
   }
 };
 

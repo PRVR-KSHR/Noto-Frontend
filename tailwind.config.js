@@ -28,8 +28,9 @@ export default {
           800: '#0F1629',
           900: '#0D1526',
         },
-        // Background and foreground
-        background: '#FFFFFF',
+  // Background and foreground
+  // Updated light-mode background to a softer off-white for eye comfort
+  background: '#FFF8EC',
         foreground: '#10367D',
         muted: {
           DEFAULT: '#EBEBEB',     // Your light gray

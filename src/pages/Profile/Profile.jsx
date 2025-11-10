@@ -2,12 +2,15 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { fileAPI, authAPI, messageAPI } from "../../utils/api";
+import api from "../../utils/api";
 import toast from "react-hot-toast";
 import { signOut } from "firebase/auth";
 import { auth } from "../../firebase/config";
 import { useNavigate } from "react-router-dom";
 import PencilLoader from "../../components/PencilLoader/PencilLoader";
 import UserAvatar from "../../components/UserAvatar";
+import ProfessorValidatorTab from "../../components/ProfessorValidatorTab/ProfessorValidatorTab";
+import ProfessorMaterialVerification from "../../components/ProfessorMaterialVerification/ProfessorMaterialVerification";
 import {
   BookOpen,
   FileText,
@@ -33,6 +36,7 @@ import {
   Clock3,
   Star,
   RefreshCw,
+  Shield,
 } from "lucide-react";
 
 const Profile = () => {
@@ -49,7 +53,9 @@ const Profile = () => {
     bookmarks: 0,
     messages: 0,
   });
+  const [taggedMaterialsCount, setTaggedMaterialsCount] = useState(0); // ✅ NEW: Count of tagged materials for professor
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [isProfessorApproved, setIsProfessorApproved] = useState(false);
 
   // Helper function to count words
   const countWords = (text) => {
@@ -128,17 +134,79 @@ const Profile = () => {
   ];
 
   useEffect(() => {
-    // ✅ FETCH: Get actual counts on component mount
-    fetchActualCounts();
+    // ✅ FETCH: Debounce API calls to avoid rate limiting
+    const timers = [];
+    
+    // Fetch professor status first (no delay)
+    timers.push(
+      setTimeout(() => {
+        checkProfessorStatus();
+      }, 0)
+    );
+    
+    // Then fetch counts after 200ms
+    timers.push(
+      setTimeout(() => {
+        fetchActualCounts();
+      }, 200)
+    );
 
-    if (activeTab === "materials") {
-      fetchMyMaterials();
-    } else if (activeTab === "bookmarks") {
-      fetchBookmarks();
-    } else if (activeTab === "messages") {
-      fetchMessages();
-    }
+    // Then fetch tab-specific data after 400ms
+    timers.push(
+      setTimeout(() => {
+        if (activeTab === "materials") {
+          fetchMyMaterials();
+        } else if (activeTab === "bookmarks") {
+          fetchBookmarks();
+        } else if (activeTab === "messages") {
+          fetchMessages();
+        }
+      }, 400)
+    );
+
+    // Cleanup timers on unmount or dependency change
+    return () => {
+      timers.forEach(timer => clearTimeout(timer));
+    };
   }, [activeTab, selectedCategory]);
+
+  // ✅ NEW: Check if user is approved professor
+  const checkProfessorStatus = async () => {
+    try {
+      const response = await api.get('/professors/my-application');
+      // Check if application exists AND is approved
+      if (response.data.application && response.data.application.status === 'approved') {
+        setIsProfessorApproved(true);
+        // ✅ NEW: Fetch tagged materials count for this professor
+        fetchTaggedMaterialsCount();
+      } else {
+        setIsProfessorApproved(false);
+        setTaggedMaterialsCount(0);
+      }
+    } catch (error) {
+      // Error fetching - default to not approved
+      console.error('Error checking professor status:', error);
+      setIsProfessorApproved(false);
+      setTaggedMaterialsCount(0);
+    }
+  };
+
+  // ✅ NEW: Fetch count of tagged materials PENDING REVIEW ONLY
+  const fetchTaggedMaterialsCount = async () => {
+    try {
+      const response = await api.get('/materials/professor/tagged-materials');
+      if (response.data.success) {
+        // Count only materials with pending verification status
+        const pendingCount = response.data.materials?.filter(
+          material => material.taggedProfessors?.[0]?.verificationStatus === 'pending'
+        ).length || 0;
+        setTaggedMaterialsCount(pendingCount);
+      }
+    } catch (error) {
+      console.error('Error fetching tagged materials count:', error);
+      setTaggedMaterialsCount(0);
+    }
+  };
 
   // ✅ NEW: Refresh data when page becomes visible (user returns to tab)
   useEffect(() => {
@@ -396,8 +464,13 @@ const Profile = () => {
     showBookmarkAction = false,
     showDeleteButton = false
   ) => {
+    // Safety check: ensure material and category exist
+    if (!material || !material.category) {
+      return <div className="p-4 text-gray-500">Material data unavailable</div>;
+    }
+    
     const categoryInfo = getCategoryInfo(material.category.type);
-    const CategoryIcon = categoryInfo.icon;
+    const CategoryIcon = categoryInfo?.icon || BookOpen;
 
     return (
       <div
@@ -433,16 +506,16 @@ const Profile = () => {
 
             <div className="mt-2 text-xs sm:text-sm text-gray-500 dark:text-gray-400 space-y-1 text-center sm:text-left">
               <p>
-                <strong>Subject:</strong> {material.category.subject}
+                <strong>Subject:</strong> {material.category?.subject || 'N/A'}
               </p>
               <p>
-                <strong>Course:</strong> {material.category.branch}
+                <strong>Course:</strong> {material.category?.branch || 'N/A'}
               </p>
               <p>
-                <strong>Semester:</strong> {material.category.semester}
+                <strong>Semester:</strong> {material.category?.semester || 'N/A'}
               </p>
               <p>
-                <strong>College:</strong> {material.metadata.collegeName}
+                <strong>College:</strong> {material.metadata?.collegeName || 'N/A'}
               </p>
               {/* NEW: Verification Status Display - only for uploaded materials */}
               {!showBookmarkAction && material.verification && (
@@ -473,11 +546,14 @@ const Profile = () => {
                       {material.verification.status === "verified" && (
                         <div>
                           <p className="font-semibold text-green-300 dark:text-green-400 mb-2">
-                            ✓ Verified by Admin
+                            ✓ Verified {material.verification.adminVerified ? "by Admin" : material.verification.professorVerified ? "by Professors" : ""}
                           </p>
                           <p className="text-gray-300 dark:text-gray-400 mb-2">
-                            This material has been reviewed and approved by
-                            administrators.
+                            {material.verification.adminVerified 
+                              ? "This material has been reviewed and approved by administrators."
+                              : material.verification.professorVerified
+                              ? "This material has been reviewed and approved by all tagged professors."
+                              : "This material has been verified and approved."}
                           </p>
                           {material.verification.verifiedAt && (
                             <p className="text-gray-400 dark:text-gray-500 text-xs">
@@ -766,11 +842,43 @@ const Profile = () => {
                   Messages ({actualCounts.messages})
                 </span>
               </button>
+
+              {/* Show "Apply for Validator" tab only if NOT approved professor */}
+              {!isProfessorApproved && (
+                <button
+                  onClick={() => setActiveTab("professor")}
+                  className={`py-3 sm:py-4 px-3 sm:px-4 font-medium text-xs sm:text-sm text-left sm:text-center rounded-t-lg transition-all ${
+                    activeTab === "professor"
+                      ? "border-2 border-blue-400 border-b-4 border-b-blue-600 text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30"
+                      : "border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+                  }`}
+                >
+                  <Shield className="w-4 h-4 inline mr-2" />
+                  <span className="hidden sm:inline">Apply for Validator</span>
+                  <span className="sm:hidden">Apply for Validator</span>
+                </button>
+              )}
+
+              {/* Show "Material Verification" tab only if approved professor */}
+              {isProfessorApproved && (
+                <button
+                  onClick={() => setActiveTab("verification")}
+                  className={`py-3 sm:py-4 px-3 sm:px-4 font-medium text-xs sm:text-sm text-left sm:text-center rounded-t-lg transition-all ${
+                    activeTab === "verification"
+                      ? "border-2 border-blue-400 border-b-4 border-b-blue-600 text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30"
+                      : "border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+                  }`}
+                >
+                  <CheckCircle className="w-4 h-4 inline mr-2" />
+                  <span className="hidden sm:inline">Material Verification ({taggedMaterialsCount})</span>
+                  <span className="sm:hidden">Verification ({taggedMaterialsCount})</span>
+                </button>
+              )}
             </nav>
           </div>
 
-          {/* Category Filter - Only show for materials and bookmarks, not for messages */}
-          {activeTab !== "messages" && (
+          {/* Category Filter - Only show for materials and bookmarks, not for messages or professor tabs */}
+          {activeTab !== "messages" && activeTab !== "professor" && activeTab !== "verification" && (
             <div className="p-6 border-b border-gray-200 dark:border-gray-700">
               <div className="flex flex-wrap gap-2">
                 {categories.map((category) => {
@@ -794,7 +902,8 @@ const Profile = () => {
             </div>
           )}
 
-          {/* Content */}
+          {/* Content - Only show for materials, bookmarks, and messages tabs */}
+          {activeTab !== "professor" && activeTab !== "verification" && (
           <div className="p-6">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
@@ -805,39 +914,43 @@ const Profile = () => {
                   : "My Messages"}
               </h2>
               {activeTab === "messages" ? (
-                <div className="flex flex-col pl-4 sm:flex-row sm:items-center sm:justify-end gap-2">
-                  <button
-                    onClick={() => fetchMessages()}
-                    className="bg-green-600 dark:bg-green-500 text-white px-3 py-2 sm:px-4 sm:py-2 rounded-full sm:rounded-lg hover:bg-green-700 dark:hover:bg-green-600 transition-all duration-200 flex items-center justify-center gap-2 text-sm font-medium shadow-sm hover:shadow-md"
-                    title="Refresh messages"
-                    aria-label="Refresh messages"
-                  >
-                    <RefreshCw className="w-4 h-4" />
-                    <span className="hidden sm:inline">Refresh</span>
-                  </button>
-                  <button
-                    onClick={handleNewMessageClick}
-                    disabled={hasExistingMessage()}
-                    className={`px-3 sm:px-4 py-2 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm ${
-                      hasExistingMessage()
-                        ? "bg-gray-400 dark:bg-gray-600 text-gray-200 cursor-not-allowed"
-                        : "bg-blue-600 dark:bg-blue-500 text-white hover:bg-blue-700 dark:hover:bg-blue-600"
-                    }`}
-                    title={
-                      hasExistingMessage()
-                        ? "Delete your existing message before creating a new one"
-                        : "Send a new message to admin"
-                    }
-                  >
-                    <Send className="w-3 h-3 sm:w-4 sm:h-4" />
-                    <span className="hidden sm:inline">New Message</span>
-                    <span className="sm:hidden">Message</span>
-                  </button>
+                <div className="flex flex-col gap-3">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-2">
+                    <button
+                      onClick={() => fetchMessages()}
+                      className="bg-green-600 dark:bg-green-500 text-white px-3 py-2 sm:px-4 sm:py-2 rounded-full sm:rounded-lg hover:bg-green-700 dark:hover:bg-green-600 transition-all duration-200 flex items-center justify-center gap-2 text-sm font-medium shadow-sm hover:shadow-md"
+                      title="Refresh messages"
+                      aria-label="Refresh messages"
+                    >
+                      <RefreshCw className="w-4 h-4" />
+                      <span className="hidden sm:inline">Refresh</span>
+                    </button>
+                    <button
+                      onClick={handleNewMessageClick}
+                      disabled={hasExistingMessage()}
+                      className={`px-3 sm:px-4 py-2 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm ${
+                        hasExistingMessage()
+                          ? "bg-gray-400 dark:bg-gray-600 text-gray-200 cursor-not-allowed"
+                          : "bg-blue-600 dark:bg-blue-500 text-white hover:bg-blue-700 dark:hover:bg-blue-600"
+                      }`}
+                      title={
+                        hasExistingMessage()
+                          ? "Delete your existing message before creating a new one"
+                          : "Send a new message to admin"
+                      }
+                    >
+                      <Send className="w-3 h-3 sm:w-4 sm:h-4" />
+                      <span className="hidden sm:inline">New Message</span>
+                      <span className="sm:hidden">Message</span>
+                    </button>
+                  </div>
                   {hasExistingMessage() && (
-                    <p className="text-xs text-red-600 dark:text-red-400 text-center sm:text-right max-w-full sm:max-w-48">
-                      ⚠️ You have an existing message. Delete it before creating
-                      a new one.
-                    </p>
+                    <div className="flex items-center gap-2 p-3 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg">
+                      <AlertCircle className="w-4 h-4 text-red-600 dark:text-red-400 flex-shrink-0" />
+                      <p className="text-sm text-red-700 dark:text-red-300 font-medium">
+                        ⚠️ You have an existing message. Delete it before creating a new one.
+                      </p>
+                    </div>
                   )}
                 </div>
               ) : activeTab === "materials" ? (
@@ -1012,6 +1125,7 @@ const Profile = () => {
               </div>
             )}
           </div>
+          )}
         </div>
       </div>
       {/* ✅ ADD: Delete Account Confirmation Modal */}
@@ -1158,6 +1272,43 @@ const Profile = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Professor Validator Tab */}
+      {activeTab === "professor" && (
+        <ProfessorValidatorTab />
+      )}
+
+      {/* Material Verification Tab Content - Inside the card with proper styling */}
+      {activeTab === "verification" && (
+        <div className="mb-6 mx-auto bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-lg shadow-md dark:shadow-gray-900 transition-colors duration-300 max-w-7xl w-full">
+          {/* Header Section - Compact spacing below tabs */}
+          <div className="px-4 sm:px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div className="flex-1">
+              <div className="flex items-center gap-2">
+                <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                  Material Verification Queue
+                </h3>
+              </div>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                Review and verify materials tagged for you before they go live.
+              </p>
+            </div>
+            <button
+              onClick={() => fetchTaggedMaterialsCount()}
+              className="px-3 sm:px-4 py-2 bg-blue-600 dark:bg-blue-500 text-white text-sm font-medium rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors flex items-center gap-2 whitespace-nowrap"
+              title="Refresh verification queue count"
+            >
+              <RefreshCw className="w-4 h-4" />
+              <span className="hidden sm:inline">Refresh</span>
+              <span className="sm:hidden">↻</span>
+            </button>
+          </div>
+          {/* Table Content */}
+          <div className="px-4 sm:px-6 py-4 overflow-x-auto">
+            <ProfessorMaterialVerification />
           </div>
         </div>
       )}
