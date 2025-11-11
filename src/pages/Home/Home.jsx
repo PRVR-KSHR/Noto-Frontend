@@ -112,6 +112,7 @@ const Home = () => {
     document.body.style.overflow = "unset";
   };
 
+  // Keep the hero section near the top of the viewport while navigation is visible
   return (
     <div className="min-h-screen dark:bg-gray-900 transition-colors duration-300">
   <section className="relative min-h-[80vh] sm:min-h-[85vh] lg:min-h-screen overflow-hidden px-4 lg:px-8 flex items-start lg:items-center dark:bg-gray-900 transition-colors duration-300 pt-28 md:pt-0 pb-8">
