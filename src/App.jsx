@@ -70,10 +70,10 @@ function App() {
           </main>
           <Footer />
         
-        {/* Global toast notifications with isolated styling */}
-        <Toaster />
+          {/* Global toast notifications with isolated styling */}
+          <Toaster position="top-center" />
         
-        <AppWithPopup />
+          <AppWithPopup />
         </div>
       </Router>
   );
