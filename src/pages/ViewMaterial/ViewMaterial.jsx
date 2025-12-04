@@ -188,10 +188,14 @@ const ViewMaterial = () => {
   // ✅ Authentication check
   useEffect(() => {
     if (!user) {
-      navigate("/login");
+      // Store the current location so user returns here after login
+      navigate("/login", { 
+        state: { from: { pathname: `/view/${materialId}` } },
+        replace: true 
+      });
       return;
     }
-  }, [user, navigate]);
+  }, [user, navigate, materialId]);
 
   useEffect(() => {
     if (!user) return;
