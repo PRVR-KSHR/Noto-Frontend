@@ -54,7 +54,9 @@ function App() {
                 <Route path="/" element={<Home />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/materials" element={<Materials />} />
-                <Route path="/materials/view/:id" element={<ViewMaterial />} />
+                <Route path="/materials/view/:fileId" element={<ViewMaterial />} />
+                {/* NEW: public share alias for direct links */}
+                <Route path="/view/:fileId" element={<ViewMaterial />} />
                 <Route path="/upload" element={<Upload />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/about" element={<About />} />

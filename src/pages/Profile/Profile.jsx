@@ -658,7 +658,7 @@ const Profile = () => {
                 )}
 
                 <button
-                  onClick={() => navigate(`/materials/view/${material._id}`)}
+                  onClick={() => navigate(`/view/${material._id}`)}
                   className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg transition-colors flex items-center justify-center"
                 >
                   <Eye className="w-4 h-4 mr-2" />

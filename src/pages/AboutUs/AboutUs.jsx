@@ -1,6 +1,6 @@
 import React from "react";
 import kaushal from "../../assets/kaushal.jpg";
-import nitya from "../../assets/Nits.jpg";
+import apurv from "../../assets/apurv.jpg";
 import praveer from "../../assets/praveer.jpg";
 
 const About = () => {
@@ -477,7 +477,7 @@ const About = () => {
                   Kaushal Mandal
                 </h1>
                 <p className="mt-2 text-gray-500 dark:text-gray-200 capitalize transition-colors duration-300">
-                  FUll stack Developer
+                  Full stack Developer
                 </p>
                 <div className="flex mt-3 -mx-2">
                   <a
@@ -546,18 +546,18 @@ const About = () => {
               <div className="flex flex-col items-center p-4 border border-blue-100/60 dark:border-gray-700/60 sm:p-6 rounded-xl bg-white/30 dark:bg-gray-900/70 transition-colors duration-300">
                 <img
                   className="object-cover w-full rounded-xl aspect-square"
-                  src={nitya}
-                  alt="Nityanand Kumar"
+                  src={apurv}
+                  alt="Apurv Anupam"
                 />
                 <h1 className="mt-4 text-2xl font-semibold text-gray-700 dark:text-white capitalize transition-colors duration-300">
-                  Nityanand Kumar
+                  Apurv Anupam
                 </h1>
                 <p className="mt-2 text-gray-500 dark:text-gray-200 capitalize transition-colors duration-300">
-                  Full Stack Developer (UI/UX designer)
+                  Full Stack Developer
                 </p>
                 <div className="flex mt-3 -mx-2">
                   <a
-                    href="https://www.linkedin.com/in/nityanand-kumar-097040282?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
+                    href=""
                     target="_blank"
   rel="noopener noreferrer"
                     className="mx-2 text-gray-600 dark:text-gray-300 transition-colors duration-300 hover:text-blue-700 dark:hover:text-blue-400"
@@ -583,7 +583,7 @@ const About = () => {
                   </a>
 
                   <a
-                    href="https://www.instagram.com/ankushanand_?igsh=MXYwMTBvNjVhcWZkZg=="
+                    href="https://www.instagram.com/c_yclo"
                     target="_blank"
   rel="noopener noreferrer"
                     className="mx-2 text-gray-600 dark:text-gray-300 transition-colors duration-300 hover:text-pink-500 dark:hover:text-pink-400"

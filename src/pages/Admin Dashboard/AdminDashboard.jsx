@@ -1509,7 +1509,7 @@ const AdminDashboard = () => {
                             <div className="flex space-x-2">
                               {/* View Document Button - Navigate to view page */}
                               <button
-                                onClick={() => navigate(`/materials/view/${material._id}`)}
+                                onClick={() => navigate(`/view/${material._id}`)}
                                 className="inline-flex items-center px-3 py-1 rounded-md text-sm font-medium bg-purple-100 text-purple-800 hover:bg-purple-200 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-purple-900/40 dark:text-purple-200 dark:hover:bg-purple-900/60"
                                 title="View full document with all details"
                               >

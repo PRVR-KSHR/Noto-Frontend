@@ -2,26 +2,18 @@ import axios from 'axios';
 import { signOut } from "firebase/auth";
 import { auth } from '../firebase/config';
 
-// Prefer local API when running the frontend on localhost to avoid accidental calls to production
-const FALLBACK_API = 'http://localhost:5000/api';
-const ENV_API = import.meta.env.VITE_API_URL;
-const API_BASE_URL = (typeof window !== 'undefined' && window.location.hostname === 'localhost')
-  ? FALLBACK_API
-  : (ENV_API || FALLBACK_API);
-// Debug: surface which API base is being used
-// eslint-disable-next-line no-console
-console.log('[API] Base URL:', API_BASE_URL);
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 // Create axios instance with longer timeout for Render cold starts
 const api = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: API_URL,
   headers: {
     'Content-Type': 'application/json',
   },
   timeout: 60000, // 60 second timeout to handle Render cold starts
 });
 
-// ✅ FIXED: Add the missing request interceptor to add auth tokens
+// Add request interceptor
 api.interceptors.request.use(
   async (config) => {
     console.log('🚀 Making API request to:', config.url);
@@ -45,7 +37,7 @@ api.interceptors.request.use(
   }
 );
 
-// ✅ FIXED: Single response interceptor that doesn't interfere with login
+// Add response interceptor for better error handling
 api.interceptors.response.use(
   (response) => {
     console.log('✅ API response received:', response.status);
@@ -57,7 +49,7 @@ api.interceptors.response.use(
       console.error('🚨 Network error - Backend server may be down');
     }
 
-    // ✅ FIXED: Only sign out on 401 if it's NOT during login/profile fetch
+    // Only sign out on 401 if it's NOT during login/profile fetch
     if (error.response?.status === 401) {
       console.log('🔒 Unauthorized access');
       // Only auto-signout if user is currently logged in AND it's not a login-related endpoint
@@ -123,7 +115,7 @@ export const fileAPI = {
   getFileWithText: async (fileId) => {
     console.log('📖 Fetching file with extracted text:', fileId);
     // ✅ FIXED: Use longer timeout specifically for text extraction
-    const response = await axios.get(`${API_BASE_URL}/files/view/${fileId}`, {
+    const response = await axios.get(`${API_URL}/files/view/${fileId}`, {
       timeout: 60000, // 60 seconds for text extraction
       headers: {
         'Content-Type': 'application/json',
@@ -212,7 +204,7 @@ export const fileAPI = {
     if (!user) throw new Error('User not authenticated');
 
     const token = await user.getIdToken(true);
-    const response = await axios.post(`${API_BASE_URL}/files/upload`, formData, {
+    const response = await axios.post(`${API_URL}/files/upload`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
         'Authorization': `Bearer ${token}`
