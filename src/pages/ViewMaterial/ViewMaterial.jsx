@@ -27,7 +27,8 @@ import {
 } from "lucide-react";
 
 const ViewMaterial = () => {
-  const { id } = useParams();
+  const { fileId, id } = useParams();
+  const materialId = fileId || id; // Support both :fileId and :id route params
   const { user } = useAuth();
   const navigate = useNavigate();
   const [material, setMaterial] = useState(null);
@@ -199,14 +200,14 @@ const ViewMaterial = () => {
 
     const loadMaterialOnce = () => {
       if (
-        materialFetchRef.current.id === id &&
+        materialFetchRef.current.id === materialId &&
         materialFetchRef.current.promise
       ) {
         return materialFetchRef.current.promise;
       }
 
-      const promise = fileAPI.getFileById(id);
-      materialFetchRef.current = { id, promise };
+      const promise = fileAPI.getFileById(materialId);
+      materialFetchRef.current = { id: materialId, promise };
       return promise;
     };
 
@@ -333,7 +334,7 @@ Error: ${error.message}`;
           setDocumentText(fallbackText);
         }
       } catch (error) {
-        if (materialFetchRef.current.id === id) {
+        if (materialFetchRef.current.id === materialId) {
           materialFetchRef.current = { id: null, promise: null };
         }
 
@@ -354,7 +355,7 @@ Error: ${error.message}`;
           setLoading(false);
         }
 
-        if (materialFetchRef.current.id === id) {
+        if (materialFetchRef.current.id === materialId) {
           materialFetchRef.current = { id: null, promise: null };
         }
       }
@@ -365,7 +366,7 @@ Error: ${error.message}`;
     return () => {
       isCancelled = true;
     };
-  }, [id, user, navigate]);
+  }, [materialId, user, navigate]);
 
   // NEW: Check if user is admin
   useEffect(() => {
