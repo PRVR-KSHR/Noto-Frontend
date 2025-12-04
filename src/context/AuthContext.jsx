@@ -102,8 +102,7 @@ export const AuthProvider = ({ children }) => {
       // Personalized welcome messages
       const userName = response.data.user.displayName;
       if (response.data.isNewUser) {
-        toast.success(`Welcome to NOTO, ${userName}! 🎉`);
-        toast.success('Your account has been created successfully!');
+        toast.success(`Welcome to NOTO, ${userName}! 🎉 Your account has been created successfully!`);
       } else {
         toast.success(`Welcome back, ${userName}! 👋`);
       }
