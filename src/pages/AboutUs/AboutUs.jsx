@@ -477,7 +477,7 @@ const About = () => {
                   Kaushal Mandal
                 </h1>
                 <p className="mt-2 text-gray-500 dark:text-gray-200 capitalize transition-colors duration-300">
-                  Full stack Developer
+                  Full stack Developer (MERN)
                 </p>
                 <div className="flex mt-3 -mx-2">
                   <a
@@ -553,7 +553,7 @@ const About = () => {
                   Apurv Anupam
                 </h1>
                 <p className="mt-2 text-gray-500 dark:text-gray-200 capitalize transition-colors duration-300">
-                  Full Stack Developer
+                  Full Stack Developer (UI/UX designer)
                 </p>
                 <div className="flex mt-3 -mx-2">
                   <a
