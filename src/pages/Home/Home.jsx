@@ -115,12 +115,8 @@ const Home = () => {
   // Keep the hero section near the top of the viewport while navigation is visible
   return (
     <div className="min-h-screen dark:bg-gray-900 transition-colors duration-300">
-<<<<<<< HEAD
-  {/* Hero: aggressive mobile height reduction; -mt on events to pull up */}
-  <section className="relative min-h-[50vh] sm:min-h-[68vh] lg:min-h-[92vh] overflow-hidden px-4 lg:px-8 flex items-start sm:items-center lg:items-center dark:bg-gray-900 transition-colors duration-300 pt-16 md:pt-0 pb-0">
-=======
-  <section className="relative min-h-[45vh] sm:min-h-[45vh] lg:min-h-screen overflow-hidden px-4 lg:px-8 flex items-start lg:items-center dark:bg-gray-900 transition-colors duration-300 pt-28 md:pt-0 pb-8">
->>>>>>> 4fe11dd411a01c85c0ee8992d648b9af9cd4b58d
+      {/* Hero: aggressive mobile height reduction; -mt on events to pull up */}
+      <section className="relative min-h-[50vh] sm:min-h-[68vh] lg:min-h-[92vh] overflow-hidden px-4 lg:px-8 flex items-start sm:items-center lg:items-center dark:bg-gray-900 transition-colors duration-300 pt-16 md:pt-0 pb-0">
         <HeroBackgroundSVG className="absolute -z-999" />
 
         <div className="container relative z-10 mx-auto ">
