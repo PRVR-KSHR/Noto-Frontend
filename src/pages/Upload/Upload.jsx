@@ -100,6 +100,7 @@ const Upload = () => {
     "BPE (Bachelor of Physical Education)",
     "BTTM (Bachelor of Travel and Tourism Management)",
     "BHM (Bachelor of Hotel Management)",
+    "BTech (Bachelor of Technology)",
 
     // Postgraduate Courses
     "MBA (Master of Business Administration)",
