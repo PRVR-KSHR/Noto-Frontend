@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Heart, Copy } from 'lucide-react';
 import toast from 'react-hot-toast';
-import qrCodeImage from "../../assets/ankushPaytmQr.jpg";
+import qrCodeImage from "../../assets/prvr-paytm-upi.jpg";
 
 const UPISupportPopup = ({ isOpen, onClose }) => {
   const [isVisible, setIsVisible] = useState(false);
@@ -88,7 +88,7 @@ const UPISupportPopup = ({ isOpen, onClose }) => {
                 <div className="flex-1">
                   <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">UPI ID</p>
                   <p className="text-sm font-mono text-gray-700 dark:text-gray-300 break-all">
-                    ankush.nk@ptyes
+                    noto-prvr@ptyes
                   </p>
                 </div>
                 <button

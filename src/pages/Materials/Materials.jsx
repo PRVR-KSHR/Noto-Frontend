@@ -369,7 +369,13 @@ const Materials = () => {
 
               <div className="flex items-center justify-between sm:justify-end gap-2 sm:gap-3">
                 <button
-                  onClick={() => navigate("/profile?tab=messages")}
+                  onClick={() => {
+                    if (user) {
+                      navigate("/profile?tab=messages");
+                    } else {
+                      navigate("/login");
+                    }
+                  }}
                   className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white px-3 py-1.5 rounded-md transition-colors text-sm font-medium whitespace-nowrap"
                 >
                   <MessageSquare className="w-3.5 h-3.5" />
