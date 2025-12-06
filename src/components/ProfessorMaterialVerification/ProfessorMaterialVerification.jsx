@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../utils/api';
 import toast from 'react-hot-toast';
-import { Loader2, CheckCircle, XCircle, MessageSquare, Eye, XCircle as XCircleIcon } from 'lucide-react';
+import { Loader2, CheckCircle, XCircle, MessageSquare, Eye, Trash2 } from 'lucide-react';
 
 const ProfessorMaterialVerification = () => {
   const { user } = useAuth();
@@ -138,6 +138,28 @@ const ProfessorMaterialVerification = () => {
     setRejectionCategory('quality');
   };
 
+  // ✅ NEW: Handle Delete Material
+  const handleDeleteMaterial = async (materialId, materialTitle) => {
+    if (!window.confirm(`Are you sure you want to delete "${materialTitle}"? This action cannot be undone and will remove it from the system.`)) {
+      return;
+    }
+
+    try {
+      setVerifyingId(materialId);
+      const response = await api.delete(`/professors/verification/${materialId}/delete`);
+
+      if (response.data.success) {
+        toast.success('✅ Material deleted successfully');
+        fetchTaggedMaterials(); // Refresh list
+      }
+    } catch (error) {
+      console.error('Error deleting material:', error);
+      toast.error(error.response?.data?.message || 'Failed to delete material');
+    } finally {
+      setVerifyingId(null);
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center py-12">
@@ -193,7 +215,17 @@ const ProfessorMaterialVerification = () => {
                   <td className="px-6 py-4">
                     {isPending && <span className="inline-flex px-3 py-1 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-200">Pending</span>}
                     {isApproved && <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-200"><CheckCircle className="w-4 h-4" />Approved</span>}
-                    {isRejected && <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-200"><XCircle className="w-4 h-4" />Rejected</span>}
+                    {isRejected && (
+                      <div>
+                        <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-200 mb-2"><XCircle className="w-4 h-4" />Rejected</span>
+                        {/* ✅ NEW: Show rejection feedback */}
+                        {myVerification.comments && (
+                          <div className="mt-2 p-2 bg-red-50 dark:bg-red-900/20 rounded border border-red-200 dark:border-red-800">
+                            <p className="text-xs text-red-700 dark:text-red-300"><strong>Feedback:</strong> {myVerification.comments}</p>
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex space-x-2">
@@ -220,6 +252,17 @@ const ProfessorMaterialVerification = () => {
                           className="inline-flex items-center px-3 py-1 rounded-md text-sm font-medium bg-red-100 text-red-800 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-red-500 dark:bg-red-900/40 dark:text-red-200 dark:hover:bg-red-900/60 transition disabled:opacity-50"
                         >
                           {verifyingId === material._id ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <XCircle className="h-4 w-4 mr-1" />}Reject
+                        </button>
+                      )}
+                      {/* ✅ NEW: Delete button */}
+                      {(isApproved || isRejected) && (
+                        <button
+                          onClick={() => handleDeleteMaterial(material._id, material.title)}
+                          disabled={verifyingId === material._id}
+                          className="inline-flex items-center px-3 py-1 rounded-md text-sm font-medium bg-orange-100 text-orange-800 hover:bg-orange-200 focus:outline-none focus:ring-2 focus:ring-orange-500 dark:bg-orange-900/40 dark:text-orange-200 dark:hover:bg-orange-900/60 transition disabled:opacity-50"
+                          title="Delete this material from the system"
+                        >
+                          {verifyingId === material._id ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <Trash2 className="h-4 w-4 mr-1" />}Delete
                         </button>
                       )}
                     </div>
@@ -282,6 +325,17 @@ const ProfessorMaterialVerification = () => {
                     {verifyingId === material._id ? <Loader2 className="w-3 h-3 animate-spin" /> : <XCircle className="w-3 h-3" />}Reject
                   </button>
                 )}
+                {/* ✅ NEW: Delete button for mobile */}
+                {(isApproved || isRejected) && (
+                  <button
+                    onClick={() => handleDeleteMaterial(material._id, material.title)}
+                    disabled={verifyingId === material._id}
+                    className="flex items-center gap-1 px-3 py-1 rounded-md text-xs font-medium bg-orange-100 text-orange-800 hover:bg-orange-200 dark:bg-orange-900/40 dark:text-orange-200 dark:hover:bg-orange-900/60 disabled:opacity-50"
+                    title="Delete this material from the system"
+                  >
+                    {verifyingId === material._id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Trash2 className="w-3 h-3" />}Delete
+                  </button>
+                )}
               </div>
             </div>
           );
@@ -295,14 +349,14 @@ const ProfessorMaterialVerification = () => {
             {/* Modal Header */}
             <div className="sticky top-0 px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <XCircleIcon className="h-6 w-6 text-red-600 dark:text-red-400" />
+                <XCircle className="h-6 w-6 text-red-600 dark:text-red-400" />
                 <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">Reject Material</h2>
               </div>
               <button
                 onClick={cancelRejection}
                 className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition"
               >
-                <XCircleIcon className="h-6 w-6" />
+                <XCircle className="h-6 w-6" />
               </button>
             </div>
 
