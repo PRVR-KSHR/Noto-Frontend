@@ -9,6 +9,7 @@ import Footer from "./components/Footer";
 import PencilLoader from "./components/PencilLoader/PencilLoader";
 import AppWithPopup from "./components/AppWithPopup";
 import ScrollToTop from "./components/SmoothScroll";
+import VisitorCounter from "./components/VisitorCounter/VisitorCounter";
 
 // Lazy load all pages for better performance
 const Home = React.lazy(() => import("./pages/Home/Home"));
@@ -74,6 +75,9 @@ function App() {
           <Toaster position="top-center" />
         
           <AppWithPopup />
+          
+          {/* Visitor Counter */}
+          <VisitorCounter />
         </div>
       </Router>
   );
