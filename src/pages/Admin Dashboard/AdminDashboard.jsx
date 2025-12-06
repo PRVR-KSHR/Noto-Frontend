@@ -29,6 +29,7 @@ import {
 import PencilLoader from '../../components/PencilLoader/PencilLoader';
 import ProfessorVerificationTab from '../../components/AdminDashboard/ProfessorVerificationTab';
 import MaterialManagementTab from '../../components/AdminDashboard/MaterialManagementTab';
+import AnalyticsDashboard from '../../components/AnalyticsDashboard/AnalyticsDashboard';
 
 const AdminDashboard = () => {
   const { user } = useAuth();
@@ -716,6 +717,17 @@ const AdminDashboard = () => {
               >
                 <Eye className="h-4 w-4" />
                 Material Management
+              </button>
+              <button
+                onClick={() => setActiveTab('analytics')}
+                className={`flex items-center gap-2 rounded-lg px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  activeTab === 'analytics'
+                    ? 'border-2 border-blue-400 bg-blue-50 text-blue-600 dark:border-blue-500/70 dark:bg-blue-900/30 dark:text-blue-300 shadow-sm'
+                    : 'border border-gray-200 text-gray-500 dark:border-gray-700 dark:text-gray-400 hover:text-gray-700 hover:bg-gray-50 dark:hover:text-gray-200 dark:hover:bg-gray-800/60'
+                }`}
+              >
+                <Activity className="h-4 w-4" />
+                Analytics
               </button>
             </nav>
           </div>
@@ -1548,6 +1560,9 @@ const AdminDashboard = () => {
 
         {/* Material Management Tab */}
         {activeTab === 'materialManagement' && <MaterialManagementTab />}
+
+        {/* Analytics Tab */}
+        {activeTab === 'analytics' && <AnalyticsDashboard />}
       </div>
     </div>
 
