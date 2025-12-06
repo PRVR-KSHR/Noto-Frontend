@@ -205,7 +205,7 @@ const MaterialManagementTab = () => {
                 <tr key={material._id} className="border-t border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50">
                   <td className="px-6 py-4 text-sm text-gray-900 dark:text-white font-medium">{material.title}</td>
                   <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">{material.category?.subject || 'N/A'}</td>
-                  <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">{material.uploadedBy?.username || 'Unknown'}</td>
+                  <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">{material.uploaderName || material.uploadedBy?.username || 'Unknown'}</td>
                   <td className="px-6 py-4 text-sm">
                     <span className={`px-2 py-1 rounded text-xs font-semibold ${
                       material.verification?.status === 'verified'
