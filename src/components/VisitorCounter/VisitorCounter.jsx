@@ -1,102 +1,73 @@
-import React, { useState, useEffect } from 'react';
-import { Eye, TrendingUp } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Eye, Users } from 'lucide-react';
 import api from '../../utils/api';
 
 const VisitorCounter = () => {
-  const [todayVisits, setTodayVisits] = useState(0);
-  const [totalVisits, setTotalVisits] = useState(0);
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [activeUsers, setActiveUsers] = useState(0);
+  const [sessionId, setSessionId] = useState(null);
+  const sessionIdRef = useRef(null);
 
   useEffect(() => {
-    // Log visitor on component mount
-    logVisit();
-    // Fetch visitor stats
-    fetchVisitorStats();
+    // Initialize session on component mount
+    initializeSession();
+    
+    // Fetch active users count immediately
+    fetchActiveUsers();
+    
+    // Set up periodic updates
+    const fetchInterval = setInterval(fetchActiveUsers, 30000); // Update every 30 seconds
+    const pingInterval = setInterval(pingSession, 60000); // Keep session alive every 60 seconds
+
+    return () => {
+      clearInterval(fetchInterval);
+      clearInterval(pingInterval);
+    };
   }, []);
 
-  const logVisit = async () => {
+  const initializeSession = async () => {
     try {
-      await api.post('/analytics/visit', {
-        page: window.location.pathname,
-        timestamp: new Date().toISOString()
+      // Generate unique session ID for this browser
+      const sid = sessionIdRef.current || `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      sessionIdRef.current = sid;
+      setSessionId(sid);
+
+      // Start session on backend
+      await api.post('/analytics/session/start', {
+        sessionId: sid,
+        page: window.location.pathname
       });
     } catch (error) {
-      console.log('Visit logged (local fallback)');
-      // Fallback: store in localStorage if API fails
-      const visits = JSON.parse(localStorage.getItem('visitorData') || '{"today": 0, "total": 0}');
-      visits.today += 1;
-      visits.total += 1;
-      localStorage.setItem('visitorData', JSON.stringify(visits));
+      console.log('Session init failed (will use local tracking)');
     }
   };
 
-  const fetchVisitorStats = async () => {
+  const pingSession = async () => {
+    if (!sessionIdRef.current) return;
     try {
-      setLoading(true);
-      const response = await api.get('/analytics/visits');
+      await api.post('/analytics/session/ping', {
+        sessionId: sessionIdRef.current
+      });
+    } catch (error) {
+      console.log('Session ping failed');
+    }
+  };
+
+  const fetchActiveUsers = async () => {
+    try {
+      const response = await api.get('/analytics/active-users');
       if (response.data.success) {
-        setTodayVisits(response.data.todayVisits || 0);
-        setTotalVisits(response.data.totalVisits || 0);
+        setActiveUsers(response.data.activeUsers || 0);
       }
     } catch (error) {
-      console.log('Using local visitor data');
-      // Fallback to localStorage
-      const visits = JSON.parse(localStorage.getItem('visitorData') || '{"today": 0, "total": 0}');
-      setTodayVisits(visits.today || 0);
-      setTotalVisits(visits.total || 0);
-    } finally {
-      setLoading(false);
+      console.log('Failed to fetch active users');
     }
   };
 
   return (
-    <div className="fixed bottom-4 left-4 z-40">
-      {/* Main Counter Button */}
-      <button
-        onClick={() => setIsExpanded(!isExpanded)}
-        className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-300 ${
-          isExpanded 
-            ? 'bg-blue-600 text-white' 
-            : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 shadow-lg hover:shadow-xl'
-        } border border-blue-200 dark:border-blue-600`}
-      >
-        <Eye className="w-4 h-4" />
-        <span className="text-sm font-semibold">{totalVisits}</span>
-      </button>
-
-      {/* Expanded Stats */}
-      {isExpanded && (
-        <div className="absolute bottom-16 left-0 bg-white dark:bg-gray-800 rounded-lg shadow-xl p-4 min-w-48 border border-gray-200 dark:border-gray-700 animate-in fade-in slide-in-from-bottom-2 duration-200">
-          <div className="space-y-3">
-            {/* Today's Visits */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Eye className="w-4 h-4 text-blue-500" />
-                <span className="text-sm text-gray-600 dark:text-gray-300">Today</span>
-              </div>
-              <span className="font-bold text-lg text-blue-600 dark:text-blue-400">{todayVisits}</span>
-            </div>
-
-            {/* Total Visits */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <TrendingUp className="w-4 h-4 text-green-500" />
-                <span className="text-sm text-gray-600 dark:text-gray-300">Total</span>
-              </div>
-              <span className="font-bold text-lg text-green-600 dark:text-green-400">{totalVisits}</span>
-            </div>
-
-            {/* Divider */}
-            <div className="h-px bg-gray-200 dark:bg-gray-700"></div>
-
-            {/* Last 7 Days Average */}
-            <div className="text-xs text-gray-500 dark:text-gray-400 text-center">
-              {todayVisits > 0 ? `~${Math.round(totalVisits / 30)} per day` : 'No visits yet'}
-            </div>
-          </div>
-        </div>
-      )}
+    <div className="fixed bottom-4 left-4 z-40 flex items-center gap-2 px-4 py-2 rounded-lg bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 shadow-lg hover:shadow-xl border border-green-200 dark:border-green-600 transition-all">
+      <Users className="w-4 h-4 text-green-600 dark:text-green-400" />
+      <span className="text-sm font-semibold">{activeUsers}</span>
+      <span className="text-xs text-gray-600 dark:text-gray-400">online</span>
     </div>
   );
 };
