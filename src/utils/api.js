@@ -16,23 +16,26 @@ const api = axios.create({
 // Add request interceptor
 api.interceptors.request.use(
   async (config) => {
-    console.log('🚀 Making API request to:', config.url);
     const user = auth.currentUser;
     if (user) {
       try {
-        const token = await user.getIdToken(true); // Force refresh
+        // Add timeout to token refresh to prevent hanging
+        const tokenPromise = user.getIdToken(true);
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('Token refresh timeout')), 5000)
+        );
+        
+        const token = await Promise.race([tokenPromise, timeoutPromise]);
         config.headers.Authorization = `Bearer ${token}`;
-        console.log('✅ Added auth token to request');
       } catch (error) {
-        console.error('❌ Error getting ID token:', error);
+        // Silently fail for token refresh - request will go through without auth
+        // This prevents blocking non-critical requests like analytics
+        console.log('⚠️ Token refresh skipped (request will continue)');
       }
-    } else {
-      console.log('ℹ️ No current user found');
     }
     return config;
   },
   (error) => {
-    console.error('❌ Request interceptor error:', error);
     return Promise.reject(error);
   }
 );
@@ -40,23 +43,20 @@ api.interceptors.request.use(
 // Add response interceptor for better error handling
 api.interceptors.response.use(
   (response) => {
-    console.log('✅ API response received:', response.status);
     return response;
   },
   async (error) => {
-    console.error('❌ API error:', error.response?.status, error.response?.data);
-    if (error.code === 'ERR_NETWORK') {
-      console.error('🚨 Network error - Backend server may be down');
+    // Only log critical errors, not analytics failures
+    const isAnalyticsEndpoint = error.config?.url?.includes('/analytics');
+    if (!isAnalyticsEndpoint) {
+      console.error('❌ API error:', error.response?.status, error.response?.data?.message);
     }
 
     // Only sign out on 401 if it's NOT during login/profile fetch
     if (error.response?.status === 401) {
-      console.log('🔒 Unauthorized access');
-      // Only auto-signout if user is currently logged in AND it's not a login-related endpoint
       const isLoginEndpoint = error.config?.url?.includes('/auth/google') || error.config?.url?.includes('/auth/profile');
       const currentUser = auth.currentUser;
       if (currentUser && !isLoginEndpoint) {
-        console.log('🔄 Auto-signing out due to expired token');
         try {
           await signOut(auth);
           if (window.location.pathname !== '/') {
