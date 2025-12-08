@@ -78,10 +78,15 @@ const ErrorPage = ({ errorCode = 404, errorMessage, errorDetails }) => {
         <div className="flex justify-center">
           <div className="w-full sm:w-10/12 md:w-8/12 text-center">
             <div
-              className="bg-[url(https://cdn.dribbble.com/users/285475/screenshots/2083086/dribbble_1.gif)] h-[250px] sm:h-[350px] md:h-[400px] bg-center bg-no-repeat bg-contain"
+              className="h-[250px] sm:h-[350px] md:h-[400px] flex items-center justify-center relative"
               aria-hidden="true"
             >
-              <h1 className="text-center text-black dark:text-white text-6xl sm:text-7xl md:text-8xl pt-6 sm:pt-8 font-bold">
+              <img
+                src="https://cdn.dribbble.com/users/285475/screenshots/2083086/dribbble_1.gif"
+                alt="Error animation"
+                className="h-full w-full object-contain"
+              />
+              <h1 className="text-center text-black dark:text-white text-6xl sm:text-7xl md:text-8xl font-bold absolute">
                 {error.code}
               </h1>
             </div>
