@@ -73,7 +73,7 @@ const ErrorPage = ({ errorCode = 404, errorMessage, errorDetails }) => {
   };
 
   return (
-    <section className="bg-white font-serif min-h-screen flex items-center justify-center">
+    <section className="bg-white dark:bg-gray-900 font-serif min-h-screen flex items-center justify-center transition-colors duration-300">
       <div className="container mx-auto px-4">
         <div className="flex justify-center">
           <div className="w-full sm:w-10/12 md:w-8/12 text-center">
@@ -81,20 +81,20 @@ const ErrorPage = ({ errorCode = 404, errorMessage, errorDetails }) => {
               className="bg-[url(https://cdn.dribbble.com/users/285475/screenshots/2083086/dribbble_1.gif)] h-[250px] sm:h-[350px] md:h-[400px] bg-center bg-no-repeat bg-contain"
               aria-hidden="true"
             >
-              <h1 className="text-center text-black text-6xl sm:text-7xl md:text-8xl pt-6 sm:pt-8 font-bold">
+              <h1 className="text-center text-gray-800 dark:text-gray-100 text-6xl sm:text-7xl md:text-8xl pt-6 sm:pt-8 font-bold transition-colors duration-300">
                 {error.code}
               </h1>
             </div>
 
             <div className="mt-[-50px]">
-              <h3 className="text-2xl text-black sm:text-3xl font-bold mb-4">
+              <h3 className="text-2xl text-gray-800 dark:text-gray-100 sm:text-3xl font-bold mb-4 transition-colors duration-300">
                 {error.message}
               </h3>
-              <p className="mb-6 text-black sm:mb-5">{error.details}</p>
+              <p className="mb-6 text-gray-700 dark:text-gray-300 sm:mb-5 transition-colors duration-300">{error.details}</p>
 
               <button
                 onClick={() => navigate("/")}
-                className="inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium transition-colors outline-offset-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring/70 disabled:pointer-events-none disabled:opacity-50 bg-green-600 text-white shadow-sm shadow-black/5 hover:bg-green-700 h-10 px-8 my-5"
+                className="inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium transition-colors outline-offset-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring/70 disabled:pointer-events-none disabled:opacity-50 bg-noto-primary dark:bg-blue-600 text-white shadow-sm shadow-black/5 hover:bg-noto-secondary dark:hover:bg-blue-700 h-10 px-8 my-5"
               >
                 Go to Home
               </button>
